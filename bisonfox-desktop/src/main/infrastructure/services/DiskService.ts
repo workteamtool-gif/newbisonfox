@@ -39,20 +39,20 @@ export class DiskService implements IDiskService {
 
         // DriveType: 2 = Removable (USB Stick), 3 = Fixed (Internal HDD or External NVMe)
         // We want external drives, so we accept 2 and 3, but strictly ignore the C: drive.
-        if (!rawDeviceId) {
-          logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: d })
-          continue
-        }
-        if (driveType !== 2 && driveType !== 3) {
-          logger.debug('DiskService', `Skipping drive ${rawDeviceId}: Unsupported drive type`, {
-            driveType
-          })
-          continue
-        }
-        if (rawDeviceId.toUpperCase() === 'C:') {
-          logger.debug('DiskService', 'Skipping drive C: (System Drive)')
-          continue
-        }
+        // if (!rawDeviceId) {
+        //   logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: d })
+        //   continue
+        // }
+        // if (driveType !== 2 && driveType !== 3) {
+        //   logger.debug('DiskService', `Skipping drive ${rawDeviceId}: Unsupported drive type`, {
+        //     driveType
+        //   })
+        //   continue
+        // }
+        // if (rawDeviceId.toUpperCase() === 'C:') {
+        //   logger.debug('DiskService', 'Skipping drive C: (System Drive)')
+        //   continue
+        // }
 
         // Ensure trailing slash for Node.js fs compatibility
         const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'

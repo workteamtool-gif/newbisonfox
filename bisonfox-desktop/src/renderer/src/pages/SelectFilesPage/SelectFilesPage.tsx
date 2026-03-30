@@ -8,8 +8,6 @@ import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
 
-const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
-
 export function SelectFilesPage(): JSX.Element {
   const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
 
@@ -35,7 +33,7 @@ export function SelectFilesPage(): JSX.Element {
     setLoading(true)
 
     driveApi
-      .getDriveTree(currentDisk.driveLetter!, 1, ITEMS_IN_ONE_PAGE)
+      .getDriveTree(currentDisk.driveLetter!, 1)
       .then((res) => {
         if (!isMounted) return
         setTree(res.nodes)
@@ -58,7 +56,7 @@ export function SelectFilesPage(): JSX.Element {
     const nextPage = rootPage + 1
     setLoading(true)
     try {
-      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage, ITEMS_IN_ONE_PAGE)
+      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage)
       setTree(res.nodes)
       setRootPage(nextPage)
       setRootHasMore(res.hasMore)
@@ -73,7 +71,7 @@ export function SelectFilesPage(): JSX.Element {
     const prevPage = rootPage - 1
     setLoading(true)
     try {
-      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage, ITEMS_IN_ONE_PAGE)
+      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage)
       setTree(res.nodes)
       setRootPage(prevPage)
       setRootHasMore(true)
@@ -91,8 +89,7 @@ export function SelectFilesPage(): JSX.Element {
       try {
         const res = await driveApi.getDriveTree(
           currentDisk.driveLetter!,
-          targetPage,
-          ITEMS_IN_ONE_PAGE
+          targetPage
         )
         setTree(res.nodes)
         setRootPage(targetPage)
@@ -106,7 +103,7 @@ export function SelectFilesPage(): JSX.Element {
   )
 
   const handleLoadChildren = useCallback(async (dirPath: string, page: number) => {
-    return driveApi.getDir(dirPath, page, ITEMS_IN_ONE_PAGE)
+    return driveApi.getDir(dirPath, page)
   }, [])
 
   const handleToggleSelect = useCallback(
@@ -158,8 +155,7 @@ export function SelectFilesPage(): JSX.Element {
       if (targetPage !== null) {
         const res = await driveApi.getDriveTree(
           currentDisk.driveLetter!,
-          targetPage,
-          ITEMS_IN_ONE_PAGE
+          targetPage
         )
         setTree(res.nodes)
         setRootPage(targetPage)
@@ -179,8 +175,7 @@ export function SelectFilesPage(): JSX.Element {
 
           const res = await driveApi.getDriveTree(
             currentDisk.driveLetter!,
-            rootTargetPage,
-            ITEMS_IN_ONE_PAGE
+            rootTargetPage
           )
           setTree(res.nodes)
           setRootPage(rootTargetPage)

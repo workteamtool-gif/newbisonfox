@@ -28,6 +28,7 @@
     --font: 'Inter', system-ui, sans-serif;
     --font-display: 'Space Grotesk', system-ui, sans-serif;
     overflow: hidden;
+    overflow: hidden;
     user-select: none;
     /* Prevents users from accidentally highlighting UI text like a webpage */
 }

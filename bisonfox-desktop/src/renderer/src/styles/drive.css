@@ -1,3 +1,28 @@
+.drive-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.drive-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.drive-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.drive-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.drive-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
 .drive-option {
     display: flex;
     align-items: center;
