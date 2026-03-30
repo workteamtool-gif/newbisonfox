@@ -252,19 +252,17 @@ export function TreeNode({
             />
           ))}
 
-          {(page > 1 || hasMore) && (
-            <PaginationBar
-              page={page}
-              totalPages={totalPages}
-              hasMore={hasMore}
-              loading={loading}
-              depth={depth}
-              onLoadPrev={handleLoadPrev}
-              onLoadNext={handleLoadNext}
-              onSearchSubmit={handleSearchSubmit}
-              onJumpToPage={handleJumpToPage}
-            />
-          )}
+          <PaginationBar
+            page={page}
+            totalPages={totalPages}
+            hasMore={hasMore}
+            loading={loading}
+            depth={depth}
+            onLoadPrev={handleLoadPrev}
+            onLoadNext={handleLoadNext}
+            onSearchSubmit={handleSearchSubmit}
+            onJumpToPage={handleJumpToPage}
+          />
         </div>
       )}
 

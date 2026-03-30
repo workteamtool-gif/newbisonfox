@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from '../Logger'
-import { IFileScanner } from '../../domain/interfaces/IFileScanner'
+import { logger } from '@main/infrastructure/Logger'
+import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 
 /** System directories to always skip during scanning. */
 const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git', 'node_modules'])

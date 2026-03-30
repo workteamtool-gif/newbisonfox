@@ -5,7 +5,7 @@ import './SuccessPage.css'
 import { JSX } from 'react'
 
 export function SuccessPage(): JSX.Element {
-  const { reset, userName, setStep } = useWizardStore()
+  const { reset, userName } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions) // Fixes the stats resetting to 0 mid-transition
   const [countdown, setCountdown] = useState(15)

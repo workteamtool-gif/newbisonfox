@@ -263,11 +263,10 @@ export function SelectFilesPage(): JSX.Element {
               onScrolled={() => setScrollToPath(undefined)}
             />
 
-            {(rootPage > 1 || rootHasMore) && (
-              <div
-                className="tree-pagination-bar"
-                style={{ margin: '1rem 0', justifyContent: 'center' }}
-              >
+            <div
+              className="tree-pagination-bar"
+              style={{ margin: '1rem 0', justifyContent: 'center' }}
+            >
                 <button
                   className="btn btn-secondary pagination-btn"
                   onClick={handleLoadPrevRoot}
@@ -327,7 +326,6 @@ export function SelectFilesPage(): JSX.Element {
                   </button>
                 </form>
               </div>
-            )}
           </>
         )}
 

@@ -1,10 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from '../Logger'
+import { logger } from '@main/infrastructure/Logger'
 import { FileNode } from '@shared/entities/FileNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { IFileService, CopyOptions } from '../../domain/interfaces/IFileService'
-import { FileScanner } from './FileScanner'
+import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
+import { FileScanner } from '@main/infrastructure/services/FileScanner'
 
 const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git', 'node_modules'])
 const COPY_CONCURRENCY = Number(process.env.COPY_CONCURRENCY) || 64

@@ -5,7 +5,7 @@ import { JSX } from 'react'
 import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
 
 export function SubfolderPage(): JSX.Element {
-  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk } = useWizardStore()
+  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName } = useWizardStore()
   useDriveMonitor()
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
@@ -22,6 +22,7 @@ export function SubfolderPage(): JSX.Element {
   }
 
   const trimmedSubfolder = subfolder.trim()
+  const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
 
   return (
     <div className="wizard-layout">
@@ -31,7 +32,7 @@ export function SubfolderPage(): JSX.Element {
           Specify a subfolder name for the data from <strong>{currentDisk?.driveLabel}</strong>. The
           data will be uploaded to: <br />
           <code style={{ fontSize: '0.8rem', color: 'var(--accent)' }}>
-            ...\{trimmedSubfolder || '<root folder>'}
+            {destinationUserEndpoint}\{userName}\{trimmedSubfolder}
           </code>
         </p>
 
