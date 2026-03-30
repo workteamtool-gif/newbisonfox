@@ -31,12 +31,12 @@ export function AnotherDiskPage(): React.JSX.Element {
         <div className="stats-dashboard another-disk-stats">
           <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-              💿
+              📤
             </div>
             <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
               {diskSessions.length}
             </div>
-            <div className="stat-lbl">Disk{diskSessions.length !== 1 ? 's' : ''} Processed</div>
+            <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
           </div>
           <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>

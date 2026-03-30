@@ -1,6 +1,6 @@
 .info-box {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: .7rem;
     padding: .9rem 1.1rem;
     background: rgba(99, 102, 241, .07);
@@ -15,5 +15,4 @@
     color: var(--accent);
     font-size: 1.05rem;
     flex-shrink: 0;
-    margin-top: .05rem;
 }

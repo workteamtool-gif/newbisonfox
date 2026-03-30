@@ -31,7 +31,7 @@ export function ReviewPage(): JSX.Element | null {
       const name = fp.split(/[/\\]/).pop() ?? fp
       const isFileLike = name.includes('.')
       return {
-        name,
+        name: `${name}   (${fp})`,
         path: fp,
         isDirectory: !isFileLike,
         hasChildren: !isFileLike

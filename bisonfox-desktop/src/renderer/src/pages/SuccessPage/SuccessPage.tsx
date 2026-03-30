@@ -8,7 +8,7 @@ export function SuccessPage(): JSX.Element {
   const { reset, userName } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions) // Fixes the stats resetting to 0 mid-transition
-  const [countdown, setCountdown] = useState(15)
+  const [countdown, setCountdown] = useState(11115)
 
   const totalFiles = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
@@ -40,21 +40,31 @@ export function SuccessPage(): JSX.Element {
           Great work, <strong>{userName}</strong>! All <strong>{totalFiles}</strong> files from{' '}
           <strong>{snapshot.length}</strong> disk{snapshot.length !== 1 ? 's' : ''} have
           been successfully uploaded!
+          {destinationUserEndpoint && (
+            <span>
+              {' '}You can see the files in the folder: <strong>{destinationUserEndpoint}\{userName}</strong>
+            </span>
+          )}
         </p>
-        {destinationUserEndpoint && (
-          <p className="page-subtitle">
-            You can see the files in the folder: {destinationUserEndpoint}\{userName}
-          </p>
-        )}
 
         <div className="success-stats-row">
-          <div className="stat-card success-stat-card">
-            <div className="stat-val">{totalFiles}</div>
-            <div className="stat-lbl">Files uploaded</div>
+          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+            <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+              📤
+            </div>
+            <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
+              {diskSessions.length}
+            </div>
+            <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
           </div>
-          <div className="stat-card success-stat-card">
-            <div className="stat-val">{snapshot.length}</div>
-            <div className="stat-lbl">Disk{snapshot.length !== 1 ? 's' : ''} processed</div>
+          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+            <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+              📄
+            </div>
+            <div className="stat-val" style={{ color: 'var(--accent-green)', fontSize: '1.8rem' }}>
+              {totalFiles.toLocaleString()}
+            </div>
+            <div className="stat-lbl">Total Files Uploaded</div>
           </div>
         </div>
 
