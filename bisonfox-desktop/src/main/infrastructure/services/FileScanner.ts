@@ -4,7 +4,7 @@ import { logger } from '@main/infrastructure/Logger'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 
 /** System directories to always skip during scanning. */
-const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
+let excludedDirectories = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
 
 /** How many parallel workers for directory scanning/counting. */
 const SCAN_CONCURRENCY = 50
@@ -16,6 +16,11 @@ function normalizeDriveCase(p: string): string {
 }
 
 export class FileScanner implements IFileScanner {
+  constructor(excludedSet: Set<string>
+    = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])) {
+    excludedDirectories = excludedSet
+  }
+
   async expandPaths(
     inputs: string[],
     basePath: string,
@@ -86,7 +91,7 @@ export class FileScanner implements IFileScanner {
             const dir = await fs.promises.opendir(p);
             for await (const e of dir) {
               if (signal?.aborted) break;
-              if (EXCLUDED.has(e.name)) continue;
+              if (excludedDirectories.has(e.name)) continue;
 
               const fullChildPath = path.join(p, e.name);
               if (excludedPaths?.has(fullChildPath)) continue;
@@ -124,7 +129,7 @@ export class FileScanner implements IFileScanner {
   ): Promise<number> {
     if (!initialPaths || initialPaths.length === 0) return 0;
 
-    const excluded = new Set<string>(excludedFiles ?? []);
+    const excludedFilesSet = new Set<string>(excludedFiles ?? []);
     let count = 0;
     let lastReport = Date.now();
     let isDone = false;
@@ -137,7 +142,7 @@ export class FileScanner implements IFileScanner {
     // 1. Initial Sorting: Separate direct files from directories
     await Promise.all(
       initialPaths.map(async (p) => {
-        if (excluded.has(p) || excluded.has(path.basename(p))) return;
+        if (excludedFilesSet.has(p) || excludedFilesSet.has(path.basename(p))) return;
         try {
           const stat = await fs.promises.stat(p);
           if (stat.isDirectory()) {
@@ -186,10 +191,10 @@ export class FileScanner implements IFileScanner {
                 if (signal?.aborted) break;
 
                 const ent = entries[i];
-                if (EXCLUDED.has(ent.name)) continue;
+                if (excludedDirectories.has(ent.name)) continue;
 
                 const fullPath = path.join(currentDir, ent.name);
-                if (excluded.has(fullPath)) continue;
+                if (excludedFilesSet.has(fullPath)) continue;
 
                 if (ent.isDirectory()) {
                   queue.push(fullPath);

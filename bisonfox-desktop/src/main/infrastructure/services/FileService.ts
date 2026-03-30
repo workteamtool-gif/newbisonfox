@@ -49,7 +49,7 @@ class AsyncSemaphore {
 const heavyLock = new AsyncSemaphore(4)
 
 export class FileService implements IFileService {
-  private readonly scanner = new FileScanner()
+  private readonly scanner = new FileScanner(EXCLUDED)
 
   // ────────────────────────────────── TREE BROWSING ──────────────────────────
 
