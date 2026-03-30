@@ -9,8 +9,6 @@ import './ReviewPage.css'
 import { JSX } from 'react'
 import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/Wizard'
 
-const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
-
 export function ReviewPage(): JSX.Element | null {
   const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession } = useWizardStore()
 
@@ -43,7 +41,7 @@ export function ReviewPage(): JSX.Element | null {
   }, [currentDisk])
 
   const handleLoadChildren = useCallback(async (dirPath: string, page: number) => {
-    return driveApi.getDir(dirPath, page, ITEMS_IN_ONE_PAGE)
+    return driveApi.getDir(dirPath, page)
   }, [])
 
   const handleToggleSelect = useCallback(
