@@ -341,7 +341,7 @@ export function UploadPage(): JSX.Element | null {
               </div>
             )}
 
-            {uploadDone && !showFailedReview && (
+            {uploadDone && (
               <div
                 style={{
                   textAlign: 'center',

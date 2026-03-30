@@ -34,6 +34,7 @@ export function useUploadManager(): {
   const [overallPercentage, setOverallPercentage] = useState(0)
   const [failedFilesList, setFailedFilesList] = useState<{ path: string; reason: string }[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [retryKey, setRetryKey] = useState(0)
 
   const [preCalcTotal, setPreCalcTotal] = useState<number | null>(null)
   const [countingComplete, setCountingComplete] = useState(false)
@@ -128,7 +129,7 @@ export function useUploadManager(): {
       controller.close()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId, phase, recalcPct])
+  }, [sessionId, phase, recalcPct, retryKey])
 
   const handleCompletion = (msg: any): void => {
     if (msg.failed !== undefined) failedRef.current = msg.failed
@@ -188,6 +189,7 @@ export function useUploadManager(): {
     setOverallPercentage(0)
     setTotalDiscovered(filesToRetry.length)
     totalRef.current = filesToRetry.length
+    setRetryKey((k) => k + 1)
     setPhase('copying')
 
     const subfolder = currentDisk.subfolder || ''

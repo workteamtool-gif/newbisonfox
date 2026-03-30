@@ -56,6 +56,14 @@ export class UploadManager {
   // --------------------------------------
 
   public async startUpload(sessionId: string, body: any): Promise<void> {
+    // Abort any previous active upload for this session (e.g. during retry)
+    const oldController = this.activeUploads.get(sessionId)
+    if (oldController) {
+      logger.info('UploadManager', `Aborting previous upload attempt for session ${sessionId}`)
+      oldController.abort()
+      this.activeUploads.delete(sessionId)
+    }
+
     const session = this.sessionSingletonInstance.get(sessionId)
     if (!session) return
 
