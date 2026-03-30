@@ -28,6 +28,10 @@ export function AnotherDiskPage(): React.JSX.Element {
           Awesome! You&apos;ve successfully processed the previous disk.
         </p>
 
+        <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
+          Summary of all of the sessions:
+        </p>
+
         <div className="stats-dashboard another-disk-stats">
           <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
