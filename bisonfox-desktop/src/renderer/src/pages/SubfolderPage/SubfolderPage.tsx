@@ -13,12 +13,7 @@ export function SubfolderPage(): JSX.Element {
   function handleSubmit(e: React.FormEvent): void {
     e.preventDefault()
     const trimmed = subfolder.trim()
-    if (!trimmed) {
-      setError('Subfolder name is required.')
-      return
-    }
-    // Simple validation: alphanumeric, spaces, dashes, underscores
-    if (!/^[a-zA-Z0-9\s-_]+$/.test(trimmed)) {
+    if (trimmed && !/^[a-zA-Z0-9\s-_]+$/.test(trimmed)) {
       setError('Name can only contain letters, numbers, spaces, dashes, and underscores.')
       return
     }
@@ -36,14 +31,14 @@ export function SubfolderPage(): JSX.Element {
           Specify a subfolder name for the data from <strong>{currentDisk?.driveLabel}</strong>. The
           data will be uploaded to: <br />
           <code style={{ fontSize: '0.8rem', color: 'var(--accent)' }}>
-            ...\{trimmedSubfolder || 'sub_folder_name'}
+            ...\{trimmedSubfolder || '<root folder>'}
           </code>
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="subfolder-input">
-              Subfolder Name
+              Subfolder Name (Optional)
             </label>
             <input
               id="subfolder-input"
@@ -68,7 +63,7 @@ export function SubfolderPage(): JSX.Element {
             >
               ← Back
             </button>
-            <button type="submit" className="btn btn-primary btn-lg" disabled={!subfolder.trim()}>
+            <button type="submit" className="btn btn-primary btn-lg">
               Next: Select Files →
             </button>
           </div>
