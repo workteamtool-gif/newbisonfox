@@ -161,30 +161,42 @@ export function TreeNode({
   }, [scrollToPath, node.path, onScrolled])
 
   const handleSearchSubmit = async (query: string): Promise<void> => {
-    if (!query.trim() || loading) return
+    const trimmedQuery = query.trim()
+    if (!trimmedQuery || loading) return
     setLoading(true)
+    useWizardStore.getState().setToast(`Searching folder for "${trimmedQuery}"...`, 'info')
+
     try {
-      const targetPage = await driveApi.findItemPage(node.path, query)
+      const targetPage = await driveApi.findItemPage(node.path, trimmedQuery)
       if (targetPage !== null) {
         const res = await onLoadChildren(node.path, targetPage)
         setLoadedChildren(res.nodes)
         setPage(targetPage)
         setHasMore(res.hasMore)
         setTotalPages(res.totalPages ?? Math.max(1, targetPage))
+
+        const match = res.nodes.find((n) =>
+          n.name.toLowerCase().includes(trimmedQuery.toLowerCase())
+        )
+        if (match && onAutoExpand) {
+          onAutoExpand(autoExpandMap || {}, match.path)
+          useWizardStore.getState().setToast(`Located "${match.name}"`, 'success')
+        } else {
+          useWizardStore.getState().setToast(`Found a match! Displaying page ${targetPage}.`, 'info')
+        }
       } else {
-        useWizardStore.getState().setToast('Searching subfolders… This may take a moment.', 'info')
-        const deepMatch = await driveApi.deepFindItem(node.path, query)
+        const deepMatch = await driveApi.deepFindItem(node.path, trimmedQuery)
         if (deepMatch) {
           useWizardStore
             .getState()
-            .setToast(`Found at ${deepMatch.path}! Expanding folder tree…`, 'success')
+            .setToast(`Found it! Opening folder path now.`, 'success')
           if (onAutoExpand) onAutoExpand(deepMatch.pages, deepMatch.path)
         } else {
-          useWizardStore.getState().setToast('File not found in any subfolders.', 'warning')
+          useWizardStore.getState().setToast(`We couldn't find any file matching that name in this folder.`, 'warning')
         }
       }
     } catch {
-      useWizardStore.getState().setToast('Search failed.', 'error')
+      useWizardStore.getState().setToast('Oops, an error occurred while searching.', 'error')
     } finally {
       setLoading(false)
     }

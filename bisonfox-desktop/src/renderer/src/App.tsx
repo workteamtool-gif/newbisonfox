@@ -19,8 +19,8 @@ function PageRouter(): React.JSX.Element {
 export default function App(): React.JSX.Element {
   return (
     <ErrorBoundary>
+      <Toast />
       <WizardLayout>
-        <Toast />
         <PageRouter />
       </WizardLayout>
     </ErrorBoundary>

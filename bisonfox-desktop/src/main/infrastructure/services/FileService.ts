@@ -163,10 +163,10 @@ export class FileService implements IFileService {
         if (EXCLUDED.has(e.name)) continue
 
         if (e.isDirectory()) {
-          if (foundDirIndex === -1 && e.name.toLowerCase() === lowerQuery) foundDirIndex = dirCount
+          if (foundDirIndex === -1 && e.name.toLowerCase().includes(lowerQuery)) foundDirIndex = dirCount
           dirCount++
         } else {
-          if (foundFileIndex === -1 && e.name.toLowerCase() === lowerQuery)
+          if (foundFileIndex === -1 && e.name.toLowerCase().includes(lowerQuery))
             foundFileIndex = fileCount
           fileCount++
         }
@@ -216,7 +216,7 @@ export class FileService implements IFileService {
             if (isDone) break
             if (EXCLUDED.has(e.name)) continue
 
-            if (e.name.toLowerCase() === lowerQuery) {
+            if (e.name.toLowerCase().includes(lowerQuery)) {
               isDone = true
               resolve(path.join(dirPath, e.name))
               return

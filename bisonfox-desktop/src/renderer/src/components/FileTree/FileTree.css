@@ -3,7 +3,7 @@
     border: 1px solid rgba(255, 255, 255, .07);
     border-radius: var(--r-md);
     max-height: 400px;
-    overflow-y: auto;
+    overflow: auto;
     padding: .6rem;
 }
 
@@ -20,6 +20,7 @@
     border: 1px solid transparent;
     margin-bottom: 2px;
     color: var(--text-primary);
+    min-width: max-content;
 }
 
 .tree-row:hover {
@@ -89,9 +90,8 @@
 .tree-name {
     flex: 1;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     user-select: none;
+    padding-right: 1rem;
 }
 
 .tree-size {
@@ -176,14 +176,14 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.2);
     color: var(--text-primary);
-    width: 120px;
-    transition: width 0.2s, border-color 0.2s;
+    width: 150px;
+    transition: border-color 0.2s, background 0.2s;
 }
 
 .pagination-search-input:focus {
     outline: none;
     border-color: var(--accent);
-    width: 150px;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .pagination-search-btn {
@@ -191,7 +191,15 @@
     border: none;
     cursor: pointer;
     opacity: 0.4;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+}
+
+.pagination-search-btn:active {
+    transform: scale(0.9);
 }
 
 .pagination-search-btn.active {

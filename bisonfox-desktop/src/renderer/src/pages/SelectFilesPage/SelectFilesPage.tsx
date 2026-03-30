@@ -148,28 +148,36 @@ export function SelectFilesPage(): JSX.Element {
 
   const handleSearchRootSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
-    if (!currentDisk || !rootSearchQuery.trim() || loading) return
+    const query = rootSearchQuery.trim()
+    if (!currentDisk || !query || loading) return
+    
     setLoading(true)
+    useWizardStore.getState().setToast(`Searching drive for "${query}"...`, 'info')
+    
     try {
-      const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, rootSearchQuery)
+      const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
       if (targetPage !== null) {
-        const res = await driveApi.getDriveTree(
-          currentDisk.driveLetter!,
-          targetPage
-        )
+        const res = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
         setTree(res.nodes)
         setRootPage(targetPage)
         setRootHasMore(res.hasMore)
         setRootTotalPages(res.totalPages ?? Math.max(1, targetPage))
+
+        const match = res.nodes.find((n) =>
+          n.name.toLowerCase().includes(query.toLowerCase())
+        )
+        if (match) {
+          setScrollToPath(match.path)
+          useWizardStore.getState().setToast(`Located "${match.name}"`, 'success')
+        } else {
+          useWizardStore.getState().setToast(`Found a match! Displaying page ${targetPage}.`, 'info')
+        }
       } else {
-        useWizardStore
-          .getState()
-          .setToast('Searching entire drive… This may take a moment.', 'info')
-        const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, rootSearchQuery)
+        const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
         if (deepMatch) {
           useWizardStore
             .getState()
-            .setToast(`Found at ${deepMatch.path}! Expanding folder tree`, 'success')
+            .setToast(`Found it! Opening folder path now.`, 'success')
           const expandedPages = deepMatch.pages
           const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
 
@@ -186,11 +194,11 @@ export function SelectFilesPage(): JSX.Element {
           setRootSearchQuery('')
           setScrollToPath(deepMatch.path)
         } else {
-          useWizardStore.getState().setToast(`File not found anywhere on this drive.`, 'warning')
+          useWizardStore.getState().setToast(`We couldn't find any file matching that name on the drive.`, 'warning')
         }
       }
     } catch {
-      useWizardStore.getState().setToast('Search failed.', 'error')
+      useWizardStore.getState().setToast('Oops, an error occurred while searching.', 'error')
     } finally {
       setLoading(false)
     }

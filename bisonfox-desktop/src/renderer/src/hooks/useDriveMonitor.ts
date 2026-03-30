@@ -22,7 +22,7 @@ export function useDriveMonitor(): void {
         const isConnected = drives.some((d) => d.letter === currentDisk.driveLetter)
 
         if (!isConnected) {
-          setToast(`Drive ${currentDisk.driveLetter} was unexpectedly disconnected!`, 'error')
+          setToast(`Connection lost! Drive ${currentDisk.driveLetter} was disconnected.`, 'error')
           setStep(InsertDiskPage)
           return
         }

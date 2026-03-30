@@ -5,14 +5,16 @@ import './SuccessPage.css'
 import { JSX } from 'react'
 
 export function SuccessPage(): JSX.Element {
-  const { reset, userName, diskSessions } = useWizardStore()
+  const { reset, userName, setStep } = useWizardStore()
+  const diskSessions = useWizardStore((s) => s.diskSessions)
+  const [snapshot] = useState(diskSessions) // Fixes the stats resetting to 0 mid-transition
   const [countdown, setCountdown] = useState(15)
 
-  const totalFiles = diskSessions.reduce(
+  const totalFiles = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
     0
   )
-  const failedFiles = diskSessions.flatMap((d) => d.failedFiles || [])
+  const failedFiles = snapshot.flatMap((d) => d.failedFiles || [])
   const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
 
   useEffect(() => {
@@ -20,7 +22,7 @@ export function SuccessPage(): JSX.Element {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
           clearInterval(interval)
-          reset()
+          reset() // reset will push step back to WelcomePage
         }
         return currentCountdown - 1
       })
@@ -36,7 +38,7 @@ export function SuccessPage(): JSX.Element {
         <p className="page-title">All Data Uploaded!</p>
         <p className="page-subtitle">
           Great work, <strong>{userName}</strong>! All <strong>{totalFiles}</strong> files from{' '}
-          <strong>{diskSessions.length}</strong> disk{diskSessions.length !== 1 ? 's' : ''} have
+          <strong>{snapshot.length}</strong> disk{snapshot.length !== 1 ? 's' : ''} have
           been successfully uploaded!
         </p>
         {destinationUserEndpoint && (
@@ -51,8 +53,8 @@ export function SuccessPage(): JSX.Element {
             <div className="stat-lbl">Files uploaded</div>
           </div>
           <div className="stat-card success-stat-card">
-            <div className="stat-val">{diskSessions.length}</div>
-            <div className="stat-lbl">Disk{diskSessions.length !== 1 ? 's' : ''} processed</div>
+            <div className="stat-val">{snapshot.length}</div>
+            <div className="stat-lbl">Disk{snapshot.length !== 1 ? 's' : ''} processed</div>
           </div>
         </div>
 

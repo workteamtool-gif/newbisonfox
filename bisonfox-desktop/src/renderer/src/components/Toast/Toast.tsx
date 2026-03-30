@@ -24,7 +24,7 @@ export function Toast(): React.JSX.Element | null {
   if (!toastMessage) return null
 
   return (
-    <div className={`toast-container toast-${safeType}`}>
+    <div key={toastMessage} className={`toast-container toast-${safeType}`}>
       <span className="toast-icon">{icon}</span>
       <span className="toast-message">{toastMessage}</span>
       <button

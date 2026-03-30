@@ -66,7 +66,18 @@ export const useWizardStore = create<WizardData & WizardActions>()(
 
     reset: () => {
       clientLogger.info('Store', 'Wizard reset triggered.')
-      set(INITIAL_DATA)
+      set((state) => {
+        state.step = WelcomePage
+        state.userName = ''
+        state.sessionId = ''
+        state.diskSessions = []
+        state.currentDisk = null
+        state.currentSubfolder = ''
+        state.uploadProgress = {}
+        state.uploadDone = false
+        state.completedFiles = 0
+        state.toast = { message: null, type: 'info' }
+      })
     }
   }))
 )

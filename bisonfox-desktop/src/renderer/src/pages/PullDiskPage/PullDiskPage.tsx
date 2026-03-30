@@ -34,14 +34,6 @@ export function PullDiskPage(): JSX.Element | null {
           <span className="pull-disk-label">You may now safely unplug</span>
         </div>
 
-        <div className="info-box" style={{ textAlign: 'left', marginBottom: '2rem' }}>
-          <span className="info-icon">⚠️</span>
-          <span>
-            Make sure to eject the drive from your OS before physically removing it to avoid data
-            corruption.
-          </span>
-        </div>
-
         <div className="action-row" style={{ justifyContent: 'center' }}>
           <button className="btn btn-primary btn-lg" onClick={handleContinue}>
             I&apos;ve Unplugged It →

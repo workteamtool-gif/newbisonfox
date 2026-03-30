@@ -27,7 +27,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
           alignItems: 'center'
         }}
       >
-        <div className="wizard-logo">🦬🦊 BisonFox</div>
+        <div className="wizard-logo">BisonFox</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {userName && (
             <div
