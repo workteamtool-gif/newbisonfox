@@ -5,5 +5,5 @@ export interface DiskSession {
   selectedFiles: string[]
   excludedFiles?: string[]
   copiedCount?: number
-  failedFiles?: string[]
+  failedFiles?: { path: string; reason: string }[]
 }

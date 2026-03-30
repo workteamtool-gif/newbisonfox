@@ -11,7 +11,7 @@ export interface UploadSession {
   status: 'pending' | 'uploading' | 'complete' | 'cancelled' | 'error'
   completedCount: number
   failedCount: number
-  failedFiles: string[]
+  failedFiles: { path: string; reason: string }[]
   totalCount: number
   createdAt: Date
   lastUpdate: Date

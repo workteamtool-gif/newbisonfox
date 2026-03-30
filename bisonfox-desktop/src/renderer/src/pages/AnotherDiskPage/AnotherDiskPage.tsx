@@ -61,8 +61,9 @@ export function AnotherDiskPage(): React.JSX.Element {
             <div className="failed-files-list" style={{}}>
               <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
                 {failedFiles.slice(0, 5).map((f, i) => (
-                  <li key={i} style={{ wordBreak: 'break-all' }}>
-                    {f}
+                  <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem' }}>
+                    <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
                   </li>
                 ))}
               </ul>

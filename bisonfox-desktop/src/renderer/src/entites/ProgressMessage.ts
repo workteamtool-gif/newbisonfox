@@ -6,7 +6,7 @@ export interface ProgressMessage {
   count?: number
   completed?: number
   failed?: number
-  failedFiles?: string[]
+  failedFiles?: { path: string; reason: string }[]
   total?: number
   progress?: Record<string, number>
   status?: string

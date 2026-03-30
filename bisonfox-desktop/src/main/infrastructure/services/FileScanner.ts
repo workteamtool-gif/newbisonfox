@@ -4,7 +4,7 @@ import { logger } from '@main/infrastructure/Logger'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 
 /** System directories to always skip during scanning. */
-const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git', 'node_modules'])
+const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
 
 /** How many parallel workers for directory scanning/counting. */
 const SCAN_CONCURRENCY = 50

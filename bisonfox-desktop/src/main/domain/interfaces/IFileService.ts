@@ -12,7 +12,7 @@ export interface CopyOptions {
     file: string,
     percent: number,
     completed: number,
-    failedFiles: string[],
+    failedFiles: { path: string; reason: string }[],
     total: number
   ) => void
 }

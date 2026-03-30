@@ -6,7 +6,7 @@ import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
 
-const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git', 'node_modules'])
+const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
 const COPY_CONCURRENCY = Number(process.env.COPY_CONCURRENCY) || 64
 const DEEP_SEARCH_CONCURRENCY = Number(process.env.DEEP_SEARCH_CONCURRENCY) || 64
 const HEAVY_FILE_THRESHOLD = (Number(process.env.HEAVY_FILE_THRESHOLD_MB) || 100) * 1024 * 1024
@@ -308,7 +308,7 @@ export class FileService implements IFileService {
     let totalDiscovered = 0
     const mkdirCache = new Set<string>()
 
-    const failedFiles: string[] = []
+    const failedFiles: { path: string; reason: string }[] = []
 
     const scanPromise = this.scanner
       .expandPaths(
@@ -327,7 +327,7 @@ export class FileService implements IFileService {
           fs.promises.mkdir(path.join(destination, relDir), { recursive: true }).catch(() => {})
         },
         (failedPath, errorMsg) => {
-          failedFiles.push(failedPath)
+          failedFiles.push({ path: failedPath, reason: errorMsg })
           logger.error('FileService', `Scan failure: ${failedPath}`, { error: errorMsg })
         },
         activeSignal
@@ -384,6 +384,7 @@ export class FileService implements IFileService {
         let attempt = 0
         let success = false
 
+        let lastError: string | undefined
         while (attempt < FAIL_RETRIES && !success) {
           if (activeSignal.aborted) break
 
@@ -397,7 +398,8 @@ export class FileService implements IFileService {
 
             await this.copyOneFast(src, destPath, activeSignal)
             success = true
-          } catch {
+          } catch (err: any) {
+            lastError = err.message || 'Unknown copy error'
             attempt++
           }
         }
@@ -409,7 +411,7 @@ export class FileService implements IFileService {
           consecutiveFailures = 0
           throttledReport(src, 100)
         } else {
-          failedFiles.push(src)
+          failedFiles.push({ path: src, reason: lastError || 'Copy failed after 5 retries' })
           throttledReport(src, -1)
 
           consecutiveFailures++

@@ -76,7 +76,10 @@ export function SuccessPage(): JSX.Element {
             <div className="failed-files-list-wrapper">
               <ul className="failed-files-list">
                 {failedFiles.slice(0, 10).map((f, i) => (
-                  <li key={i}>{f}</li>
+                  <li key={i} style={{ marginBottom: '0.4rem' }}>
+                    <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
+                  </li>
                 ))}
               </ul>
               {failedFiles.length > 10 && (
