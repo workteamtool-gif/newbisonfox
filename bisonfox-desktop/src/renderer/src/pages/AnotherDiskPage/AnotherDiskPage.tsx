@@ -1,15 +1,16 @@
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './AnotherDiskPage.css'
+import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
 
 export function AnotherDiskPage(): React.JSX.Element {
   const { setStep, diskSessions } = useWizardStore()
 
   function handleYes(): void {
-    setStep('insert-disk')
+    setStep(InsertDiskPage)
   }
 
   function handleNo(): void {
-    setStep('success')
+    setStep(SuccessPage)
   }
 
   const totalFiles = diskSessions.reduce(

@@ -7,6 +7,7 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { FileTree } from '@renderer/components/FileTree/FileTree'
 import './ReviewPage.css'
 import { JSX } from 'react'
+import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/Wizard'
 
 const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
 
@@ -110,7 +111,7 @@ export function ReviewPage(): JSX.Element | null {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      setStep('upload')
+      setStep(UploadPage)
     } catch (err: any) {
       setSyncError(
         err.message || 'Lost connection to the server. Please hit refresh and try again.'
@@ -121,7 +122,7 @@ export function ReviewPage(): JSX.Element | null {
   }
 
   if (!currentDisk) {
-    setStep('insert-disk')
+    setStep(InsertDiskPage)
     return null
   }
 
@@ -187,7 +188,7 @@ export function ReviewPage(): JSX.Element | null {
         <div className="action-row">
           <button
             className="btn btn-secondary"
-            onClick={() => setStep('select-files')}
+            onClick={() => setStep(SelectFilesPage)}
             disabled={saving}
           >
             ← Back to Select

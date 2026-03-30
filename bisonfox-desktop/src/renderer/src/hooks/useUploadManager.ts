@@ -5,6 +5,7 @@ import { uploadApi } from '@renderer/services/uploadApi'
 import { UploadPhase } from '@renderer/entites/Upload'
 import { DiskSession } from '@shared/entities/DiskSession'
 import { WizardStep } from '@renderer/entites/Wizard'
+import { PullDiskPage } from '@renderer/entites/Wizard'
 
 export function useUploadManager(): {
   phase: UploadPhase
@@ -142,7 +143,7 @@ export function useUploadManager(): {
       .getState()
       .updateLastDiskSession({ copiedCount: finalCount, failedFiles: msg.failedFiles })
     setUploadDone(true)
-    setTimeout(() => setStep('pull-disk'), 1800)
+    setTimeout(() => setStep(PullDiskPage), 1800)
   }
 
   const startUpload = (): void => {

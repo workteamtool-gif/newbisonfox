@@ -2,6 +2,7 @@ import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
 import { PHASES } from '@renderer/Constants/phases'
+import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
 
 interface WizardHeaderProps {
   onCancelClick: () => void
@@ -11,7 +12,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
   const step = useWizardStore((s) => s.step)
   const userName = useWizardStore((s) => s.userName)
 
-  if (step === 'welcome' || step === 'success') return null
+  if (step === WelcomePage || step === SuccessPage) return null
 
   let activePhaseIdx = PHASES.findIndex((p) => p.steps.includes(step))
   if (activePhaseIdx === -1) activePhaseIdx = 0

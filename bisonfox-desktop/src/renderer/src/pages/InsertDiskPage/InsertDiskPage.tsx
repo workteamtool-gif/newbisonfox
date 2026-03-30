@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { driveApi } from '@renderer/services/driveApi'
+import { SubfolderPage, SuccessPage, SetUsernamePage } from '@renderer/entites/Wizard'
 
 export function InsertDiskPage(): React.JSX.Element {
   const { setStep, setCurrentDisk, diskSessions } = useWizardStore()
@@ -56,7 +57,7 @@ export function InsertDiskPage(): React.JSX.Element {
       selectedFiles: [],
       excludedFiles: []
     })
-    setStep('subfolder')
+    setStep(SubfolderPage)
   }
 
   return (
@@ -113,11 +114,11 @@ export function InsertDiskPage(): React.JSX.Element {
 
         <div className="action-row" style={{ justifyContent: 'space-between' }}>
           {diskSessions.length > 0 ? (
-            <button className="btn btn-secondary" onClick={() => setStep('success')}>
+            <button className="btn btn-secondary" onClick={() => setStep(SuccessPage)}>
               Finish Session
             </button>
           ) : (
-            <button className="btn btn-secondary" onClick={() => setStep('set-username')}>
+            <button className="btn btn-secondary" onClick={() => setStep(SetUsernamePage)}>
               ← Back
             </button>
           )}

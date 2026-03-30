@@ -1,10 +1,10 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { clientLogger } from '@renderer/utils/logger'
-import { WizardData, WizardActions } from '@renderer/entites/Wizard'
+import { WizardData, WizardActions, WelcomePage } from '@renderer/entites/Wizard'
 
 const INITIAL_DATA: WizardData = {
-  step: 'welcome',
+  step: WelcomePage,
   userName: '',
   sessionId: '',
   diskSessions: [],
@@ -20,7 +20,7 @@ export const useWizardStore = create<WizardData & WizardActions>()(
   immer((set) => ({
     ...INITIAL_DATA,
 
-    setStep: (step) => set({ step }),
+    setStep: (step: React.LazyExoticComponent<() => React.JSX.Element | null>) => set({ step }),
 
     setUserName: (userName) => {
       clientLogger.debug('Store', `Username set to: ${userName}`)

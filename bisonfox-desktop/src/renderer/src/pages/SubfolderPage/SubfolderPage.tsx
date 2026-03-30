@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { JSX } from 'react'
+import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
 
 export function SubfolderPage(): JSX.Element {
   const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk } = useWizardStore()
@@ -22,7 +23,7 @@ export function SubfolderPage(): JSX.Element {
       return
     }
     setCurrentSubfolder(trimmed)
-    setStep('select-files')
+    setStep(SelectFilesPage)
   }
 
   const trimmedSubfolder = subfolder.trim()
@@ -63,7 +64,7 @@ export function SubfolderPage(): JSX.Element {
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={() => setStep('insert-disk')}
+              onClick={() => setStep(InsertDiskPage)}
             >
               ← Back
             </button>

@@ -2,6 +2,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import unplugImage from '@renderer/images/unplugging.png'
 import './PullDiskPage.css'
 import { JSX } from 'react'
+import { AnotherDiskPage, InsertDiskPage } from '@renderer/entites/Wizard'
 
 export function PullDiskPage(): JSX.Element | null {
   const { setStep, setCurrentDisk, setCurrentSubfolder, currentDisk, completedFiles } =
@@ -10,11 +11,11 @@ export function PullDiskPage(): JSX.Element | null {
   function handleContinue(): void {
     setCurrentDisk(null)
     setCurrentSubfolder('')
-    setStep('another-disk')
+    setStep(AnotherDiskPage)
   }
 
   if (!currentDisk) {
-    setStep('insert-disk')
+    setStep(InsertDiskPage)
     return null
   }
 

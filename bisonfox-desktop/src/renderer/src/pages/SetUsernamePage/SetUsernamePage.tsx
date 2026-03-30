@@ -4,6 +4,7 @@ import { sessionApi } from '@renderer/services/sessionApi'
 import './SetUsernamePage.css'
 import { PREFIX_OPTIONS } from '@renderer/Constants/prefixOptions'
 import { JSX } from 'react'
+import { InsertDiskPage } from '@renderer/entites/Wizard'
 
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, setSessionId, reset } = useWizardStore()
@@ -28,7 +29,7 @@ export function SetUsernamePage(): JSX.Element {
       const { sessionId } = await sessionApi.createSession(fullName)
       setUserName(fullName)
       setSessionId(sessionId)
-      setStep('insert-disk')
+      setStep(InsertDiskPage)
     } catch {
       setError('Connection error. Make sure the backend is running.')
     }

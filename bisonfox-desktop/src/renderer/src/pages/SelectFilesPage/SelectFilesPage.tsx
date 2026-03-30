@@ -6,6 +6,7 @@ import { FileTree } from '@renderer/components/FileTree'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
+import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
 
 const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
 
@@ -209,7 +210,7 @@ export function SelectFilesPage(): JSX.Element {
       selectedFiles: Array.from(selected),
       excludedFiles: Array.from(excluded)
     })
-    setStep('review')
+    setStep(ReviewPage)
     setSaving(false)
   }
 
@@ -331,7 +332,7 @@ export function SelectFilesPage(): JSX.Element {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={() => setStep('insert-disk')}
+            onClick={() => setStep(InsertDiskPage)}
           >
             ← Back
           </button>

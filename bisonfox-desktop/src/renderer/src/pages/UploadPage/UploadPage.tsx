@@ -3,6 +3,7 @@ import { useUploadManager } from '@renderer/hooks/useUploadManager'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
+import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
 
 export function UploadPage(): JSX.Element | null {
   const {
@@ -23,7 +24,7 @@ export function UploadPage(): JSX.Element | null {
   useDriveMonitor()
 
   useEffect(() => {
-    if (!currentDisk) setStep('insert-disk')
+    if (!currentDisk) setStep(InsertDiskPage)
   }, [currentDisk, setStep])
 
   if (!currentDisk) return null
@@ -54,7 +55,7 @@ export function UploadPage(): JSX.Element | null {
               {uploadError}
             </div>
             <div className="action-row">
-              <button className="btn btn-secondary" onClick={() => setStep('review')}>
+              <button className="btn btn-secondary" onClick={() => setStep(ReviewPage)}>
                 ← Back to Review
               </button>
             </div>

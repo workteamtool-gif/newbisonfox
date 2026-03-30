@@ -1,6 +1,7 @@
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WelcomePage.css'
 import { JSX } from 'react'
+import { SetUsernamePage } from '@renderer/entites/Wizard'
 
 export function WelcomePage(): JSX.Element {
   const setStep = useWizardStore((s) => s.setStep)
@@ -19,7 +20,7 @@ export function WelcomePage(): JSX.Element {
         <button
           id="start-btn"
           className="btn btn-primary btn-xl"
-          onClick={() => setStep('set-username')}
+          onClick={() => setStep(SetUsernamePage)}
         >
           ⚡ Click to Start Uploading
         </button>

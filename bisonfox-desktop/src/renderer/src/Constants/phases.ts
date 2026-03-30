@@ -1,11 +1,30 @@
-export const PHASES = [
-  { key: 'setup', label: 'Identity', steps: ['set-username'] },
+import {
+  InsertDiskPage,
+  SelectFilesPage,
+  SubfolderPage,
+  ReviewPage,
+  UploadPage,
+  PullDiskPage,
+  AnotherDiskPage,
+  SetUsernamePage,
+  WizardStep
+} from '@renderer/entites/Wizard'
+
+export interface Phase {
+  key: string
+  label: string
+  steps: WizardStep[]
+  loop?: boolean
+}
+
+export const PHASES: Phase[] = [
+  { key: 'setup', label: 'Identity', steps: [SetUsernamePage] },
   {
     key: 'prepare',
     label: 'Prepare Data',
-    steps: ['insert-disk', 'subfolder', 'select-files', 'review'],
+    steps: [InsertDiskPage, SubfolderPage, SelectFilesPage, ReviewPage],
     loop: true
   },
-  { key: 'transfer', label: 'Transfer', steps: ['upload'], loop: true },
-  { key: 'wrapup', label: 'Wrap Up', steps: ['pull-disk', 'another-disk'], loop: true }
+  { key: 'transfer', label: 'Transfer', steps: [UploadPage], loop: true },
+  { key: 'wrapup', label: 'Wrap Up', steps: [PullDiskPage, AnotherDiskPage], loop: true }
 ]
