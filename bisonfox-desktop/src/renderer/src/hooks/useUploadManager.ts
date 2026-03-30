@@ -18,7 +18,10 @@ export function useUploadManager(): {
   failedCount: number
   overallPercentage: number
   currentDisk: DiskSession | null
+  failedFilesList: { path: string; reason: string }[]
   startUpload: () => void
+  retryFailed: () => void
+  skipFailed: () => void
   setStep: (step: WizardStep) => void
 } {
   const { sessionId, currentDisk, setStep, setUploadDone, setCompletedFiles, uploadDone } =
@@ -29,6 +32,7 @@ export function useUploadManager(): {
   const [completedCount, setCompletedCount] = useState(0)
   const [failedCount, setFailedCount] = useState(0)
   const [overallPercentage, setOverallPercentage] = useState(0)
+  const [failedFilesList, setFailedFilesList] = useState<{ path: string; reason: string }[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
 
   const [preCalcTotal, setPreCalcTotal] = useState<number | null>(null)
@@ -139,11 +143,18 @@ export function useUploadManager(): {
     setFailedCount(failedRef.current)
     setCompletedFiles(finalCount)
 
+    const failed: { path: string; reason: string }[] = msg.failedFiles || []
+    setFailedFilesList(failed)
+
     useWizardStore
       .getState()
-      .updateLastDiskSession({ copiedCount: finalCount, failedFiles: msg.failedFiles })
+      .updateLastDiskSession({ copiedCount: finalCount, failedFiles: failed })
     setUploadDone(true)
-    setTimeout(() => setStep(PullDiskPage), 1800)
+
+    // Only auto-navigate if there are NO failures
+    if (failed.length === 0) {
+      setTimeout(() => setStep(PullDiskPage), 1800)
+    }
   }
 
   const startUpload = (): void => {
@@ -161,6 +172,36 @@ export function useUploadManager(): {
     })
   }
 
+  const retryFailed = (): void => {
+    if (!sessionId || !currentDisk || failedFilesList.length === 0) return
+
+    const filesToRetry = failedFilesList.map((f) => f.path)
+    clientLogger.info('UploadManager', `Retrying ${filesToRetry.length} failed file(s)...`)
+
+    // Reset state for the retry round
+    setUploadDone(false)
+    setFailedFilesList([])
+    setFailedCount(0)
+    failedRef.current = 0
+    setCompletedCount(0)
+    completedRef.current = 0
+    setOverallPercentage(0)
+    setTotalDiscovered(filesToRetry.length)
+    totalRef.current = filesToRetry.length
+    setPhase('copying')
+
+    const subfolder = currentDisk.subfolder || ''
+    uploadApi.startUpload(sessionId, filesToRetry, subfolder).catch((err: any) => {
+      clientLogger.error('UploadManager', 'Retry failed', err)
+      setUploadError(err.message || 'Retry failed.')
+    })
+  }
+
+  const skipFailed = (): void => {
+    clientLogger.info('UploadManager', `Skipping ${failedFilesList.length} failed file(s).`)
+    setStep(PullDiskPage)
+  }
+
   return {
     phase,
     uploadError,
@@ -172,7 +213,10 @@ export function useUploadManager(): {
     failedCount,
     overallPercentage,
     currentDisk,
+    failedFilesList,
     startUpload,
+    retryFailed,
+    skipFailed,
     setStep
   }
 }
