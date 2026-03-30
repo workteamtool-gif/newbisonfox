@@ -1,0 +1,28 @@
+.image-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 28px;
+    background: var(--grad-primary);
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 20px 60px rgba(99, 102, 241, .6);
+    border: 1px solid rgba(255, 255, 255, .2);
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.action-row {
+    display: flex;
+    gap: .7rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.divider {
+    height: 1px;
+    background: rgba(255, 255, 255, .07);
+    margin: 1.4rem 0;
+}

@@ -1,0 +1,77 @@
+.tree-checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, .2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--t-fast);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.tree-checkbox.checked {
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.tree-checkbox.checked::after {
+    content: '✓';
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.tree-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    filter: grayscale(0.2);
+    transition: var(--t-fast);
+}
+
+.tree-row:hover .tree-icon {
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.tree-name {
+    color: var(--text-primary);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.tree-size {
+    color: var(--text-muted);
+    font-size: .75rem;
+    flex-shrink: 0;
+    font-family: monospace;
+}
+
+.tree-toggle {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: .75rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: var(--t-fast);
+}
+
+.tree-toggle:hover {
+    background: rgba(255, 255, 255, .1);
+    color: var(--text-primary);
+}
+
+.tree-children {
+    padding-left: 1.6rem;
+    border-left: 1px solid rgba(255, 255, 255, .03);
+    margin-left: 0.8rem;
+}

@@ -1,0 +1,39 @@
+.glass-card {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--r-xl);
+    backdrop-filter: blur(24px) saturate(130%);
+    -webkit-backdrop-filter: blur(24px) saturate(130%);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+    overflow: visible;
+    animation: fadeUp .35s ease both;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .13), transparent);
+}
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: .4rem;
+}
+
+.page-subtitle {
+    font-size: .95rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 1.75rem;
+}

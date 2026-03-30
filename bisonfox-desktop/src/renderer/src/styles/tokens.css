@@ -1,0 +1,33 @@
+:root {
+    --bg-primary: #060912;
+    --bg-secondary: #0c1220;
+    --bg-glass: rgba(255, 255, 255, 0.08);
+    --bg-glass-hover: rgba(255, 255, 255, 0.12);
+    --border-glass: rgba(255, 255, 255, 0.15);
+
+    --accent: #6366f1;
+    --accent-cyan: #06b6d4;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-orange: #f59e0b;
+
+    --grad-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+    --grad-green: linear-gradient(135deg, #10b981, #059669);
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 26px;
+    --r-full: 9999px;
+    --shadow-btn: 0 4px 24px rgba(99, 102, 241, .38);
+    --t-fast: 140ms cubic-bezier(.4, 0, .2, 1);
+    --t-base: 240ms cubic-bezier(.4, 0, .2, 1);
+    --font: 'Inter', system-ui, sans-serif;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    overflow: hidden;
+    user-select: none;
+    /* Prevents users from accidentally highlighting UI text like a webpage */
+}

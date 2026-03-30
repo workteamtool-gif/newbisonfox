@@ -1,0 +1,53 @@
+.drive-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .95rem 1.2rem;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: var(--t-base);
+    margin-bottom: .65rem;
+}
+
+.drive-option:hover {
+    border-color: var(--border-accent);
+    background: rgba(99, 102, 241, .05);
+}
+
+.drive-option.selected {
+    border-color: var(--accent);
+    background: rgba(99, 102, 241, .1);
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, .3);
+}
+
+.drive-icon {
+    font-size: 1.65rem;
+}
+
+.drive-info {
+    flex: 1;
+}
+
+.drive-name {
+    font-weight: 600;
+    font-size: .92rem;
+}
+
+.drive-meta {
+    color: var(--text-muted);
+    font-size: .75rem;
+    margin-top: .1rem;
+}
+
+.drive-check {
+    color: var(--accent);
+    opacity: 0;
+    transition: var(--t-fast);
+    font-size: 1.1rem;
+}
+
+.drive-option.selected .drive-check {
+    opacity: 1;
+}
