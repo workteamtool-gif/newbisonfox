@@ -6,11 +6,19 @@
     -webkit-backdrop-filter: blur(24px) saturate(130%);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
     padding: 2.5rem;
-    width: 100%;
-    max-width: 720px;
+    width: 1024px;
+    min-width: 1024px;
     position: relative;
-    overflow: visible;
     animation: fadeUp .35s ease both;
+    transition: max-width var(--t-base);
+}
+
+.glass-card.glass-card--wide {
+    max-width: 1920px;
+}
+
+.wizard-layout--with-keyboard .glass-card {
+    padding: 1.5rem 2.5rem;
 }
 
 .glass-card::before {

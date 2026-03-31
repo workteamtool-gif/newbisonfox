@@ -13,7 +13,9 @@ const INITIAL_DATA: WizardData = {
   uploadProgress: {},
   uploadDone: false,
   completedFiles: 0,
-  toast: { message: null, type: 'info' }
+  toast: { message: null, type: 'info' },
+  isCancelModalOpen: false,
+  isKeyboardVisible: false
 }
 
 export const useWizardStore = create<WizardData & WizardActions>()(
@@ -67,6 +69,8 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     reset: () => {
       clientLogger.info('Store', 'Wizard reset triggered.')
       set(INITIAL_DATA)
-    }
+    },
+    setCancelModalOpen: (isCancelModalOpen) => set({ isCancelModalOpen }),
+    setKeyboardVisible: (isKeyboardVisible) => set({ isKeyboardVisible })
   }))
 )

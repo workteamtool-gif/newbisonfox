@@ -1,0 +1,92 @@
+.vk-overlay {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px 5vh;
+    box-sizing: border-box;
+}
+
+.vk-container {
+    width: 100%;
+    max-width: 850px;
+    background: linear-gradient(145deg, #232323, #1a1a1a);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+    animation: slideUp 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.vk-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.vk-key {
+    height: 42px;
+    flex: 1;
+    min-width: 32px;
+    border-radius: 10px;
+    border: none;
+    background: #333;
+    color: #efefef;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.05s ease;
+    box-shadow: 0 3px 0 #111;
+    text-transform: lowercase;
+}
+
+.vk-key:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #111;
+    background: #444;
+    filter: brightness(1.2);
+}
+
+.vk-special {
+    background: #444;
+    font-size: 0.85rem;
+    flex: 1.5;
+}
+
+.vk-shift.active {
+    background: #007aff;
+    box-shadow: 0 4px 0 #004ea3;
+}
+
+.vk-backspace {
+    background: #3d3d3d;
+    flex: 1.5;
+}
+
+.vk-space {
+    flex: 5;
+    background: #444;
+}
+
+.vk-done {
+    flex: 2;
+    background: #27ae60;
+    box-shadow: 0 4px 0 #1e8449;
+    font-weight: bold;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(120%) scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}

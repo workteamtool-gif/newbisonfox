@@ -66,6 +66,8 @@ export interface WizardData {
     message: string | null
     type: 'success' | 'warning' | 'error' | 'info'
   }
+  isCancelModalOpen: boolean
+  isKeyboardVisible: boolean
 }
 
 export interface WizardActions {
@@ -82,4 +84,6 @@ export interface WizardActions {
   setCompletedFiles: (count: number) => void
   setToast: (msg: string | null, type?: WizardData['toast']['type']) => void
   reset: () => void
+  setCancelModalOpen: (open: boolean) => void
+  setKeyboardVisible: (visible: boolean) => void
 }

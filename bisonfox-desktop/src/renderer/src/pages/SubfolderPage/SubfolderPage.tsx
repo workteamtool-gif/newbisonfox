@@ -1,14 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { JSX } from 'react'
 import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
+import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 
 export function SubfolderPage(): JSX.Element {
-  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName } = useWizardStore()
+  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
   useDriveMonitor()
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
+
+  const IS_TOUCHSCREEN = import.meta.env.VITE_IS_TOUCHSCREEN === 'true'
+  const [openKeyboard] = useState(IS_TOUCHSCREEN)
+  const showKeyboard = openKeyboard && !isCancelModalOpen
+
+  // Signal keyboard visibility to the outer WizardLayout grid
+  useEffect(() => {
+    setKeyboardVisible(showKeyboard)
+    return () => setKeyboardVisible(false)
+  }, [showKeyboard, setKeyboardVisible])
 
   function handleSubmit(e: React.FormEvent): void {
     e.preventDefault()
@@ -25,7 +36,7 @@ export function SubfolderPage(): JSX.Element {
   const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
 
   return (
-    <div className="wizard-layout">
+    <>
       <div className="glass-card">
         <p className="page-title">Name this Disk&apos;s folder</p>
         <p className="page-subtitle">
@@ -70,6 +81,15 @@ export function SubfolderPage(): JSX.Element {
           </div>
         </form>
       </div>
-    </div>
+      {showKeyboard && (
+        <VirtualKeyboard
+          currentValue={subfolder}
+          onChange={(newVal) => {
+            setSubfolder(newVal)
+            setError('')
+          }}
+        />
+      )}
+    </>
   )
 }

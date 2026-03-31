@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useWizardStore } from '../../store/useWizardStore'
 import { uploadApi } from '../../services/uploadApi'
 import { CancelModal } from '../CancelModal'
@@ -11,10 +11,12 @@ interface Props {
 export function WizardLayout({ children }: Props): React.JSX.Element {
   const reset = useWizardStore((s) => s.reset)
   const sessionId = useWizardStore((s) => s.sessionId)
-  const [showCancelModal, setShowCancelModal] = useState(false)
+  const isCancelModalOpen = useWizardStore((s) => s.isCancelModalOpen)
+  const setCancelModalOpen = useWizardStore((s) => s.setCancelModalOpen)
+  const isKeyboardVisible = useWizardStore((s) => s.isKeyboardVisible)
 
   const handleConfirmCancel = async (): Promise<void> => {
-    setShowCancelModal(false)
+    setCancelModalOpen(false)
     if (sessionId) {
       try {
         await uploadApi.cancelSession(sessionId)
@@ -25,14 +27,16 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     reset()
   }
 
+  const layoutClass = `wizard-layout${isKeyboardVisible ? ' wizard-layout--with-keyboard' : ''}`
+
   return (
-    <div className="wizard-layout">
+    <div className={layoutClass}>
       <CancelModal
-        isOpen={showCancelModal}
-        onClose={() => setShowCancelModal(false)}
+        isOpen={isCancelModalOpen}
+        onClose={() => setCancelModalOpen(false)}
         onConfirm={handleConfirmCancel}
       />
-      <WizardHeader onCancelClick={() => setShowCancelModal(true)} />
+      <WizardHeader onCancelClick={() => setCancelModalOpen(true)} />
       {children}
     </div>
   )

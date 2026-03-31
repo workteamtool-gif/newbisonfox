@@ -34,7 +34,7 @@ export function SuccessPage(): JSX.Element {
   }, [reset])
 
   return (
-    <div className="wizard-layout">
+    <div className="wizard-layout wizard-layout--no-header">
       <div className="glass-card success-card">
         <img src={likingImage} alt="Upload Successful" className="success-image" />
 

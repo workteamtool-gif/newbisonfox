@@ -1,17 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { sessionApi } from '@renderer/services/sessionApi'
 import './SetUsernamePage.css'
 import { PREFIX_OPTIONS } from '@renderer/Constants/prefixOptions'
 import { JSX } from 'react'
 import { InsertDiskPage } from '@renderer/entites/Wizard'
+import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 
 export function SetUsernamePage(): JSX.Element {
-  const { setStep, setUserName, setSessionId, reset } = useWizardStore()
+  const { setStep, setUserName, setSessionId, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
   const [prefix, setPrefix] = useState(PREFIX_OPTIONS[0])
   const [name, setName] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const IS_TOUCHSCREEN = import.meta.env.VITE_IS_TOUCHSCREEN === 'true'
+  const [openKeyboard] = useState(IS_TOUCHSCREEN)
+  const showKeyboard = openKeyboard && !isCancelModalOpen
+
+  useEffect(() => {
+    setKeyboardVisible(showKeyboard)
+    return () => setKeyboardVisible(false)
+  }, [showKeyboard, setKeyboardVisible])
 
   const fullName = prefix.value + name.trim()
 
@@ -37,7 +47,7 @@ export function SetUsernamePage(): JSX.Element {
   }
 
   return (
-    <div className="wizard-layout">
+    <>
       <div className="glass-card">
         <p className="page-title">What&apos;s your username?</p>
         <p className="page-subtitle">
@@ -108,6 +118,16 @@ export function SetUsernamePage(): JSX.Element {
           </div>
         </form>
       </div>
-    </div>
+
+      {showKeyboard && (
+        <VirtualKeyboard
+          currentValue={name}
+          onChange={(newVal) => {
+            setName(newVal)
+            setError('')
+          }}
+        />
+      )}
+    </>
   )
 }

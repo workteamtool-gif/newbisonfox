@@ -36,16 +36,27 @@ async function gracefulShutdown(): Promise<void> {
 
 // --- LIFECYCLE: UI CREATION ---
 function createWindow(): void {
+  
+  let mainWindow;
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  if(is.dev) {
+    mainWindow = new BrowserWindow({
     show: false,
-    fullscreen: true,
-    autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+  } else {
+    mainWindow = new BrowserWindow({
+    show: false,
+    fullscreen: true,
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false
+    }
+  })
+  }
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
