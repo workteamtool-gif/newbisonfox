@@ -9,11 +9,11 @@ export interface IFileScanner {
     parallelWorkers: number,
     onScan?: (count: number) => void,
     excludedPaths?: Set<string>,
-    onFile?: (src: string, rel: string) => void,
+    onFile?: (fullPath: string, relativePath: string) => void,
     onDir?: (relDir: string) => void,
     onScanError?: (filePath: string, errorMessage: string) => void,
     signal?: AbortSignal
-  ): Promise<{ src: string; rel: string }[]>
+  ): Promise<{ fullPath: string; relativePath: string }[]>
 
   /**
    * Performs a rapid, read-only scan to get the total number of files.

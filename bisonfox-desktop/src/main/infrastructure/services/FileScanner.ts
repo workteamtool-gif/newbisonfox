@@ -10,7 +10,11 @@ function normalizeDriveCase(p: string): string {
 }
 
 export class FileScanner implements IFileScanner {
-
+  /**
+   * RECURSIVE SCANNER
+   * Converts a list of folders into a flat list of every nested file.
+   * Uses a Worker-Queue pattern to avoid recursion depth limits and maximize I/O.
+   */
   async expandPaths(
     inputs: string[],
     basePath: string,
@@ -18,27 +22,30 @@ export class FileScanner implements IFileScanner {
     parallelWorkers: number,
     onScan?: (count: number) => void,
     excludedPaths?: Set<string>,
-    onFile?: (src: string, rel: string) => void,
+    onFile?: (fullPath: string, relativePath: string) => void,
     onDir?: (relDir: string) => void,
     onScanError?: (filePath: string, errorMessage: string) => void,
     signal?: AbortSignal,
-  ): Promise<{ src: string; rel: string }[]> {
-    const results: { src: string; rel: string }[] = [];
+  ): Promise<{ fullPath: string; relativePath: string }[]> {
+    const results: { fullPath: string; relativePath: string }[] = [];
     let foundCount = 0;
     const normBase = normalizeDriveCase(basePath);
     const queue: { p: string; isDir?: boolean }[] = inputs.map((p) => ({ p }));
     let activeWorkers = 0;
     let isDone = false;
 
+    // Helper: Formats the file path and triggers the callback
     const processFile = (fullPath: string) => {
       const normSrc = normalizeDriveCase(fullPath);
-      let rel = path.relative(normBase, normSrc);
-      if (path.isAbsolute(rel) || rel.startsWith('..')) rel = path.basename(fullPath);
+      let relativePath = path.relative(normBase, normSrc);
+
+      // Safety: If relative path fails, just use the filename
+      if (path.isAbsolute(relativePath) || relativePath.startsWith('..')) relativePath = path.basename(fullPath);
 
       if (onFile) {
-        onFile(fullPath, rel);
+        onFile(fullPath, relativePath);
       } else {
-        results.push({ src: fullPath, rel });
+        results.push({ fullPath, relativePath });
       }
 
       foundCount++;
