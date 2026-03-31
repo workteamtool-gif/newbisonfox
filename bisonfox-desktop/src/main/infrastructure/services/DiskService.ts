@@ -56,6 +56,11 @@ export class DiskService implements IDiskService {
         //   selectable = false
         //   disabledReason = 'Unsupported drive type'
         // }
+        if (driveType !== 2 && driveType !== 3) {
+          selectable = false
+          disabledReason = 'Unsupported drive type'
+        }
+
 
         // Ensure trailing slash for Node.js fs compatibility
         const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'

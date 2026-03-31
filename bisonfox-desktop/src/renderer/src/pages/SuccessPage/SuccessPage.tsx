@@ -51,7 +51,7 @@ export function SuccessPage(): JSX.Element {
         </p>
 
         <div className="success-stats-row">
-          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+          <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
               📤
             </div>
@@ -60,7 +60,7 @@ export function SuccessPage(): JSX.Element {
             </div>
             <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
           </div>
-          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+          <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
               📄
             </div>

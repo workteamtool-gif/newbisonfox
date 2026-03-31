@@ -6,7 +6,8 @@ import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
 
-const EXCLUDED = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
+// Folders and files that won't be shown in the explorer and be excluded from the copy process
+const EXCLUDED = new Set<string>([])
 const COPY_CONCURRENCY = Number(process.env.COPY_CONCURRENCY) || 64
 const DEEP_SEARCH_CONCURRENCY = Number(process.env.DEEP_SEARCH_CONCURRENCY) || 64
 const HEAVY_FILE_THRESHOLD = (Number(process.env.HEAVY_FILE_THRESHOLD_MB) || 100) * 1024 * 1024

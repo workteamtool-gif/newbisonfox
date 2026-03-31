@@ -36,7 +36,7 @@ export function AnotherDiskPage(): React.JSX.Element {
         </p>
 
         <div className="stats-dashboard another-disk-stats">
-          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+          <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
               📤
             </div>
@@ -45,7 +45,7 @@ export function AnotherDiskPage(): React.JSX.Element {
             </div>
             <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
           </div>
-          <div className="stat-card" style={{ background: 'var(--panel-bg)' }}>
+          <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
               📄
             </div>
