@@ -17,7 +17,10 @@ export function AnotherDiskPage(): React.JSX.Element {
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
     0
   )
+  const failedCountTotal = diskSessions.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
   const failedFiles = diskSessions.flatMap((d) => d.failedFiles || [])
+
+  const MAX_FAILED_FILES_TO_SHOW = 5
 
   return (
     <div className="wizard-layout">
@@ -53,23 +56,23 @@ export function AnotherDiskPage(): React.JSX.Element {
           </div>
         </div>
 
-        {failedFiles.length > 0 && (
+        {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">
             <h4 className="failed-files-title">
-              ⚠️ {failedFiles.length} file(s) could not be copied after 5 retries
+              ⚠️ {failedCountTotal} file(s) could not be copied
             </h4>
             <div className="failed-files-list" style={{}}>
               <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-                {failedFiles.slice(0, 5).map((f, i) => (
+                {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
                   <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem' }}>
                     <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
                     <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
                   </li>
                 ))}
               </ul>
-              {failedFiles.length > 5 && (
+              {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
                 <div style={{ marginTop: '0.3rem', fontStyle: 'italic' }}>
-                  ...and {failedFiles.length - 5} more.
+                  ...and {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
                 </div>
               )}
             </div>

@@ -93,19 +93,23 @@ export function InsertDiskPage(): React.JSX.Element {
               {drives.map((drive) => (
                 <div
                   key={drive.letter}
-                  className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''}`}
-                  onClick={() => setSelectedLetter(drive.letter)}
+                  className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
+                  onClick={() => drive.selectable && setSelectedLetter(drive.letter)}
+                  style={!drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
+                  title={drive.disabledReason || ''}
                 >
-                  <div className="drive-icon">💾</div>
+                  <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
                   <div className="drive-info">
                     <div className="drive-name">
                       {drive.label} ({drive.letter})
                     </div>
                     <div className="drive-meta">
-                      {Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB
+                      {drive.selectable
+                        ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
+                        : drive.disabledReason || 'Not available'}
                     </div>
                   </div>
-                  <div className="drive-check">✓</div>
+                  {drive.selectable && <div className="drive-check">✓</div>}
                 </div>
               ))}
             </div>

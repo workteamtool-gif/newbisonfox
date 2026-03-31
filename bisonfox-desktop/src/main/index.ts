@@ -38,9 +38,8 @@ async function gracefulShutdown(): Promise<void> {
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1024,
-    height: 768,
     show: false,
+    fullscreen: true,
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

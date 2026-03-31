@@ -153,11 +153,11 @@ export class UploadManager {
         onScan: (count) => {
           this.notifier.notifyProgress(session.id, { type: 'discovery', count })
         },
-        onProgress: (file, percent, completed, failedFiles, total) => {
+        onProgress: (file, percent, completed, failedCount, failedFiles, total) => {
           if (file === '__done__') {
             this.sessionSingletonInstance.update(session.id, {
               completedCount: completed,
-              failedCount: failedFiles.length,
+              failedCount: failedCount,
               failedFiles: failedFiles,
               totalCount: total,
               status: 'complete'
@@ -166,7 +166,7 @@ export class UploadManager {
             this.notifier.notifyProgress(session.id, {
               type: 'done',
               completed,
-              failed: failedFiles.length,
+              failed: failedCount,
               failedFiles,
               total
             })
@@ -186,7 +186,7 @@ export class UploadManager {
               this.sessionSingletonInstance.update(session.id, {
                 progress: current.progress,
                 completedCount: completed,
-                failedCount: failedFiles.length,
+                failedCount: failedCount,
                 failedFiles: failedFiles,
                 totalCount: total
               })
@@ -196,7 +196,7 @@ export class UploadManager {
               file,
               percent,
               completed,
-              failed: failedFiles.length,
+              failed: failedCount,
               total
             })
           }

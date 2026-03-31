@@ -45,6 +45,8 @@ export function UploadPage(): JSX.Element | null {
   // Show failed files review when upload is done AND there are failures
   const showFailedReview = uploadDone && failedFilesList.length > 0
 
+  const MAX_FAILED_FILES_TO_SHOW = 20
+
   return (
     <div className="wizard-layout">
       <div className="glass-card">
@@ -244,7 +246,7 @@ export function UploadPage(): JSX.Element | null {
                     color: 'var(--accent-red)'
                   }}
                 >
-                  ⚠️ {failedFilesList.length} file(s) could not be copied
+                  ⚠️ {failedCount} file(s) could not be copied
                 </h4>
                 <div
                   style={{
@@ -255,7 +257,7 @@ export function UploadPage(): JSX.Element | null {
                   }}
                 >
                   <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-                    {failedFilesList.slice(0, 20).map((f, i) => (
+                    {failedFilesList.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
                       <li key={i} style={{ marginBottom: '0.5rem', wordBreak: 'break-all' }}>
                         <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
                           {f.path}
@@ -272,7 +274,7 @@ export function UploadPage(): JSX.Element | null {
                       </li>
                     ))}
                   </ul>
-                  {failedFilesList.length > 20 && (
+                  {failedCount > MAX_FAILED_FILES_TO_SHOW && (
                     <div
                       style={{
                         fontStyle: 'italic',
@@ -280,7 +282,7 @@ export function UploadPage(): JSX.Element | null {
                         marginTop: '0.3rem'
                       }}
                     >
-                      …and {failedFilesList.length - 20} more.
+                      …and {failedCount - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
                     </div>
                   )}
                 </div>

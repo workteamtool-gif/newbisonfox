@@ -149,11 +149,15 @@ export function useUploadManager(): {
 
     useWizardStore
       .getState()
-      .updateLastDiskSession({ copiedCount: finalCount, failedFiles: failed })
+      .updateLastDiskSession({
+        copiedCount: finalCount,
+        failedCount: failedRef.current,
+        failedFiles: failed
+      })
     setUploadDone(true)
 
     // Only auto-navigate if there are NO failures
-    if (failed.length === 0) {
+    if (failedRef.current === 0) {
       setTimeout(() => setStep(PullDiskPage), 1800)
     }
   }

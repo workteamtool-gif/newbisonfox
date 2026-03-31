@@ -14,8 +14,11 @@ export function SuccessPage(): JSX.Element {
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
     0
   )
+  const failedCountTotal = snapshot.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
   const failedFiles = snapshot.flatMap((d) => d.failedFiles || [])
   const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
+
+  const MAX_FAILED_FILES_TO_SHOW = 10
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -68,22 +71,24 @@ export function SuccessPage(): JSX.Element {
           </div>
         </div>
 
-        {failedFiles.length > 0 && (
+        {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">
             <h4 className="failed-files-header">
-              ⚠️ {failedFiles.length} file(s) could not be copied after 5 retries
+              ⚠️ {failedCountTotal} file(s) could not be copied
             </h4>
             <div className="failed-files-list-wrapper">
               <ul className="failed-files-list">
-                {failedFiles.slice(0, 10).map((f, i) => (
+                {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
                   <li key={i} style={{ marginBottom: '0.4rem' }}>
                     <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
                     <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
                   </li>
                 ))}
               </ul>
-              {failedFiles.length > 10 && (
-                <div className="failed-files-overflow">...and {failedFiles.length - 10} more.</div>
+              {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
+                <div className="failed-files-overflow">
+                  ...and {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
+                </div>
               )}
             </div>
           </div>

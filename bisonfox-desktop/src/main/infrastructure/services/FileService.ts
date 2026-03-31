@@ -14,6 +14,7 @@ const ITEMS_IN_ONE_PAGE = Number(process.env.VITE_ITEMS_IN_ONE_PAGE) || 48
 const FAIL_INTERVAL_MS = Number(process.env.FAIL_INTERVAL_MS) || 500
 const FAIL_RETRIES = Number(process.env.FAIL_RETRIES) || 5
 const REPORT_COPIED_FILES_INTERVAL_MS = Number(process.env.REPORT_COPIED_FILES_INTERVAL_MS) || 500
+const MAX_REPORTED_FAILURES = Number(process.env.MAX_REPORTED_FAILURES) || 100
 
 /**
  * A custom Semaphore to strictly limit how many massive files can copy concurrently.
@@ -280,8 +281,6 @@ export class FileService implements IFileService {
     }
 
     const activeSignal = internalController.signal
-    let consecutiveFailures = 0
-    const HARD_FAIL_LIMIT = 20
 
     const inferredBase =
       basePath ??
@@ -309,6 +308,7 @@ export class FileService implements IFileService {
     const mkdirCache = new Set<string>()
 
     const failedFiles: { path: string; reason: string }[] = []
+    let failedCount = 0
 
     const scanPromise = this.scanner
       .expandPaths(
@@ -327,7 +327,10 @@ export class FileService implements IFileService {
           fs.promises.mkdir(path.join(destination, relDir), { recursive: true }).catch(() => {})
         },
         (failedPath, errorMsg) => {
-          failedFiles.push({ path: failedPath, reason: errorMsg })
+          failedCount++
+          if (failedFiles.length < MAX_REPORTED_FAILURES) {
+            failedFiles.push({ path: failedPath, reason: errorMsg })
+          }
           logger.error('FileService', `Scan failure: ${failedPath}`, { error: errorMsg })
         },
         activeSignal
@@ -355,14 +358,14 @@ export class FileService implements IFileService {
         }
         lastBroadcastTime = now
         const total = expectedTotal ?? totalDiscovered
-        onProgress(file, pct, completed, failedFiles, total)
+        onProgress(file, pct, completed, failedCount, failedFiles, total)
       } else if (!reportTimer) {
         reportTimer = setTimeout(
           () => {
             reportTimer = null
             lastBroadcastTime = Date.now()
             const total = expectedTotal ?? totalDiscovered
-            onProgress(lastReportFile, lastReportPct, completed, failedFiles, total)
+            onProgress(lastReportFile, lastReportPct, completed, failedCount, failedFiles, total)
           },
           REPORT_COPIED_FILES_INTERVAL_MS - (now - lastBroadcastTime)
         )
@@ -408,20 +411,13 @@ export class FileService implements IFileService {
 
         if (success) {
           completed++
-          consecutiveFailures = 0
           throttledReport(src, 100)
         } else {
-          failedFiles.push({ path: src, reason: lastError || 'Copy failed after 5 retries' })
-          throttledReport(src, -1)
-
-          consecutiveFailures++
-          if (consecutiveFailures >= HARD_FAIL_LIMIT) {
-            logger.error(
-              'FileService',
-              'Circuit Breaker Tripped! Assuming source drive disconnected.'
-            )
-            internalController.abort()
+          failedCount++
+          if (failedCount <= MAX_REPORTED_FAILURES) {
+            failedFiles.push({ path: src, reason: lastError || 'Copy failed after 5 retries' })
           }
+          throttledReport(src, -1)
         }
       }
     }
@@ -433,7 +429,7 @@ export class FileService implements IFileService {
     if (reportTimer) clearTimeout(reportTimer)
 
     const finalTotal = expectedTotal ?? totalDiscovered
-    onProgress('__done__', 100, completed, failedFiles, finalTotal)
+    onProgress('__done__', 100, completed, failedCount, failedFiles, finalTotal)
   }
 
   private async copyOneFast(src: string, dest: string, signal?: AbortSignal): Promise<void> {

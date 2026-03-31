@@ -39,19 +39,22 @@ export class DiskService implements IDiskService {
 
         // DriveType: 2 = Removable (USB Stick), 3 = Fixed (Internal HDD or External NVMe)
         // We want external drives, so we accept 2 and 3, but strictly ignore the C: drive.
-        // if (!rawDeviceId) {
-        //   logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: d })
-        //   continue
-        // }
-        // if (driveType !== 2 && driveType !== 3) {
-        //   logger.debug('DiskService', `Skipping drive ${rawDeviceId}: Unsupported drive type`, {
-        //     driveType
-        //   })
-        //   continue
-        // }
+        // All drives are listed, but ineligible ones are marked non-selectable.
+        if (!rawDeviceId) {
+          logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: d })
+          continue
+        }
+
+        let selectable = true
+        let disabledReason: string | undefined
+
         // if (rawDeviceId.toUpperCase() === 'C:') {
-        //   logger.debug('DiskService', 'Skipping drive C: (System Drive)')
-        //   continue
+        //   selectable = false
+        //   disabledReason = 'System drive — cannot be selected'
+        // }
+        //  else if (driveType !== 2 && driveType !== 3) {
+        //   selectable = false
+        //   disabledReason = 'Unsupported drive type'
         // }
 
         // Ensure trailing slash for Node.js fs compatibility
@@ -60,7 +63,9 @@ export class DiskService implements IDiskService {
         drives.push({
           letter,
           label: label ? `${label} (${rawDeviceId})` : `Local Disk (${rawDeviceId})`,
-          totalSize: size
+          totalSize: size,
+          selectable,
+          disabledReason
         })
       }
 
