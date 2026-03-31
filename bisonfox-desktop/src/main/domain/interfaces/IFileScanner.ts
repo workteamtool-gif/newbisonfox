@@ -5,6 +5,8 @@ export interface IFileScanner {
   expandPaths(
     inputs: string[],
     basePath: string,
+    excludedDirectories: Set<string>,
+    parallelWorkers: number,
     onScan?: (count: number) => void,
     excludedPaths?: Set<string>,
     onFile?: (src: string, rel: string) => void,
@@ -18,6 +20,8 @@ export interface IFileScanner {
    */
   countFiles(
     initialPaths: string[],
+    excludedDirectories: Set<string>,
+    parallelWorkers: number,
     excludedFiles?: string[],
     onCount?: (count: number) => void,
     signal?: AbortSignal

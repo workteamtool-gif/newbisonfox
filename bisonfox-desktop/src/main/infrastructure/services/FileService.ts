@@ -51,7 +51,7 @@ class AsyncSemaphore {
 const heavyLock = new AsyncSemaphore(4)
 
 export class FileService implements IFileService {
-  private readonly scanner = new FileScanner(EXCLUDED)
+  private readonly scanner = new FileScanner()
 
   // ────────────────────────────────── TREE BROWSING ──────────────────────────
 
@@ -261,7 +261,7 @@ export class FileService implements IFileService {
     onCount?: (count: number) => void,
     signal?: AbortSignal
   ): Promise<number> {
-    return this.scanner.countFiles(files, excludedFiles, onCount, signal)
+    return this.scanner.countFiles(files, EXCLUDED, COPY_CONCURRENCY, excludedFiles, onCount, signal)
   }
 
   // ────────────────────────────────── COPY ENGINE ────────────────────────────
@@ -315,7 +315,9 @@ export class FileService implements IFileService {
       .expandPaths(
         initialPaths,
         inferredBase,
-        (count) => {
+        EXCLUDED,
+        COPY_CONCURRENCY,
+        (count: number) => {
           totalDiscovered = count
           if (onScan) onScan(count)
         },

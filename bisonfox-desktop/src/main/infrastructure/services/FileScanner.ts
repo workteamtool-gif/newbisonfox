@@ -3,12 +3,6 @@ import * as path from 'path'
 import { logger } from '@main/infrastructure/Logger'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 
-/** System directories to always skip during scanning. */
-let excludedDirectories = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])
-
-/** How many parallel workers for directory scanning/counting. */
-const SCAN_CONCURRENCY = 50
-
 /** Normalise Windows drive letter to uppercase for consistent path.relative calls. */
 function normalizeDriveCase(p: string): string {
   if (p.charAt(1) === ':') return p.charAt(0).toUpperCase() + p.slice(1)
@@ -16,20 +10,18 @@ function normalizeDriveCase(p: string): string {
 }
 
 export class FileScanner implements IFileScanner {
-  constructor(excludedSet: Set<string>
-    = new Set(['$RECYCLE.BIN', 'System Volume Information', '.git'])) {
-    excludedDirectories = excludedSet
-  }
 
   async expandPaths(
     inputs: string[],
     basePath: string,
+    excludedDirectories: Set<string>,
+    parallelWorkers: number,
     onScan?: (count: number) => void,
     excludedPaths?: Set<string>,
     onFile?: (src: string, rel: string) => void,
     onDir?: (relDir: string) => void,
     onScanError?: (filePath: string, errorMessage: string) => void,
-    signal?: AbortSignal
+    signal?: AbortSignal,
   ): Promise<{ src: string; rel: string }[]> {
     const results: { src: string; rel: string }[] = [];
     let foundCount = 0;
@@ -114,7 +106,7 @@ export class FileScanner implements IFileScanner {
       }
     };
 
-    const workers = Array.from({ length: SCAN_CONCURRENCY }, worker);
+    const workers = Array.from({ length: parallelWorkers }, worker);
     await Promise.all(workers);
 
     if (onScan && !onFile) onScan(foundCount);
@@ -123,6 +115,8 @@ export class FileScanner implements IFileScanner {
 
   async countFiles(
     initialPaths: string[],
+    excludedDirectories: Set<string>,
+    parallelWorkers = 1,
     excludedFiles?: string[],
     onCount?: (c: number) => void,
     signal?: AbortSignal
@@ -137,7 +131,6 @@ export class FileScanner implements IFileScanner {
 
     // The engine's raw directory queue
     const queue: string[] = [];
-    const MAX_CONCURRENT_READS = 100; // Sweet spot for saturating Windows I/O without crashing it
 
     // 1. Initial Sorting: Separate direct files from directories
     await Promise.all(
@@ -179,7 +172,7 @@ export class FileScanner implements IFileScanner {
           return;
         }
 
-        while (queue.length > 0 && activeReads < MAX_CONCURRENT_READS) {
+        while (queue.length > 0 && activeReads < parallelWorkers) {
           const currentDir = queue.shift()!;
           activeReads++;
 
