@@ -116,15 +116,6 @@ export class UploadManager {
       return
     }
 
-    logger.info(
-      'UploadManager',
-      `Starting upload session ${session.id} for user ${session.userName}`,
-      {
-        target: targetDest,
-        fileCount: filesToUpload.length
-      }
-    )
-
     const controller = new AbortController()
     this.activeUploads.set(session.id, controller)
 

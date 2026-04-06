@@ -3,9 +3,10 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { driveApi } from '@renderer/services/driveApi'
 import { SubfolderPage, SuccessPage, SetUsernamePage } from '@renderer/entites/Wizard'
+import { clientLogger } from '@renderer/utils/logger'
 
 export function InsertDiskPage(): React.JSX.Element {
-  const { setStep, setCurrentDisk, diskSessions } = useWizardStore()
+  const { setStep, setCurrentDisk, diskSessions, userName, sessionId } = useWizardStore()
 
   const [drives, setDrives] = useState<DriveInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -57,6 +58,7 @@ export function InsertDiskPage(): React.JSX.Element {
       selectedFiles: [],
       excludedFiles: []
     })
+    clientLogger.info('InsertDiskPage', `For user: ${userName} in session: ${sessionId} chose drive: ${drive.label} (${drive.letter})`)
     setStep(SubfolderPage)
   }
 
@@ -118,11 +120,17 @@ export function InsertDiskPage(): React.JSX.Element {
 
         <div className="action-row" style={{ justifyContent: 'space-between' }}>
           {diskSessions.length > 0 ? (
-            <button className="btn btn-secondary" onClick={() => setStep(SuccessPage)}>
+            <button className="btn btn-secondary" onClick={() => {
+              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
+              setStep(SuccessPage)
+            }}>
               Finish Session
             </button>
           ) : (
-            <button className="btn btn-secondary" onClick={() => setStep(SetUsernamePage)}>
+            <button className="btn btn-secondary" onClick={() => {
+              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
+              setStep(SetUsernamePage)
+            }}>
               ← Back
             </button>
           )}

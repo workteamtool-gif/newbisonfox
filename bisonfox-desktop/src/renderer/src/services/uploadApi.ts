@@ -4,12 +4,13 @@ import { ProgressMessage } from '@renderer/entites/ProgressMessage'
 
 export const uploadApi = {
   countFiles: async (
+    sessionId: string,
     selectedPaths: string[],
     excludedPaths: string[],
     signal?: AbortSignal,
     onCount?: (c: number) => void
   ): Promise<number> => {
-    clientLogger.info('API', 'Starting background file count session (IPC)...')
+    clientLogger.info('API', `Starting background file count session (IPC) for session ${sessionId}...`)
     const scanId = Math.random().toString(36).substring(2, 10)
 
     return new Promise((resolve, reject) => {
@@ -31,7 +32,6 @@ export const uploadApi = {
 
       if (signal) {
         signal.addEventListener('abort', () => {
-          clientLogger.warn('API', `File count aborted by user for session ${scanId}`)
           window.api.invoke(IPC_CHANNELS.UPLOAD.CANCEL_COUNT, { scanId })
           unsubscribe()
           reject(new Error('Aborted'))
@@ -88,7 +88,6 @@ export const uploadApi = {
     sessionId: string,
     onMessage: (msg: ProgressMessage) => void
   ): { close: () => void } => {
-    clientLogger.info('IPC', `Connecting to upload progress stream for session ${sessionId}...`)
     const channel = `${IPC_CHANNELS.UPLOAD.PROGRESS_PREFIX}${sessionId}`
 
     const unsubscribe = window.api.on(channel, (data: ProgressMessage) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { sessionApi } from '@renderer/services/sessionApi'
+import { clientLogger } from '@renderer/utils/logger'
 import './SetUsernamePage.css'
 import { PREFIX_OPTIONS } from '@renderer/Constants/prefixOptions'
 import { JSX } from 'react'
@@ -39,6 +40,7 @@ export function SetUsernamePage(): JSX.Element {
       const { sessionId } = await sessionApi.createSession(fullName)
       setUserName(fullName)
       setSessionId(sessionId)
+      clientLogger.info('SetUsernamePage', `User ${fullName} logged in. Session: ${sessionId}`)
       setStep(InsertDiskPage)
     } catch {
       setError('Connection error. Make sure the backend is running.')
@@ -98,7 +100,10 @@ export function SetUsernamePage(): JSX.Element {
           )}
 
           <div className="action-row" style={{ justifyContent: 'space-between' }}>
-            <button type="button" className="btn btn-secondary" onClick={() => reset()}>
+            <button type="button" className="btn btn-secondary" onClick={() => {
+              clientLogger.info('SetUsernamePage', 'User clicked back button, resetting data')
+              reset()
+            }}>
               ← Back
             </button>
             <button

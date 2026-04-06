@@ -4,9 +4,10 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { JSX } from 'react'
 import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
+import { clientLogger } from '@renderer/utils/logger'
 
 export function SubfolderPage(): JSX.Element {
-  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
+  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName, sessionId, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
   useDriveMonitor()
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
@@ -29,6 +30,11 @@ export function SubfolderPage(): JSX.Element {
       return
     }
     setCurrentSubfolder(trimmed)
+    if (trimmed) {
+      clientLogger.info('SubfolderPage', `For user: ${userName} in session: ${sessionId} specified subfolder: "${trimmed}"`)
+    } else {
+      clientLogger.info('SubfolderPage', `For user: ${userName} in session: ${sessionId} did not specify a subfolder`)
+    }
     setStep(SelectFilesPage)
   }
 
@@ -71,7 +77,10 @@ export function SubfolderPage(): JSX.Element {
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={() => setStep(InsertDiskPage)}
+              onClick={() => {
+                clientLogger.info('SubfolderPage', `The user: ${userName} in session: ${sessionId} navigating back to InsertDiskPage`)
+                setStep(InsertDiskPage)
+              }}
             >
               ← Back
             </button>

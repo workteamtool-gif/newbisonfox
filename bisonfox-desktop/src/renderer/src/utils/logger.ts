@@ -35,7 +35,7 @@ function log(level: LogLevel, context: string, message: string, data?: any): voi
     )
   }
 
-  if (level === LogLevel.ERROR || level === LogLevel.WARN) {
+  if (level !== LogLevel.DEBUG) {
     sendToMainProcess(level, context, message, data)
   }
 }

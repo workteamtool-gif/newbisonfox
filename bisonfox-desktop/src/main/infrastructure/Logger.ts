@@ -82,10 +82,10 @@ class Logger {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   }
 
-  private getStream(level: string, dateStamp: string): fs.WriteStream | null {
+  private getStream(dateStamp: string): fs.WriteStream | null {
     if (!this.logDir) return null // Guard against null
 
-    const key = `${level}_${dateStamp}`
+    const key = dateStamp
 
     // Rotate day boundary: close old streams
     if (this.currentDate && this.currentDate !== dateStamp) {
@@ -104,15 +104,15 @@ class Logger {
       return this.streams.get(key)!
     }
 
-    const filePath = path.join(this.logDir, `${dateStamp}_${level.toLowerCase()}.log`)
-    this.rotateIfNeeded(filePath, level.toLowerCase(), dateStamp)
+    const filePath = path.join(this.logDir, `${dateStamp}.log`)
+    this.rotateIfNeeded(filePath, dateStamp)
 
     const stream = fs.createWriteStream(filePath, { flags: 'a', encoding: 'utf-8' })
     this.streams.set(key, stream)
     return stream
   }
 
-  private rotateIfNeeded(filePath: string, level: string, dateStamp: string): void {
+  private rotateIfNeeded(filePath: string, dateStamp: string): void {
     if (!this.logDir) return // Guard against null
 
     try {
@@ -122,8 +122,8 @@ class Logger {
 
       // Rotate: shift existing rotated files
       for (let i = MAX_FILES_PER_LEVEL - 1; i >= 1; i--) {
-        const older = path.join(this.logDir, `${dateStamp}_${level}.${i}.log`)
-        const newer = path.join(this.logDir, `${dateStamp}_${level}.${i + 1}.log`)
+        const older = path.join(this.logDir, `${dateStamp}.${i}.log`)
+        const newer = path.join(this.logDir, `${dateStamp}.${i + 1}.log`)
         if (fs.existsSync(older)) {
           if (i + 1 >= MAX_FILES_PER_LEVEL) {
             fs.unlinkSync(older) // drop oldest
@@ -134,11 +134,11 @@ class Logger {
       }
 
       // Move current → .1
-      const rotated = path.join(this.logDir, `${dateStamp}_${level}.1.log`)
+      const rotated = path.join(this.logDir, `${dateStamp}.1.log`)
       fs.renameSync(filePath, rotated)
 
       // Close and remove old stream
-      const key = `${level.toUpperCase()}_${dateStamp}`
+      const key = dateStamp
       const existing = this.streams.get(key)
       if (existing) {
         try {
@@ -169,7 +169,7 @@ class Logger {
     // 1. Try to write to file if configured
     if (this.logDir) {
       const dateStamp = this.getDateStamp()
-      const stream = this.getStream(label, dateStamp)
+      const stream = this.getStream(dateStamp)
       if (stream) stream.write(line)
     }
 

@@ -24,7 +24,7 @@ export function useUploadManager(): {
   skipFailed: () => void
   setStep: (step: WizardStep) => void
 } {
-  const { sessionId, currentDisk, setStep, setUploadDone, setCompletedFiles, uploadDone } =
+  const { sessionId, currentDisk, setStep, setUploadDone, setCompletedFiles, uploadDone, userName } =
     useWizardStore()
 
   const [phase, setPhase] = useState<UploadPhase>('ready')
@@ -62,30 +62,49 @@ export function useUploadManager(): {
     setCountingComplete(false)
     setPreCalcTotal(0)
 
-    uploadApi
-      .countFiles(
-        currentDisk.selectedFiles,
-        currentDisk.excludedFiles ?? [],
-        controller.signal,
-        (count) => {
-          if (!cancelled) setPreCalcTotal(count)
-        }
-      )
-      .then((count) => {
-        if (!cancelled) {
-          setPreCalcTotal(count)
-          setCountingComplete(true)
-        }
-      })
-      .catch(() => {
-        /* Ignore aborts */
-      })
+    const timeoutId = setTimeout(() => {
+      if (cancelled) return
+      uploadApi
+        .countFiles(
+          sessionId,
+          currentDisk.selectedFiles,
+          currentDisk.excludedFiles ?? [],
+          controller.signal,
+          (count) => {
+            if (!cancelled) setPreCalcTotal(count)
+          }
+        )
+        .then((count) => {
+          if (!cancelled) {
+            setPreCalcTotal(count)
+            setCountingComplete(true)
+          }
+        })
+        .catch(() => {
+          /* Ignore aborts */
+        })
+    }, 50)
 
     return () => {
       cancelled = true
+      clearTimeout(timeoutId)
       controller.abort()
     }
-  }, [currentDisk, phase])
+  }, [currentDisk, phase, sessionId, userName])
+
+  // Effect to log copy progress every minute
+  useEffect(() => {
+    if (phase !== 'copying') return
+
+    const intervalId = setInterval(() => {
+      clientLogger.info(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} copy in progress: ${completedRef.current} files copied so far.`
+      )
+    }, 60000) // 1 minute
+
+    return () => clearInterval(intervalId)
+  }, [phase, sessionId, userName])
 
   useEffect(() => {
     if (!sessionId || phase === 'ready') return
@@ -158,21 +177,38 @@ export function useUploadManager(): {
 
     // Only auto-navigate if there are NO failures
     if (failedRef.current === 0) {
+      clientLogger.info(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} copied successfully ${finalCount} files.`
+      )
       setTimeout(() => setStep(PullDiskPage), 1800)
+    } else {
+      const top3Failed = failed
+        .slice(0, 3)
+        .map((f) => `${f.path} (Reason: ${f.reason})`)
+        .join(', ')
+      clientLogger.error(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} copy failed for ${failedRef.current} files and ${finalCount} copied successfully.
+         Failed examples: ${top3Failed}.`
+      )
     }
   }
 
   const startUpload = (): void => {
     if (!sessionId || !currentDisk) return
-
-    clientLogger.info('UploadManager', 'Initiating upload sequence...')
+    
     setPhase('copying')
     setTotalDiscovered(preCalcTotal || 0)
     totalRef.current = preCalcTotal || 0
 
     const subfolder = currentDisk.subfolder || ''
     uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder).catch((err: any) => {
-      clientLogger.error('UploadManager', 'Failed to upload', err)
+      clientLogger.error(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} failed to upload.`,
+        err
+      )
       setUploadError(err.message || 'Failed to start upload.')
     })
   }
@@ -181,7 +217,10 @@ export function useUploadManager(): {
     if (!sessionId || !currentDisk || failedFilesList.length === 0) return
 
     const filesToRetry = failedFilesList.map((f) => f.path)
-    clientLogger.info('UploadManager', `Retrying ${filesToRetry.length} failed file(s)...`)
+    clientLogger.info(
+      'UploadManager',
+      `For user: ${userName} in session: ${sessionId} user decided to retry copying for ${filesToRetry.length} failed files.`
+    )
 
     // Reset state for the retry round
     setUploadDone(false)
@@ -198,13 +237,20 @@ export function useUploadManager(): {
 
     const subfolder = currentDisk.subfolder || ''
     uploadApi.startUpload(sessionId, filesToRetry, subfolder).catch((err: any) => {
-      clientLogger.error('UploadManager', 'Retry failed', err)
+      clientLogger.error(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} retry failed.`,
+        err
+      )
       setUploadError(err.message || 'Retry failed.')
     })
   }
 
   const skipFailed = (): void => {
-    clientLogger.info('UploadManager', `Skipping ${failedFilesList.length} failed file(s).`)
+    clientLogger.info(
+      'UploadManager',
+      `For user: ${userName} in session: ${sessionId} skipping ${failedFilesList.length} failed file(s).`
+    )
     setStep(PullDiskPage)
   }
 

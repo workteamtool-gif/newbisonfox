@@ -8,9 +8,10 @@ import { FileTree } from '@renderer/components/FileTree/FileTree'
 import './ReviewPage.css'
 import { JSX } from 'react'
 import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/Wizard'
+import { clientLogger } from '@renderer/utils/logger'
 
 export function ReviewPage(): JSX.Element | null {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession } = useWizardStore()
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } = useWizardStore()
 
   useDriveMonitor()
 
@@ -109,6 +110,7 @@ export function ReviewPage(): JSX.Element | null {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
+      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedFiles} files to drive: ${finalDisk.driveLabel}`)
       setStep(UploadPage)
     } catch (err: any) {
       setSyncError(
@@ -120,6 +122,7 @@ export function ReviewPage(): JSX.Element | null {
   }
 
   if (!currentDisk) {
+    clientLogger.warn('ReviewPage', `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to InsertDiskPage`)
     setStep(InsertDiskPage)
     return null
   }
@@ -186,7 +189,10 @@ export function ReviewPage(): JSX.Element | null {
         <div className="action-row">
           <button
             className="btn btn-secondary"
-            onClick={() => setStep(SelectFilesPage)}
+            onClick={() => {
+              clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
+              setStep(SelectFilesPage)
+            }}
             disabled={saving}
           >
             ← Back to Select

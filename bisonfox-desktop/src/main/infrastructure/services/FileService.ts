@@ -295,9 +295,6 @@ export class FileService implements IFileService {
       })()
 
     const excludedSet = new Set<string>(excludedFiles ?? [])
-    logger.info('FileService', `Streaming copy of ${initialPaths.length} root path(s).`, {
-      excluded: excludedSet.size
-    })
 
     if (initialPaths.length === 0) return
 

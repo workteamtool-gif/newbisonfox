@@ -34,9 +34,6 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     setCurrentSubfolder: (currentSubfolder) => set({ currentSubfolder }),
 
     addDiskSession: (session) => {
-      clientLogger.info('Store', `Added disk queue: ${session.driveLabel}`, {
-        fileCount: session.selectedFiles.length
-      })
       set((state) => {
         state.diskSessions.push(session)
       })

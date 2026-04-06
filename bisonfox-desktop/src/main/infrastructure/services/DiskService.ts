@@ -24,7 +24,7 @@ export class DiskService implements IDiskService {
       const { stdout } = await execAsync(`powershell -NoProfile -Command "${psCommand}"`)
 
       if (!stdout.trim()) return []
-
+      
       // If there is only one drive, PowerShell returns an object. If multiple, an array.
       const parsed = JSON.parse(stdout)
       const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]

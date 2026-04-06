@@ -18,12 +18,7 @@ export const driveApi = {
     page: number = 1,
     limit: number = ITEMS_IN_ONE_PAGE
   ): Promise<PaginatedResult<FileNode[]>> => {
-    clientLogger.debug('API', `Fetching drive tree for ${drive} (Page ${page})`)
     const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, { drive, page, limit })
-    clientLogger.info(
-      'API',
-      `Successfully fetched ${result?.nodes?.length || 0} nodes from ${drive}`
-    )
     return result ?? { nodes: [], hasMore: false }
   },
 

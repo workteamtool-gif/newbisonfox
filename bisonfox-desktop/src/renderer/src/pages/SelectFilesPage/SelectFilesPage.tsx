@@ -7,9 +7,10 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
+import { clientLogger } from '@renderer/utils/logger'
 
 export function SelectFilesPage(): JSX.Element {
-  const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
+  const { setStep, currentDisk, setCurrentDisk, currentSubfolder, userName, sessionId } = useWizardStore()
 
   useDriveMonitor()
 
@@ -32,22 +33,25 @@ export function SelectFilesPage(): JSX.Element {
     let isMounted = true
     setLoading(true)
 
-    driveApi
-      .getDriveTree(currentDisk.driveLetter!, 1)
-      .then((res) => {
-        if (!isMounted) return
-        setTree(res.nodes)
-        setRootPage(1)
-        setRootHasMore(res.hasMore)
-        setRootTotalPages(res.totalPages ?? 1)
-        setLoading(false)
-      })
-      .catch(() => {
-        if (isMounted) setLoading(false)
-      })
+    const timeoutId = setTimeout(() => {
+      driveApi
+        .getDriveTree(currentDisk.driveLetter!, 1)
+        .then((res) => {
+          if (!isMounted) return
+          setTree(res.nodes)
+          setRootPage(1)
+          setRootHasMore(res.hasMore)
+          setRootTotalPages(res.totalPages ?? 1)
+          setLoading(false)
+        })
+        .catch(() => {
+          if (isMounted) setLoading(false)
+        })
+    }, 50)
 
     return () => {
       isMounted = false
+      clearTimeout(timeoutId)
     }
   }, [currentDisk])
 
@@ -150,10 +154,10 @@ export function SelectFilesPage(): JSX.Element {
     e.preventDefault()
     const query = rootSearchQuery.trim()
     if (!currentDisk || !query || loading) return
-    
+
     setLoading(true)
     useWizardStore.getState().setToast(`Searching drive for "${query}"...`, 'info')
-    
+
     try {
       const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
       if (targetPage !== null) {
@@ -213,6 +217,12 @@ export function SelectFilesPage(): JSX.Element {
       selectedFiles: Array.from(selected),
       excludedFiles: Array.from(excluded)
     })
+    const selectedArrayStr = `[${Array.from(selected).join(', ')}]`
+    const excludedArrayStr = `[${Array.from(excluded).join(', ')}]`
+    clientLogger.info(
+      'SelectFilesPage',
+      `The user: ${userName} in session: ${sessionId} is proceeding with ${selectedArrayStr} items selected, ${excludedArrayStr} exclusions`
+    )
     setStep(ReviewPage)
     setSaving(false)
   }
@@ -267,65 +277,65 @@ export function SelectFilesPage(): JSX.Element {
               className="tree-pagination-bar"
               style={{ margin: '1rem 0', justifyContent: 'center' }}
             >
+              <button
+                className="btn btn-secondary pagination-btn"
+                onClick={handleLoadPrevRoot}
+                disabled={rootPage <= 1 || loading}
+              >
+                Previous
+              </button>
+
+              <form
+                className="pagination-jump-form"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const page = parseInt(jumpToPageInput, 10)
+                  if (!isNaN(page)) {
+                    handleJumpToPage(page)
+                    setJumpToPageInput('')
+                  }
+                }}
+              >
+                <span className="pagination-text">Page </span>
+                <input
+                  type="number"
+                  min={1}
+                  max={rootTotalPages}
+                  placeholder={String(rootPage)}
+                  value={jumpToPageInput}
+                  onChange={(e) => setJumpToPageInput(e.target.value)}
+                  className="pagination-jump-input"
+                  disabled={loading}
+                />
+                <span className="pagination-text"> of {rootTotalPages}</span>
+              </form>
+
+              <button
+                className="btn btn-secondary pagination-btn"
+                onClick={handleLoadNextRoot}
+                disabled={!rootHasMore || loading}
+              >
+                Next
+              </button>
+
+              <form onSubmit={handleSearchRootSubmit} className="pagination-search-form">
+                <input
+                  type="text"
+                  placeholder="Jump to file..."
+                  value={rootSearchQuery}
+                  onChange={(e) => setRootSearchQuery(e.target.value)}
+                  className="pagination-search-input"
+                  disabled={loading}
+                />
                 <button
-                  className="btn btn-secondary pagination-btn"
-                  onClick={handleLoadPrevRoot}
-                  disabled={rootPage <= 1 || loading}
+                  type="submit"
+                  disabled={!rootSearchQuery.trim() || loading}
+                  className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
                 >
-                  Previous
+                  🔍
                 </button>
-
-                <form
-                  className="pagination-jump-form"
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    const page = parseInt(jumpToPageInput, 10)
-                    if (!isNaN(page)) {
-                      handleJumpToPage(page)
-                      setJumpToPageInput('')
-                    }
-                  }}
-                >
-                  <span className="pagination-text">Page </span>
-                  <input
-                    type="number"
-                    min={1}
-                    max={rootTotalPages}
-                    placeholder={String(rootPage)}
-                    value={jumpToPageInput}
-                    onChange={(e) => setJumpToPageInput(e.target.value)}
-                    className="pagination-jump-input"
-                    disabled={loading}
-                  />
-                  <span className="pagination-text"> of {rootTotalPages}</span>
-                </form>
-
-                <button
-                  className="btn btn-secondary pagination-btn"
-                  onClick={handleLoadNextRoot}
-                  disabled={!rootHasMore || loading}
-                >
-                  Next
-                </button>
-
-                <form onSubmit={handleSearchRootSubmit} className="pagination-search-form">
-                  <input
-                    type="text"
-                    placeholder="Jump to file..."
-                    value={rootSearchQuery}
-                    onChange={(e) => setRootSearchQuery(e.target.value)}
-                    className="pagination-search-input"
-                    disabled={loading}
-                  />
-                  <button
-                    type="submit"
-                    disabled={!rootSearchQuery.trim() || loading}
-                    className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
-                  >
-                    🔍
-                  </button>
-                </form>
-              </div>
+              </form>
+            </div>
           </>
         )}
 
@@ -333,7 +343,10 @@ export function SelectFilesPage(): JSX.Element {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={() => setStep(InsertDiskPage)}
+            onClick={() => {
+              clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
+              setStep(InsertDiskPage)
+            }}
           >
             ← Back
           </button>
