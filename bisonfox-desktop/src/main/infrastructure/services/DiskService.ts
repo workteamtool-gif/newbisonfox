@@ -52,6 +52,8 @@ export class DiskService implements IDiskService {
             // Ensure trailing slash for Node.js fs compatibility
             const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'
 
+            // 2- Removable: Removable media drives, such as floppy drives or USB flash drives.
+            // 3 - Fixed: Fixed media drives, such as internal hard drives (HDD or SSD).
             if (driveType !== 2 && driveType !== 3) {
               selectable = false
               disabledReason = 'Unsupported drive type'

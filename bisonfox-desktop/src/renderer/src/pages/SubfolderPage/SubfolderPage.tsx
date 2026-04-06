@@ -63,9 +63,10 @@ export function SubfolderPage(): JSX.Element {
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
               placeholder="e.g. project_alpha"
+              maxLength={20}
               value={subfolder}
               onChange={(e) => {
-                setSubfolder(e.target.value)
+                setSubfolder(e.target.value.slice(0, 20))
                 setError('')
               }}
               autoFocus
@@ -94,7 +95,7 @@ export function SubfolderPage(): JSX.Element {
         <VirtualKeyboard
           currentValue={subfolder}
           onChange={(newVal) => {
-            setSubfolder(newVal)
+            setSubfolder(newVal.slice(0, 20))
             setError('')
           }}
         />

@@ -9,7 +9,7 @@ import { InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 
 export function SetUsernamePage(): JSX.Element {
-  const { setStep, setUserName, setSessionId, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
+  const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
   const [prefix, setPrefix] = useState(PREFIX_OPTIONS[0])
   const [name, setName] = useState('')
   const [error, setError] = useState('')
@@ -37,10 +37,8 @@ export function SetUsernamePage(): JSX.Element {
         setLoading(false)
         return
       }
-      const { sessionId } = await sessionApi.createSession(fullName)
       setUserName(fullName)
-      setSessionId(sessionId)
-      clientLogger.info('SetUsernamePage', `User ${fullName} logged in. Session: ${sessionId}`)
+      clientLogger.info('SetUsernamePage', `User ${fullName} logged in.`)
       setStep(InsertDiskPage)
     } catch {
       setError('Connection error. Make sure the backend is running.')
@@ -53,7 +51,7 @@ export function SetUsernamePage(): JSX.Element {
       <div className="glass-card">
         <p className="page-title">What&apos;s your username?</p>
         <p className="page-subtitle">
-          Enter your username to begin. It must contain only letters and underscores (maximum 50
+          Enter your username to begin. It must contain only letters and underscores (maximum 20
           characters).
         </p>
 
@@ -83,9 +81,10 @@ export function SetUsernamePage(): JSX.Element {
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
               placeholder="e.g. bison"
+              maxLength={20}
               value={name}
               onChange={(e) => {
-                setName(e.target.value)
+                setName(e.target.value.slice(0, 20))
                 setError('')
               }}
               autoFocus
@@ -128,7 +127,7 @@ export function SetUsernamePage(): JSX.Element {
         <VirtualKeyboard
           currentValue={name}
           onChange={(newVal) => {
-            setName(newVal)
+            setName(newVal.slice(0, 20))
             setError('')
           }}
         />

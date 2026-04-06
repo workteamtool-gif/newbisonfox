@@ -110,7 +110,7 @@ export function ReviewPage(): JSX.Element | null {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedFiles} files to drive: ${finalDisk.driveLabel}`)
+      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedFiles} files`)
       setStep(UploadPage)
     } catch (err: any) {
       setSyncError(

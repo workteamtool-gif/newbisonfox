@@ -4,9 +4,10 @@ import { DriveInfo } from '@shared/entities/DriveInfo'
 import { driveApi } from '@renderer/services/driveApi'
 import { SubfolderPage, SuccessPage, SetUsernamePage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
+import { sessionApi } from '@renderer/services/sessionApi'
 
 export function InsertDiskPage(): React.JSX.Element {
-  const { setStep, setCurrentDisk, diskSessions, userName, sessionId } = useWizardStore()
+  const { setStep, setCurrentDisk, diskSessions, userName, sessionId, setSessionId } = useWizardStore()
 
   const [drives, setDrives] = useState<DriveInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -47,19 +48,29 @@ export function InsertDiskPage(): React.JSX.Element {
     }
   }, [])
 
-  const handleContinue = (): void => {
+  const handleContinue = async (): Promise<void> => {
     const drive = drives.find((d) => d.letter === selectedLetter)
     if (!drive) return
 
-    setCurrentDisk({
-      driveLabel: drive.label || `Disk (${drive.letter})`,
-      driveLetter: drive.letter,
-      subfolder: '',
-      selectedFiles: [],
-      excludedFiles: []
-    })
-    clientLogger.info('InsertDiskPage', `For user: ${userName} in session: ${sessionId} chose drive: ${drive.label} (${drive.letter})`)
-    setStep(SubfolderPage)
+    try {
+      const { sessionId: newSessionId } = await sessionApi.createSession(userName)
+      setSessionId(newSessionId)
+
+      setCurrentDisk({
+        driveLabel: drive.label || `Disk (${drive.letter})`,
+        driveLetter: drive.letter,
+        subfolder: '',
+        selectedFiles: [],
+        excludedFiles: []
+      })
+      clientLogger.info(
+        'InsertDiskPage',
+        `For user: ${userName} in session: ${newSessionId} chose drive: ${drive.label} (${drive.letter})`
+      )
+      setStep(SubfolderPage)
+    } catch {
+      clientLogger.error('InsertDiskPage', 'Failed to create session')
+    }
   }
 
   return (
