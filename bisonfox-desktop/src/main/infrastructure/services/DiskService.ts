@@ -1,5 +1,6 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
+import * as fs from 'fs'
 import { IDiskService } from '../../domain/interfaces/IDiskService'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { logger } from '../Logger'
@@ -30,48 +31,47 @@ export class DiskService implements IDiskService {
       const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]
 
       const drives: DriveInfo[] = []
+      const hiddenDrivesEnv = process.env.HIDDEN_DRIVES || 'C:'
+      const hiddenDrives = hiddenDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
-      for (const d of rawDrives) {
-        const rawDeviceId = d.DeviceID // e.g., "D:"
-        const driveType = parseInt(d.DriveType) || 0
-        const size = parseInt(d.Size) || 0
-        const label = d.VolumeName ? d.VolumeName.trim() : ''
+      for (const rawDrive of rawDrives) {
+        const rawDeviceId = rawDrive.DeviceID // e.g., "D:"
 
-        // DriveType: 2 = Removable (USB Stick), 3 = Fixed (Internal HDD or External NVMe)
-        // We want external drives, so we accept 2 and 3, but strictly ignore the C: drive.
-        // All drives are listed, but ineligible ones are marked non-selectable.
         if (!rawDeviceId) {
-          logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: d })
-          continue
-        }
+          logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: rawDrive })
+        } else {
+            const upperDeviceId = rawDeviceId.toUpperCase()
+            if (!hiddenDrives.includes(upperDeviceId)) {              
+            const driveType = parseInt(rawDrive.DriveType) || 0
+            const size = parseInt(rawDrive.Size) || 0
+            const label = rawDrive.VolumeName ? rawDrive.VolumeName.trim() : ''
 
-        let selectable = true
-        let disabledReason: string | undefined
+            let selectable = true
+            let disabledReason: string | undefined
 
-        // if (rawDeviceId.toUpperCase() === 'C:') {
-        //   selectable = false
-        //   disabledReason = 'System drive — cannot be selected'
-        // }
-        //  else if (driveType !== 2 && driveType !== 3) {
-        //   selectable = false
-        //   disabledReason = 'Unsupported drive type'
-        // }
-        if (driveType !== 2 && driveType !== 3) {
-          selectable = false
-          disabledReason = 'Unsupported drive type'
-        }
+            // Ensure trailing slash for Node.js fs compatibility
+            const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'
 
-
-        // Ensure trailing slash for Node.js fs compatibility
-        const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'
-
-        drives.push({
-          letter,
-          label: label ? `${label} (${rawDeviceId})` : `Local Disk (${rawDeviceId})`,
-          totalSize: size,
-          selectable,
-          disabledReason
-        })
+            if (driveType !== 2 && driveType !== 3) {
+              selectable = false
+              disabledReason = 'Unsupported drive type'
+            } else {
+              try {
+                await fs.promises.access(letter, fs.constants.R_OK)
+              } catch (err) {
+                selectable = false
+                disabledReason = 'Unreadable or access denied'
+              }
+            }
+            drives.push({
+              letter,
+              label: label ? `${label} (${rawDeviceId})` : `Local Disk (${rawDeviceId})`,
+              totalSize: size,
+              selectable,
+              disabledReason
+            })
+            }
+          }
       }
 
       return drives
