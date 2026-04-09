@@ -197,7 +197,16 @@ export function useUploadManager(): {
 
   const startUpload = (): void => {
     if (!sessionId || !currentDisk) return
-    
+
+    // Reset any leftover state from a previous upload session
+    setUploadDone(false)
+    setFailedFilesList([])
+    setFailedCount(0)
+    failedRef.current = 0
+    setCompletedCount(0)
+    completedRef.current = 0
+    setOverallPercentage(0)
+
     setPhase('copying')
     setTotalDiscovered(preCalcTotal || 0)
     totalRef.current = preCalcTotal || 0

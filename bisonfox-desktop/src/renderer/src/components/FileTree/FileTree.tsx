@@ -33,7 +33,7 @@ export function FileTree({
         <div
           style={{
             padding: '1rem',
-            color: 'var(--text-muted)',
+            color: 'var(--text-secondary)',
             textAlign: 'center',
             fontSize: '.85rem'
           }}

@@ -4,6 +4,8 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
+import { clientLogger } from '@renderer/utils/logger'
 
 export function UploadPage(): JSX.Element | null {
   const {
@@ -40,7 +42,7 @@ export function UploadPage(): JSX.Element | null {
       ? <>מכין...</>
       : phase === 'scanning'
         ? <>סורק... נמצאו {totalDiscovered.toLocaleString()} קבצים</>
-        : <>מעתיק {doneTotal.toLocaleString()} / {totalDiscovered.toLocaleString()} קבצים</>
+        : <>מעתיק {totalDiscovered.toLocaleString()} / {doneTotal.toLocaleString()} קבצים</>
 
   // Show failed files review when upload is done AND there are failures
   const showFailedReview = uploadDone && failedFilesList.length > 0
@@ -89,7 +91,7 @@ export function UploadPage(): JSX.Element | null {
               >
                 <span style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</span>
                 {!countingComplete ? (
-                  <span style={{ color: 'var(--text-muted)' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>
                     <span className="spin">⟳</span>
                     {preCalcTotal
                       ? ` נמצאו ${preCalcTotal.toLocaleString()} קבצים עד כה...`
@@ -100,13 +102,13 @@ export function UploadPage(): JSX.Element | null {
                     <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--accent)' }}>
                       {preCalcTotal?.toLocaleString()}
                     </span>
-                    <span style={{ color: 'var(--text-muted)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>
                       קבצים להעתקה</span>
                   </>
                 )}
               </div>
 
-              <div className="action-row" style={{ justifyContent: 'center' }}>
+              {/* <div className="action-row" style={{ justifyContent: 'center' }}>
                 <button
                   className="btn btn-primary btn-lg"
                   onClick={startUpload}
@@ -114,7 +116,16 @@ export function UploadPage(): JSX.Element | null {
                 >
                   Start Copying →
                 </button>
-              </div>
+              </div> */}
+
+              <NavigationOptions
+                onBack={() => {
+                  clientLogger.info('UploadPage', 'User navigating back to ReviewPage')
+                  setStep(ReviewPage)
+                }}
+                onForward={startUpload}
+                forwardDisabled={!countingComplete}
+              />
             </div>
           )
         }
@@ -129,13 +140,6 @@ export function UploadPage(): JSX.Element | null {
                   : uploadDone
                     ? <>✅ ההעלאה הושלמה!</>
                     : <>🚀 מעלה קבצים...</>}
-              </p>
-              <p className="page-subtitle">
-                {showFailedReview
-                  ? `${completedCount.toLocaleString()} files were copied successfully, but ${failedCount} file(s) could not be copied.`
-                  : uploadDone
-                    ? `הועלו ${completedCount.toLocaleString()} קבצים ל- ${currentDisk.subfolder}`
-                    : `מעתיק קבצים מ- ${currentDisk.driveLetter} ל- ${currentDisk.subfolder}`}
               </p>
 
               {/* Status Video — hide during failed review */}
@@ -172,7 +176,8 @@ export function UploadPage(): JSX.Element | null {
                       background: 'linear-gradient(to top, rgba(6,12,32,0.9) 0%, transparent 60%)',
                       display: 'flex',
                       alignItems: 'flex-end',
-                      padding: '1rem 1.4rem'
+                      padding: '1rem 1.4rem',
+                      direction: 'ltr'
                     }}
                   >
                     <span
@@ -209,7 +214,7 @@ export function UploadPage(): JSX.Element | null {
                 </div>
                 <div className="stat-card">
                   <div className="stat-val">{completedCount.toLocaleString()}</div>
-                  <div className="stat-lbl">Copied</div>
+                  <div className="stat-lbl">הועתקו</div>
                 </div>
                 <div className="stat-card">
                   <div
@@ -222,7 +227,7 @@ export function UploadPage(): JSX.Element | null {
                 </div>
                 <div className="stat-card">
                   <div className="stat-val">{overallPercentage}%</div>
-                  <div className="stat-lbl">Overall</div>
+                  <div className="stat-lbl">סה"כ</div>
                 </div>
               </div>
 
@@ -281,8 +286,9 @@ export function UploadPage(): JSX.Element | null {
                       <div
                         style={{
                           fontStyle: 'italic',
-                          color: 'var(--text-muted)',
-                          marginTop: '0.3rem'
+                          color: 'var(--text-secondary)',
+                          marginTop: '0.3rem',
+                          direction: 'rtl'
                         }}
                       >
                         ...ועוד {failedCount - MAX_FAILED_FILES_TO_SHOW} (רק {MAX_FAILED_FILES_TO_SHOW} הכשלונות הראשונים מוצגים).
@@ -295,12 +301,14 @@ export function UploadPage(): JSX.Element | null {
                       display: 'flex',
                       gap: '0.75rem',
                       marginTop: '0.75rem',
-                      justifyContent: 'flex-end',
-                      width: '100%'
+                      width: '100%',
+                      justifyItems: 'flex-end',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between'
                     }}
                   >
                     <button className="btn btn-secondary" onClick={skipFailed}>
-                      דלג על פריטים שנכשלו ←
+                      דלג על פריטים שנכשלו
                     </button>
                     <button className="btn btn-primary" onClick={retryFailed}>
                       🔄 נסה שוב פריטים שנכשלו

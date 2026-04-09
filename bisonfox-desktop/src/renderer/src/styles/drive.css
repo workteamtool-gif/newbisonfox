@@ -62,7 +62,7 @@
 }
 
 .drive-meta {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: .75rem;
     margin-top: .1rem;
 }

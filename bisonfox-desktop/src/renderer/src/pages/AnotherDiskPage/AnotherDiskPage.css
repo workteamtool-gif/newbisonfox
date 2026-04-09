@@ -46,7 +46,7 @@
 
 .choice-sub {
     font-size: .8rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .another-disk-stats {
@@ -69,6 +69,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    text-align: center;
 }
 
 .failed-files-list {

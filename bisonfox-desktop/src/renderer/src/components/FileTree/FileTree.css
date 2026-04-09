@@ -39,7 +39,7 @@
     width: 2vh;
     height: 2vh;
     flex-shrink: 0;
-    border: 1px solid var(--text-muted);
+    border: 1px solid var(--text-secondary);
     border-radius: 4px;
     transition: all 0.2s;
     display: flex;
@@ -72,7 +72,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     border-radius: 4px;
     font-size: 0.9rem;
 }
@@ -96,13 +96,13 @@
 }
 
 .tree-size {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 0.75rem;
     flex-shrink: 0;
 }
 
 .tree-empty {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 0.8rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
@@ -130,7 +130,7 @@
 
 .pagination-text {
     font-size: 0.8rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .pagination-jump-form {

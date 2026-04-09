@@ -5,6 +5,7 @@ import { driveApi } from '@renderer/services/driveApi'
 import { SubfolderPage, SuccessPage, SetUsernamePage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { sessionApi } from '@renderer/services/sessionApi'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function InsertDiskPage(): React.JSX.Element {
   const { setStep, setCurrentDisk, diskSessions, userName, sessionId, setSessionId } = useWizardStore()
@@ -126,31 +127,20 @@ export function InsertDiskPage(): React.JSX.Element {
           )}
         </div>
 
-        <div className="action-row" style={{ justifyContent: 'space-between' }}>
-          {diskSessions.length > 0 ? (
-            <button className="btn btn-secondary" onClick={() => {
+        <NavigationOptions
+          onBack={() => {
+            if (diskSessions.length > 0) {
               clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
               setStep(SuccessPage)
-            }}>
-              סיום העברה
-            </button>
-          ) : (
-            <button className="btn btn-secondary" onClick={() => {
+            } else {
               clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
               setStep(SetUsernamePage)
-            }}>
-              ← חזור
-            </button>
-          )}
-
-          <button
-            className="btn btn-primary btn-lg"
-            onClick={handleContinue}
-            disabled={!selectedLetter}
-          >
-            המשך ←
-          </button>
-        </div>
+            }
+          }}
+          backLabel={diskSessions.length > 0 ? 'סיום העברה' : '→ חזור'}
+          onForward={handleContinue}
+          forwardDisabled={!selectedLetter}
+        />
       </div>
     </div>
   )

@@ -16,7 +16,7 @@
 
 .custom-select-chevron {
     font-size: 0.7rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     transition: transform var(--t-fast);
 }
 

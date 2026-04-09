@@ -8,6 +8,7 @@ import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function SelectFilesPage(): JSX.Element {
   const { setStep, currentDisk, setCurrentDisk, currentSubfolder, userName, sessionId } = useWizardStore()
@@ -249,7 +250,7 @@ export function SelectFilesPage(): JSX.Element {
           <p
             style={{
               textAlign: 'center',
-              color: 'var(--text-muted)',
+              color: 'var(--text-secondary)',
               padding: '2rem',
               fontSize: '.9rem'
             }}
@@ -339,32 +340,15 @@ export function SelectFilesPage(): JSX.Element {
           </>
         )}
 
-        <div className="action-row" style={{ justifyContent: 'space-between' }}>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => {
-              clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
-              setStep(InsertDiskPage)
-            }}
-          >
-            ← חזור
-          </button>
-          <button
-            id="select-continue-btn"
-            className="btn btn-primary btn-lg"
-            disabled={selected.size === 0 || saving}
-            onClick={handleContinue}
-          >
-            {saving ? (
-              <>
-                <span className="spin">⟳</span> שומר...
-              </>
-            ) : (
-              <>המשך ←</>
-            )}
-          </button>
-        </div>
+        <NavigationOptions
+          onBack={() => {
+            clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
+            setStep(InsertDiskPage)
+          }}
+          onForward={handleContinue}
+          forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}
+          forwardDisabled={selected.size === 0 || saving}
+        />
       </div>
     </div>
   )

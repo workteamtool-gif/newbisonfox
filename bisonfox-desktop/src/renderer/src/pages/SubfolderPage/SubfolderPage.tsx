@@ -5,6 +5,7 @@ import { JSX } from 'react'
 import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { clientLogger } from '@renderer/utils/logger'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function SubfolderPage(): JSX.Element {
   const { setStep, currentSubfolder, setCurrentSubfolder, userName, sessionId, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
@@ -61,9 +62,10 @@ export function SubfolderPage(): JSX.Element {
               id="subfolder-input"
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
-              placeholder="לדוגמה project_alpha"
+              placeholder="For example: project_alpha"
               maxLength={20}
               value={subfolder}
+              style={{ direction: 'ltr' }}
               onChange={(e) => {
                 setSubfolder(e.target.value.slice(0, 20))
                 setError('')
@@ -73,21 +75,13 @@ export function SubfolderPage(): JSX.Element {
             {error && <span className="form-msg error">⚠ {error}</span>}
           </div>
 
-          <div className="action-row" style={{ justifyContent: 'space-between' }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => {
-                clientLogger.info('SubfolderPage', `The user: ${userName} in session: ${sessionId} navigating back to InsertDiskPage`)
-                setStep(InsertDiskPage)
-              }}
-            >
-              ← חזור
-            </button>
-            <button type="submit" className="btn btn-primary btn-lg">
-              הבא: בחירת קבצים ←
-            </button>
-          </div>
+
+          <NavigationOptions
+            onBack={() => {
+              clientLogger.info('SubfolderPage', `The user: ${userName} in session: ${sessionId} navigating back to InsertDiskPage`)
+              setStep(InsertDiskPage)
+            }}
+          />
         </form>
       </div>
       {showKeyboard && (

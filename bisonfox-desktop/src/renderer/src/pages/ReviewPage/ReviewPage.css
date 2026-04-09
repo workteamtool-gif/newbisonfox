@@ -20,7 +20,7 @@
 }
 
 .review-disk-count {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: .78rem;
 }
 
@@ -35,5 +35,5 @@
 .review-empty-state {
     padding: 2rem;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }

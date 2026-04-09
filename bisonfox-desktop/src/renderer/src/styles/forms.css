@@ -27,7 +27,7 @@
 }
 
 .form-input::placeholder {
-    color: var(--text-muted);
+    color: var(--text-secondary);
 }
 
 .form-input:focus {

@@ -62,7 +62,7 @@ export function PaginationBar({
             }
           }}
         >
-          <span className="pagination-text">Page </span>
+          <span className="pagination-text">Page</span>
           <input
             type="number"
             min={1}
@@ -73,7 +73,7 @@ export function PaginationBar({
             className="pagination-jump-input"
             disabled={loading}
           />
-          <span className="pagination-text"> of {totalPages}</span>
+          <span className="pagination-text">of {totalPages}</span>
         </form>
       )}
 

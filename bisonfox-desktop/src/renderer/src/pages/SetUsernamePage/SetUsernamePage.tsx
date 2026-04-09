@@ -7,6 +7,7 @@ import { PREFIX_OPTIONS } from '@renderer/Constants/prefixOptions'
 import { JSX } from 'react'
 import { InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
@@ -79,9 +80,10 @@ export function SetUsernamePage(): JSX.Element {
               id="name-input"
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
-              placeholder="לדוגמה bison"
+              placeholder="For example: bison"
               maxLength={20}
               value={name}
+              style={{ direction: 'ltr' }}
               onChange={(e) => {
                 setName(e.target.value.slice(0, 20))
                 setError('')
@@ -91,34 +93,21 @@ export function SetUsernamePage(): JSX.Element {
             {error && <span className="form-msg error">⚠ {error}</span>}
           </div>
 
-          {name.trim() && (
-            <div className="username-preview">
-              שם המשתמש סופי: <strong>{fullName}</strong>
-            </div>
+          {name.trim() && (<>
+            <div style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
+            <div className="username-preview" style={{ direction: 'ltr' }}>
+              <strong>{fullName}</strong>
+            </div></>
           )}
 
-          <div className="action-row" style={{ justifyContent: 'space-between' }}>
-            <button type="button" className="btn btn-secondary" onClick={() => {
+          <NavigationOptions
+            onBack={() => {
               clientLogger.info('SetUsernamePage', 'User clicked back button, resetting data')
               reset()
-            }}>
-              ← חזור
-            </button>
-            <button
-              type="submit"
-              id="name-submit-btn"
-              className="btn btn-primary btn-lg"
-              disabled={loading || !name.trim()}
-            >
-              {loading ? (
-                <>
-                  <span className="spin">⟳</span> בודק...
-                </>
-              ) : (
-                <>המשך ←</>
-              )}
-            </button>
-          </div>
+            }}
+            forwardLabel={loading ? <><span className="spin">⟳</span> בודק...</> : <>המשך ←</>}
+            forwardDisabled={loading || !name.trim()}
+          />
         </form>
       </div>
 

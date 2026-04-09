@@ -33,7 +33,7 @@ export function CancelModal({
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
             Cancel Session?
           </h2>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.5 }}>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.5 }}>
             Are you sure you want to abandon this session? All of your selected files, folders, and
             progress will be lost.
           </p>

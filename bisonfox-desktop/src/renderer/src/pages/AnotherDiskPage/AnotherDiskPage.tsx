@@ -76,7 +76,7 @@ export function AnotherDiskPage(): React.JSX.Element {
                 ))}
               </ul>
               {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
-                <div style={{ marginTop: '0.3rem', fontStyle: 'italic' }}>
+                <div style={{ marginTop: '0.3rem', fontStyle: 'italic', direction: 'rtl' }}>
                   ...ועוד {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} (רק {MAX_FAILED_FILES_TO_SHOW} הכשלונות הראשונים מוצגים).
                 </div>
               )}

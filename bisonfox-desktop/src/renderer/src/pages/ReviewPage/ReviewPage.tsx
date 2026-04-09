@@ -9,6 +9,7 @@ import './ReviewPage.css'
 import { JSX } from 'react'
 import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
+import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function ReviewPage(): JSX.Element | null {
   const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName, currentSubfolder } = useWizardStore()
@@ -187,31 +188,16 @@ export function ReviewPage(): JSX.Element | null {
 
         <div className="divider" />
 
-        <div className="action-row" style={{ justifyContent: 'space-between' }}>
-          <button
-            className="btn btn-secondary"
-            onClick={() => {
-              clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
-              setStep(SelectFilesPage)
-            }}
-            disabled={saving}
-          >
-            ← חזור
-          </button>
-          <button
-            className="btn btn-primary btn-lg"
-            onClick={handleStartUpload}
-            disabled={selected.size === 0 || saving}
-          >
-            {saving ? (
-              <>
-                <span className="spin">⟳</span> שומר...
-              </>
-            ) : (
-              <>התחל העלאה ←</>
-            )}
-          </button>
-        </div>
+        <NavigationOptions
+          onBack={() => {
+            clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
+            setStep(SelectFilesPage)
+          }}
+          backDisabled={saving}
+          onForward={handleStartUpload}
+          forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>התחל העלאה ←</>}
+          forwardDisabled={selected.size === 0 || saving}
+        />
       </div>
     </div>
   )

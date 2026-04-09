@@ -84,9 +84,10 @@
 }
 
 .success-countdown {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 0.85rem;
     margin-bottom: 1rem;
+    direction: rtl;
 }
 
 .success-countdown strong {

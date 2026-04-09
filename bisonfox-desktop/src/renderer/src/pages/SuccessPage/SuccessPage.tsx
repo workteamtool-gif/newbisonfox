@@ -7,8 +7,8 @@ import { JSX } from 'react'
 export function SuccessPage(): JSX.Element {
   const { reset, userName } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
-  const [snapshot] = useState(diskSessions) // Fixes the stats resetting to 0 mid-transition
-  const [countdown, setCountdown] = useState(15)
+  const [snapshot] = useState(diskSessions)
+  const [countdown, setCountdown] = useState(1115)
 
   const totalFiles = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
@@ -25,7 +25,7 @@ export function SuccessPage(): JSX.Element {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
           clearInterval(interval)
-          reset() // reset will push step back to WelcomePage
+          reset()
         }
         return currentCountdown - 1
       })
@@ -38,14 +38,13 @@ export function SuccessPage(): JSX.Element {
       <div className="glass-card success-card">
         <img src={likingImage} alt="Upload Successful" className="success-image" />
 
-        <p className="page-title">All Data Uploaded!</p>
+        <p className="page-title">הכל הועלה בהצלחה!</p>
         <p className="page-subtitle">
-          Great work, <strong>{userName}</strong>! All <strong>{totalFiles}</strong> files from{' '}
-          <strong>{snapshot.length}</strong> disk{snapshot.length !== 1 ? 's' : ''} have
-          been successfully uploaded!
+          עבודה יפה<strong>{userName}</strong>! כל <strong>{totalFiles}</strong> הקבצים מ{' '}
+          <strong>{snapshot.length}</strong> הדיסקים הועלו בהצלחה!
           {destinationUserEndpoint && (
             <span>
-              {' '}You can see the files in the folder: <strong>{destinationUserEndpoint}\{userName}</strong>
+              {' '}ניתן לראות את הקבצים בתיקיה: <strong>{destinationUserEndpoint}\{userName}</strong>
             </span>
           )}
         </p>
@@ -95,7 +94,7 @@ export function SuccessPage(): JSX.Element {
         )}
 
         <p className="success-countdown">
-          Returning to home in <strong>{countdown}</strong>s…
+          חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
         </p>
 
         <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={reset}>

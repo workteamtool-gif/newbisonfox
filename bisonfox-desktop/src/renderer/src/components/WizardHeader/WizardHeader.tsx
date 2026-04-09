@@ -33,7 +33,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
             <div
               style={{
                 fontSize: '0.85rem',
-                color: 'var(--text-muted)',
+                color: 'var(--text-secondary)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '1vh'
@@ -69,7 +69,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
               <div
                 className={`step-dot ${status}`}
                 title={phase.label}
-                style={{ position: 'relative', padding: '0 5vh' }}
+                style={{ position: 'relative', margin: '0 5vh' }}
               >
                 {status === 'done' ? '✓' : i + 1}
                 <span
@@ -79,7 +79,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
                     left: '50%',
                     transform: 'translateX(-50%)',
                     fontSize: '0.7rem',
-                    color: status === 'active' ? 'var(--text-primary)' : 'var(--text-muted)',
+                    color: status === 'active' ? 'var(--text-primary)' : 'var(--text-secondary)',
                     whiteSpace: 'nowrap',
                     fontWeight: status === 'active' ? 500 : 400
                   }}
