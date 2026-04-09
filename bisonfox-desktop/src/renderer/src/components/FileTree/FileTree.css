@@ -66,8 +66,8 @@
 
 /* --- Toggle & Icons --- */
 .tree-toggle {
-    width: 1vh;
-    height: 1vh;
+    width: 2vh;
+    height: 2vh;
     display: flex;
     align-items: center;
     justify-content: center;

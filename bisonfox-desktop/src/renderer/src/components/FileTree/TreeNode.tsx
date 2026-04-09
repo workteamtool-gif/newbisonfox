@@ -208,12 +208,12 @@ export function TreeNode({
         ref={rowRef}
         className={`tree-row ${checked ? 'selected' : ''} ${highlighted ? 'highlighted-node' : ''}`}
         style={{ paddingLeft: `${depth}vh` }}
-        onClick={() => onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck)}
+        onClick={handleExpand}
       >
-        <div className={`tree-checkbox ${checked ? 'checked' : ''}`} />
+        <div className={`tree-checkbox ${checked ? 'checked' : ''}`} onClick={(e) => { e.stopPropagation(); onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck) }} />
 
         {canExpand && (
-          <span className="tree-toggle" onClick={handleExpand}>
+          <span className="tree-toggle">
             {loading && loadedChildren === null ? (
               <span className="spin" style={{ fontSize: '0.75rem' }}>
                 ⟳
