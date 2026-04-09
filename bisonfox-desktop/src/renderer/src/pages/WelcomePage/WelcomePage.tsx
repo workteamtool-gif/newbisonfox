@@ -13,8 +13,7 @@ export function WelcomePage(): JSX.Element {
 
         <h1 className="welcome-title">BisonFox</h1>
         <p className="welcome-sub">
-          Securely transfer files from physical drives to your system. Multi-disk support, real-time
-          progress, and clean file management.
+          ברוכים הבאים לשועל ברזל החדש! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>
 
         <button
@@ -22,7 +21,7 @@ export function WelcomePage(): JSX.Element {
           className="btn btn-primary btn-xl"
           onClick={() => setStep(SetUsernamePage)}
         >
-          ⚡ Click to Start Uploading
+          ⚡ לחץ כדי להתחיל
         </button>
       </div>
     </div>

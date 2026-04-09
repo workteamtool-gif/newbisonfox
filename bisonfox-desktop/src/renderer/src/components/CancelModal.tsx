@@ -28,16 +28,7 @@ export function CancelModal({
           animation: 'fadeIn 0.2s ease-out'
         }}
       >
-        <div
-          className="glass-card"
-          style={{
-            maxWidth: '400px',
-            width: '90%',
-            textAlign: 'center',
-            margin: 0,
-            boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
-          }}
-        >
+        <div className="glass-card">
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
             Cancel Session?

@@ -57,7 +57,6 @@ export function InsertDiskPage(): React.JSX.Element {
       setSessionId(newSessionId)
 
       setCurrentDisk({
-        driveLabel: drive.label || `Disk (${drive.letter})`,
         driveLetter: drive.letter,
         subfolder: '',
         selectedFiles: [],
@@ -65,7 +64,7 @@ export function InsertDiskPage(): React.JSX.Element {
       })
       clientLogger.info(
         'InsertDiskPage',
-        `For user: ${userName} in session: ${newSessionId} chose drive: ${drive.label} (${drive.letter})`
+        `For user: ${userName} in session: ${newSessionId} chose drive: ${drive.letter}`
       )
       setStep(SubfolderPage)
     } catch {
@@ -82,24 +81,22 @@ export function InsertDiskPage(): React.JSX.Element {
           <div className="pc-emoji">💻</div>
         </div>
 
-        <p className="page-title">Connect a Disk</p>
+        <p className="page-title">חבר כונן חיצוני</p>
         <p className="page-subtitle">
-          Please plug in your physical disk or USB drive. We&apos;ll find it for you automatically.
-        </p>
-
+          אנא חבר את הכונן החיצוני. אנו נמצא אותו באופן אוטומטי</p>
         <div className="form-group">
           <label
             className="form-label"
             style={{ display: 'flex', justifyContent: 'space-between' }}
           >
-            <span>Select Drive</span>
-            {loading && <span className="badge badge-info pulse">Scanning...</span>}
+            <span>בחר כונן</span>
+            {loading && <span className="badge badge-info pulse">סורק...</span>}
           </label>
 
           {drives.length === 0 && !loading ? (
             <div className="info-box">
               <span className="info-icon">ℹ️</span>
-              <div>Waiting for disk connection... Please plug in your drive.</div>
+              <div>ממתין לחיבור כונן... אנא חבר את הכונן.</div>
             </div>
           ) : (
             <div className="drive-list">
@@ -114,12 +111,12 @@ export function InsertDiskPage(): React.JSX.Element {
                   <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
                   <div className="drive-info">
                     <div className="drive-name">
-                      {drive.label} ({drive.letter})
+                      ({drive.letter})
                     </div>
                     <div className="drive-meta">
                       {drive.selectable
                         ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
-                        : drive.disabledReason || 'Not available'}
+                        : drive.disabledReason || <>לא זמין</>}
                     </div>
                   </div>
                   {drive.selectable && <div className="drive-check">✓</div>}
@@ -135,14 +132,14 @@ export function InsertDiskPage(): React.JSX.Element {
               clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
               setStep(SuccessPage)
             }}>
-              Finish Session
+              סיום העברה
             </button>
           ) : (
             <button className="btn btn-secondary" onClick={() => {
               clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
               setStep(SetUsernamePage)
             }}>
-              ← Back
+              ← חזור
             </button>
           )}
 
@@ -151,7 +148,7 @@ export function InsertDiskPage(): React.JSX.Element {
             onClick={handleContinue}
             disabled={!selectedLetter}
           >
-            Continue →
+            המשך ←
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 .pill-dot {
-    width: 5px;
-    height: 5px;
+    width: 0.7vh;
+    height: 0.7vh;
     border-radius: 50%;
     background: var(--accent);
 }

@@ -44,13 +44,12 @@ export class DiskService implements IDiskService {
             if (!hiddenDrives.includes(upperDeviceId)) {              
             const driveType = parseInt(rawDrive.DriveType) || 0
             const size = parseInt(rawDrive.Size) || 0
-            const label = rawDrive.VolumeName ? rawDrive.VolumeName.trim() : ''
-
+            
             let selectable = true
             let disabledReason: string | undefined
 
             // Ensure trailing slash for Node.js fs compatibility
-            const letter = rawDeviceId.endsWith('\\') ? rawDeviceId : rawDeviceId + '\\'
+            const letter = upperDeviceId.endsWith('\\') ? upperDeviceId : upperDeviceId + '\\'
 
             // 2- Removable: Removable media drives, such as floppy drives or USB flash drives.
             // 3 - Fixed: Fixed media drives, such as internal hard drives (HDD or SSD).
@@ -67,7 +66,6 @@ export class DiskService implements IDiskService {
             }
             drives.push({
               letter,
-              label: label ? `${label} (${rawDeviceId})` : `Local Disk (${rawDeviceId})`,
               totalSize: size,
               selectable,
               disabledReason

@@ -7,7 +7,7 @@ import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKey
 import { clientLogger } from '@renderer/utils/logger'
 
 export function SubfolderPage(): JSX.Element {
-  const { setStep, currentSubfolder, setCurrentSubfolder, currentDisk, userName, sessionId, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
+  const { setStep, currentSubfolder, setCurrentSubfolder, userName, sessionId, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
   useDriveMonitor()
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
@@ -26,7 +26,7 @@ export function SubfolderPage(): JSX.Element {
     e.preventDefault()
     const trimmed = subfolder.trim()
     if (trimmed && !/^[a-zA-Z0-9\s-_]+$/.test(trimmed)) {
-      setError('Name can only contain letters, numbers, spaces, dashes, and underscores.')
+      setError('השם יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקווים תחתונים.')
       return
     }
     setCurrentSubfolder(trimmed)
@@ -44,10 +44,9 @@ export function SubfolderPage(): JSX.Element {
   return (
     <>
       <div className="glass-card">
-        <p className="page-title">Name this Disk&apos;s folder</p>
+        <p className="page-title">תן שם לתיקיית הכונן</p>
         <p className="page-subtitle">
-          Specify a subfolder name for the data from <strong>{currentDisk?.driveLabel}</strong>. The
-          data will be uploaded to: <br />
+          המסלול לנתונים ייראה כך: <br />
           <code style={{ fontSize: '0.8rem', color: 'var(--accent)' }}>
             {destinationUserEndpoint}\{userName}\{trimmedSubfolder}
           </code>
@@ -56,13 +55,13 @@ export function SubfolderPage(): JSX.Element {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="subfolder-input">
-              Subfolder Name (Optional)
+              שם תת-תיקייה (אופציונלי)
             </label>
             <input
               id="subfolder-input"
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
-              placeholder="e.g. project_alpha"
+              placeholder="לדוגמה project_alpha"
               maxLength={20}
               value={subfolder}
               onChange={(e) => {
@@ -74,7 +73,7 @@ export function SubfolderPage(): JSX.Element {
             {error && <span className="form-msg error">⚠ {error}</span>}
           </div>
 
-          <div className="action-row">
+          <div className="action-row" style={{ justifyContent: 'space-between' }}>
             <button
               type="button"
               className="btn btn-secondary"
@@ -83,10 +82,10 @@ export function SubfolderPage(): JSX.Element {
                 setStep(InsertDiskPage)
               }}
             >
-              ← Back
+              ← חזור
             </button>
             <button type="submit" className="btn btn-primary btn-lg">
-              Next: Select Files →
+              הבא: בחירת קבצים ←
             </button>
           </div>
         </form>

@@ -3,6 +3,7 @@
     overflow-y: auto;
     padding-right: 4px;
     margin-bottom: 0.5rem;
+    direction: ltr;
 }
 
 .drive-list::-webkit-scrollbar {

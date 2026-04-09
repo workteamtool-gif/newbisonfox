@@ -1,6 +1,5 @@
 export interface DiskSession {
-  driveLabel: string
-  driveLetter?: string
+  driveLetter: string
   subfolder?: string
   selectedFiles: string[]
   excludedFiles?: string[]

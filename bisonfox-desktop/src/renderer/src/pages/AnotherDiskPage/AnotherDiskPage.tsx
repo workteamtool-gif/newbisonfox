@@ -30,14 +30,14 @@ export function AnotherDiskPage(): React.JSX.Element {
   return (
     <div className="wizard-layout">
       <div className="glass-card" style={{ textAlign: 'center' }}>
-        <p className="page-title">Another Disk?</p>
+        <p className="page-title">כונן נוסף?</p>
 
         <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
-          Awesome! You&apos;ve successfully processed the previous disk.
+          נהדר! סיימת לעבד את הכונן הקודם בהצלחה.
         </p>
 
         <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
-          Summary of all of the sessions:
+          סיכום של כל ההעברות:
         </p>
 
         <div className="stats-dashboard another-disk-stats">
@@ -48,7 +48,7 @@ export function AnotherDiskPage(): React.JSX.Element {
             <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
               {diskSessions.length}
             </div>
-            <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
+            <div className="stat-lbl">העברות שעובדו</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
@@ -57,34 +57,34 @@ export function AnotherDiskPage(): React.JSX.Element {
             <div className="stat-val" style={{ color: 'var(--accent-green)', fontSize: '1.8rem' }}>
               {totalFiles.toLocaleString()}
             </div>
-            <div className="stat-lbl">Total Files Uploaded</div>
+            <div className="stat-lbl">סה"כ קבצים שהועלו</div>
           </div>
         </div>
 
         {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">
             <h4 className="failed-files-title">
-              ⚠️ {failedCountTotal} file(s) could not be copied
+              ⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים
             </h4>
             <div className="failed-files-list" style={{}}>
               <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
                 {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
                   <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem' }}>
                     <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
-                    <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
+                    <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>סיבה: {f.reason}</div>
                   </li>
                 ))}
               </ul>
               {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
                 <div style={{ marginTop: '0.3rem', fontStyle: 'italic' }}>
-                  ...and {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
+                  ...ועוד {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} (רק {MAX_FAILED_FILES_TO_SHOW} הכשלונות הראשונים מוצגים).
                 </div>
               )}
             </div>
           </div>
         )}
 
-        <h3 className="another-disk-question">Do you want to add another disk?</h3>
+        <h3 className="another-disk-question">האם תרצה להוסיף כונן נוסף?</h3>
 
         <div className="choice-row">
           <div
@@ -96,8 +96,8 @@ export function AnotherDiskPage(): React.JSX.Element {
             onKeyDown={(e) => e.key === 'Enter' && handleYes()}
           >
             <span className="choice-emoji">💿</span>
-            <span className="choice-label">Yes, add another</span>
-            <span className="choice-sub">Insert another disk to continue</span>
+            <span className="choice-label">כן, הוסף עוד כונן</span>
+            <span className="choice-sub">חבר כונן נוסף כדי להמשיך</span>
           </div>
 
           <div
@@ -109,8 +109,8 @@ export function AnotherDiskPage(): React.JSX.Element {
             onKeyDown={(e) => e.key === 'Enter' && handleNo()}
           >
             <span className="choice-emoji">✅</span>
-            <span className="choice-label">No, I&apos;m done</span>
-            <span className="choice-sub">Proceed to success page</span>
+            <span className="choice-label">לא, סיימתי</span>
+            <span className="choice-sub">עבור לעמוד הסיום</span>
           </div>
         </div>
       </div>

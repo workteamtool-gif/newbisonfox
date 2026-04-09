@@ -156,7 +156,8 @@ export function SelectFilesPage(): JSX.Element {
     if (!currentDisk || !query || loading) return
 
     setLoading(true)
-    useWizardStore.getState().setToast(`Searching drive for "${query}"...`, 'info')
+    setLoading(true)
+    useWizardStore.getState().setToast(`מחפש בכונן עבור "${query}"...`, 'info')
 
     try {
       const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
@@ -172,16 +173,16 @@ export function SelectFilesPage(): JSX.Element {
         )
         if (match) {
           setScrollToPath(match.path)
-          useWizardStore.getState().setToast(`Located "${match.name}"`, 'success')
+          useWizardStore.getState().setToast(`נמצא "${match.name}"`, 'success')
         } else {
-          useWizardStore.getState().setToast(`Found a match! Displaying page ${targetPage}.`, 'info')
+          useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
         }
       } else {
         const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
         if (deepMatch) {
           useWizardStore
             .getState()
-            .setToast(`Found it! Opening folder path now.`, 'success')
+            .setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           const expandedPages = deepMatch.pages
           const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
 
@@ -198,11 +199,11 @@ export function SelectFilesPage(): JSX.Element {
           setRootSearchQuery('')
           setScrollToPath(deepMatch.path)
         } else {
-          useWizardStore.getState().setToast(`We couldn't find any file matching that name on the drive.`, 'warning')
+          useWizardStore.getState().setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
         }
       }
     } catch {
-      useWizardStore.getState().setToast('Oops, an error occurred while searching.', 'error')
+      useWizardStore.getState().setToast('אופס, אירעה שגיאה במהלך החיפוש.', 'error')
     } finally {
       setLoading(false)
     }
@@ -231,17 +232,16 @@ export function SelectFilesPage(): JSX.Element {
 
   return (
     <div className="wizard-layout">
-      <div className="glass-card">
-        <p className="page-title">Select Files &amp; Folders</p>
+      <div className="glass-card" style={{ height: '80vh' }}>
+        <p className="page-title">בחירת קבצים ותיקיות</p>
         <p className="page-subtitle">
-          Choose what to copy from <strong>{currentDisk?.driveLabel}</strong>. Check items below —
-          selecting a folder includes all its contents on upload.
+          בחר מה להעתיק . סמן פריטים למטה - בחירת תיקייה כוללת את כל תוכנה בהעלאה.
         </p>
 
         <div className="info-box">
           <span className="info-icon">ℹ️</span>
           <span>
-            {selectedCount} item{selectedCount !== 1 ? 's' : ''} selected
+            נבחרו {selectedCount} פריטים
           </span>
         </div>
 
@@ -254,7 +254,7 @@ export function SelectFilesPage(): JSX.Element {
               fontSize: '.9rem'
             }}
           >
-            <span className="spin">⟳</span> Reading drive…
+            <span className="spin">⟳</span> קורא כונן...
           </p>
         ) : (
           <>
@@ -275,7 +275,7 @@ export function SelectFilesPage(): JSX.Element {
 
             <div
               className="tree-pagination-bar"
-              style={{ margin: '1rem 0', justifyContent: 'center' }}
+              style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
             >
               <button
                 className="btn btn-secondary pagination-btn"
@@ -296,7 +296,7 @@ export function SelectFilesPage(): JSX.Element {
                   }
                 }}
               >
-                <span className="pagination-text">Page </span>
+                <span className="pagination-text">Page</span>
                 <input
                   type="number"
                   min={1}
@@ -307,7 +307,7 @@ export function SelectFilesPage(): JSX.Element {
                   className="pagination-jump-input"
                   disabled={loading}
                 />
-                <span className="pagination-text"> of {rootTotalPages}</span>
+                <span className="pagination-text">{rootTotalPages}</span>
               </form>
 
               <button
@@ -318,7 +318,7 @@ export function SelectFilesPage(): JSX.Element {
                 Next
               </button>
 
-              <form onSubmit={handleSearchRootSubmit} className="pagination-search-form">
+              <form onSubmit={handleSearchRootSubmit} className="pagination-search-form" style={{ direction: 'ltr' }}>
                 <input
                   type="text"
                   placeholder="Jump to file..."
@@ -339,7 +339,7 @@ export function SelectFilesPage(): JSX.Element {
           </>
         )}
 
-        <div className="action-row">
+        <div className="action-row" style={{ justifyContent: 'space-between' }}>
           <button
             type="button"
             className="btn btn-secondary"
@@ -348,7 +348,7 @@ export function SelectFilesPage(): JSX.Element {
               setStep(InsertDiskPage)
             }}
           >
-            ← Back
+            ← חזור
           </button>
           <button
             id="select-continue-btn"
@@ -358,10 +358,10 @@ export function SelectFilesPage(): JSX.Element {
           >
             {saving ? (
               <>
-                <span className="spin">⟳</span> Saving…
+                <span className="spin">⟳</span> שומר...
               </>
             ) : (
-              'Continue →'
+              <>המשך ←</>
             )}
           </button>
         </div>

@@ -33,7 +33,7 @@ export function SetUsernamePage(): JSX.Element {
     try {
       const result = await sessionApi.validateName(fullName)
       if (!result.valid) {
-        setError(result.message ?? 'Invalid name.')
+        setError('שם המשתמש אינו תקין. הוא חייב לכלול עד 20 תווים (אותיות באנגלית, מספרים וקו תחתון בלבד)')
         setLoading(false)
         return
       }
@@ -49,16 +49,15 @@ export function SetUsernamePage(): JSX.Element {
   return (
     <>
       <div className="glass-card">
-        <p className="page-title">What&apos;s your username?</p>
+        <p className="page-title">מה שם המשתמש שלך?</p>
         <p className="page-subtitle">
-          Enter your username to begin. It must contain only letters and underscores (maximum 20
-          characters).
+          הזן שם משתמש כדי להתחיל. עליו להכיל רק אותיות, מספרים וקווים תחתונים (מקסימום 20 תווים).
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">Prefix</label>
-            <div className="prefix-chips">
+            <label className="form-label" style={{ fontSize: '2vh' }}>קידומת:</label>
+            <div className="prefix-chips" style={{ direction: 'ltr' }}>
               {PREFIX_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
@@ -74,13 +73,13 @@ export function SetUsernamePage(): JSX.Element {
 
           <div className="form-group">
             <label className="form-label" htmlFor="name-input">
-              Name
+              שם
             </label>
             <input
               id="name-input"
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
-              placeholder="e.g. bison"
+              placeholder="לדוגמה bison"
               maxLength={20}
               value={name}
               onChange={(e) => {
@@ -94,7 +93,7 @@ export function SetUsernamePage(): JSX.Element {
 
           {name.trim() && (
             <div className="username-preview">
-              Final username: <strong>{fullName}</strong>
+              שם המשתמש סופי: <strong>{fullName}</strong>
             </div>
           )}
 
@@ -103,7 +102,7 @@ export function SetUsernamePage(): JSX.Element {
               clientLogger.info('SetUsernamePage', 'User clicked back button, resetting data')
               reset()
             }}>
-              ← Back
+              ← חזור
             </button>
             <button
               type="submit"
@@ -113,10 +112,10 @@ export function SetUsernamePage(): JSX.Element {
             >
               {loading ? (
                 <>
-                  <span className="spin">⟳</span> Validating…
+                  <span className="spin">⟳</span> בודק...
                 </>
               ) : (
-                'Continue →'
+                <>המשך ←</>
               )}
             </button>
           </div>

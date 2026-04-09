@@ -6,6 +6,7 @@
     justify-content: center;
     padding: 0 24px 5vh;
     box-sizing: border-box;
+    direction: ltr;
 }
 
 .vk-container {

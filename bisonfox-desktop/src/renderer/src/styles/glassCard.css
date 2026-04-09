@@ -13,10 +13,6 @@
     transition: max-width var(--t-base);
 }
 
-.glass-card.glass-card--wide {
-    max-width: 1920px;
-}
-
 .wizard-layout--with-keyboard .glass-card {
     padding: 1.5rem 2.5rem;
 }

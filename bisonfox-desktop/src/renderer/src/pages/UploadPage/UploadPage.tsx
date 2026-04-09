@@ -37,10 +37,10 @@ export function UploadPage(): JSX.Element | null {
 
   const phaseLabel =
     phase === 'preparing'
-      ? 'Preparing…'
+      ? <>מכין...</>
       : phase === 'scanning'
-        ? `Scanning… ${totalDiscovered.toLocaleString()} files found`
-        : `Copying ${doneTotal.toLocaleString()} / ${totalDiscovered.toLocaleString()} files`
+        ? <>סורק... נמצאו {totalDiscovered.toLocaleString()} קבצים</>
+        : <>מעתיק {doneTotal.toLocaleString()} / {totalDiscovered.toLocaleString()} קבצים</>
 
   // Show failed files review when upload is done AND there are failures
   const showFailedReview = uploadDone && failedFilesList.length > 0
@@ -54,7 +54,7 @@ export function UploadPage(): JSX.Element | null {
         {uploadError && (
           <>
             <p className="page-title" style={{ color: 'var(--accent-red)' }}>
-              Upload Error
+              שגיאה בהעתקה
             </p>
             <div
               className="info-box"
@@ -64,7 +64,7 @@ export function UploadPage(): JSX.Element | null {
             </div>
             <div className="action-row">
               <button className="btn btn-secondary" onClick={() => setStep(ReviewPage)}>
-                ← Back to Review
+                חזרה לבדיקה ←
               </button>
             </div>
           </>
@@ -75,11 +75,8 @@ export function UploadPage(): JSX.Element | null {
         {
           !uploadError && phase === 'ready' && (
             <div style={{ textAlign: 'center' }}>
-              <p className="page-title">Ready to Copy</p>
-              <p className="page-subtitle">
-                You&apos;re about to copy files from <strong>{currentDisk.driveLabel}</strong>.
+              <p className="page-title">מוכן להעתקה
               </p>
-
               <div
                 className="info-box"
                 style={{
@@ -95,15 +92,16 @@ export function UploadPage(): JSX.Element | null {
                   <span style={{ color: 'var(--text-muted)' }}>
                     <span className="spin">⟳</span>
                     {preCalcTotal
-                      ? ` Found ${preCalcTotal.toLocaleString()} files so far...`
-                      : ' Counting total files...'}
+                      ? ` נמצאו ${preCalcTotal.toLocaleString()} קבצים עד כה...`
+                      : ' סופרים קבצים...'}
                   </span>
                 ) : (
                   <>
                     <span style={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--accent)' }}>
                       {preCalcTotal?.toLocaleString()}
                     </span>
-                    <span style={{ color: 'var(--text-muted)' }}>Files to be copied</span>
+                    <span style={{ color: 'var(--text-muted)' }}>
+                      קבצים להעתקה</span>
                   </>
                 )}
               </div>
@@ -127,17 +125,17 @@ export function UploadPage(): JSX.Element | null {
             <div style={{ height: '720px' }}>
               <p className="page-title">
                 {showFailedReview
-                  ? '⚠️ Some Files Failed'
+                  ? <>⚠️ חלק מהקבצים נכשלו</>
                   : uploadDone
-                    ? '✅ Upload Complete!'
-                    : '🚀 Uploading Files…'}
+                    ? <>✅ ההעלאה הושלמה!</>
+                    : <>🚀 מעלה קבצים...</>}
               </p>
               <p className="page-subtitle">
                 {showFailedReview
                   ? `${completedCount.toLocaleString()} files were copied successfully, but ${failedCount} file(s) could not be copied.`
                   : uploadDone
-                    ? `Uploaded ${completedCount.toLocaleString()} files to ${currentDisk.subfolder}`
-                    : `Copying files from ${currentDisk.driveLabel} to ${currentDisk.subfolder}`}
+                    ? `הועלו ${completedCount.toLocaleString()} קבצים ל- ${currentDisk.subfolder}`
+                    : `מעתיק קבצים מ- ${currentDisk.driveLetter} ל- ${currentDisk.subfolder}`}
               </p>
 
               {/* Status Video — hide during failed review */}
@@ -207,7 +205,7 @@ export function UploadPage(): JSX.Element | null {
                   <div className="stat-val">
                     {totalDiscovered > 0 ? totalDiscovered.toLocaleString() : shown}
                   </div>
-                  <div className="stat-lbl">Total Files</div>
+                  <div className="stat-lbl">סה"כ קבצים</div>
                 </div>
                 <div className="stat-card">
                   <div className="stat-val">{completedCount.toLocaleString()}</div>
@@ -220,7 +218,7 @@ export function UploadPage(): JSX.Element | null {
                   >
                     {failedCount > 0 ? failedCount.toLocaleString() : '—'}
                   </div>
-                  <div className="stat-lbl">Failed</div>
+                  <div className="stat-lbl">נכשלו</div>
                 </div>
                 <div className="stat-card">
                   <div className="stat-val">{overallPercentage}%</div>
@@ -251,7 +249,7 @@ export function UploadPage(): JSX.Element | null {
                       color: 'var(--accent-red)'
                     }}
                   >
-                    ⚠️ {failedCount} file(s) could not be copied
+                    ⚠️ לא ניתן היה להעתיק {failedCount} קבצים
                   </h4>
                   <div
                     style={{
@@ -274,7 +272,7 @@ export function UploadPage(): JSX.Element | null {
                               opacity: 0.85
                             }}
                           >
-                            {f.reason}
+                            סיבה: {f.reason}
                           </div>
                         </li>
                       ))}
@@ -287,7 +285,7 @@ export function UploadPage(): JSX.Element | null {
                           marginTop: '0.3rem'
                         }}
                       >
-                        …and {failedCount - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
+                        ...ועוד {failedCount - MAX_FAILED_FILES_TO_SHOW} (רק {MAX_FAILED_FILES_TO_SHOW} הכשלונות הראשונים מוצגים).
                       </div>
                     )}
                   </div>
@@ -302,10 +300,10 @@ export function UploadPage(): JSX.Element | null {
                     }}
                   >
                     <button className="btn btn-secondary" onClick={skipFailed}>
-                      Skip Failed Items →
+                      דלג על פריטים שנכשלו ←
                     </button>
                     <button className="btn btn-primary" onClick={retryFailed}>
-                      🔄 Retry Failed Items
+                      🔄 נסה שוב פריטים שנכשלו
                     </button>
                   </div>
                 </div>
@@ -322,8 +320,7 @@ export function UploadPage(): JSX.Element | null {
                     fontSize: '0.85rem'
                   }}
                 >
-                  ⚠️ <strong>{failedCount.toLocaleString()} file(s) failed</strong> — skipped to keep
-                  the copy running.
+                  ⚠️ <strong>{failedCount.toLocaleString()} קבצים נכשלו</strong> — דולגו כדי להמשיך בהעתקה.
                 </div>
               )}
 
@@ -342,7 +339,7 @@ export function UploadPage(): JSX.Element | null {
                   <div className="progress-track" style={{ height: '10px' }}>
                     <div
                       className="progress-fill"
-                      style={{ width: `${overallPercentage}%`, transition: 'width 0.3s ease' }}
+                      style={{ width: `${overallPercentage}%` }}
                     />
                   </div>
                 </div>

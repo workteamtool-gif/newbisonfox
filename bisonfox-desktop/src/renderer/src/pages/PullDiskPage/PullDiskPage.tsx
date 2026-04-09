@@ -22,21 +22,20 @@ export function PullDiskPage(): JSX.Element | null {
   return (
     <div className="wizard-layout">
       <div className="glass-card" style={{ textAlign: 'center' }}>
-        <p className="page-title">Pull the Disk</p>
+        <p className="page-title">הוצאת הכונן</p>
         <p className="page-subtitle">
-          All <strong>{completedFiles.toLocaleString()}</strong> files from{' '}
-          <strong>{currentDisk.driveLabel}</strong> have been noted. Please safely remove the drive
-          now.
+          כל <strong>{completedFiles.toLocaleString()}</strong> הקבצים מ-{' '}
+          <strong>{currentDisk.driveLabel}</strong> נרשמו. אנא הסר את הכונן בבטחה כעת.
         </p>
 
         <div className="pull-disk-visual">
           <img src={unplugImage} alt="Unplug Drive" className="pull-disk-image" />
-          <span className="pull-disk-label">You may now safely unplug</span>
+          <span className="pull-disk-label">ניתן כעת לנתק בבטחה</span>
         </div>
 
         <div className="action-row" style={{ justifyContent: 'center' }}>
           <button className="btn btn-primary btn-lg" onClick={handleContinue}>
-            I&apos;ve Unplugged It →
+            ניתקתי את הכונן  →
           </button>
         </div>
       </div>

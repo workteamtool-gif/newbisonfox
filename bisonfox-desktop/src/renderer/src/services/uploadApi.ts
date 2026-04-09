@@ -49,13 +49,13 @@ export const uploadApi = {
 
   addDiskFiles: async (
     sessionId: string,
-    driveLabel: string,
+    driveLetter: string,
     selectedFiles: string[],
     excludedFiles: string[]
   ) => {
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.ADD_DISK_FILES, {
       sessionId,
-      driveLabel,
+      driveLetter,
       selectedFiles,
       excludedFiles
     })

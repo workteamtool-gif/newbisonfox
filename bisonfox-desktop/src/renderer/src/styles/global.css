@@ -2,8 +2,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 96px;
-    height: 96px;
+    width: 5vh;
+    height: 5vh;
     border-radius: 28px;
     background: var(--grad-primary);
     font-size: 3rem;

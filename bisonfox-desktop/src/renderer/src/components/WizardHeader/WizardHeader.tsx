@@ -24,11 +24,11 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
           display: 'flex',
           justifyContent: 'space-between',
           width: '100%',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
         <div className="wizard-logo">BisonFox</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1vh' }}>
           {userName && (
             <div
               style={{
@@ -36,7 +36,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
                 color: 'var(--text-muted)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '1vh'
               }}
             >
               <span className="pill-dot" style={{ background: 'var(--accent-green)' }}></span>
@@ -46,7 +46,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
           <button
             className="btn btn-secondary"
             style={{
-              padding: '4px 12px',
+              padding: '0.5vh 1vh',
               fontSize: '0.8rem',
               background: 'transparent',
               border: '1px solid rgba(255,100,100,0.3)',
@@ -55,7 +55,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
             onClick={onCancelClick}
             title="Cancel Session & Return Home"
           >
-            Cancel Session
+            ביטול העברה
           </button>
         </div>
       </div>
@@ -69,7 +69,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
               <div
                 className={`step-dot ${status}`}
                 title={phase.label}
-                style={{ position: 'relative' }}
+                style={{ position: 'relative', padding: '0 5vh' }}
               >
                 {status === 'done' ? '✓' : i + 1}
                 <span

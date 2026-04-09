@@ -34,7 +34,7 @@ export function PaginationBar({
   return (
     <div
       className="tree-row tree-pagination-bar"
-      style={{ paddingLeft: `${(depth + 1) * 16 + 10}px` }}
+      style={{ paddingLeft: `${depth}vh`, direction: 'ltr' }}
     >
       <button
         className="btn btn-secondary pagination-btn"

@@ -150,7 +150,7 @@ export function TreeNode({
 
   useEffect(() => {
     if (scrollToPath && node.path === scrollToPath && rowRef.current) {
-      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
       setHighlighted(true)
       if (onScrolled) onScrolled()
 
@@ -164,7 +164,7 @@ export function TreeNode({
     const trimmedQuery = query.trim()
     if (!trimmedQuery || loading) return
     setLoading(true)
-    useWizardStore.getState().setToast(`Searching folder for "${trimmedQuery}"...`, 'info')
+    useWizardStore.getState().setToast(`מחפש בכונן החיצוני קובץ או תיקייה`, 'info')
 
     try {
       const targetPage = await driveApi.findItemPage(node.path, trimmedQuery)
@@ -180,23 +180,23 @@ export function TreeNode({
         )
         if (match && onAutoExpand) {
           onAutoExpand(autoExpandMap || {}, match.path)
-          useWizardStore.getState().setToast(`Located "${match.name}"`, 'success')
+          useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
         } else {
-          useWizardStore.getState().setToast(`Found a match! Displaying page ${targetPage}.`, 'info')
+          useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
         }
       } else {
         const deepMatch = await driveApi.deepFindItem(node.path, trimmedQuery)
         if (deepMatch) {
           useWizardStore
             .getState()
-            .setToast(`Found it! Opening folder path now.`, 'success')
+            .setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           if (onAutoExpand) onAutoExpand(deepMatch.pages, deepMatch.path)
         } else {
-          useWizardStore.getState().setToast(`We couldn't find any file matching that name in this folder.`, 'warning')
+          useWizardStore.getState().setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
         }
       }
     } catch {
-      useWizardStore.getState().setToast('Oops, an error occurred while searching.', 'error')
+      useWizardStore.getState().setToast('אופס, אירעה שגיאה במהלך החיפוש.', 'error')
     } finally {
       setLoading(false)
     }
@@ -207,7 +207,7 @@ export function TreeNode({
       <div
         ref={rowRef}
         className={`tree-row ${checked ? 'selected' : ''} ${highlighted ? 'highlighted-node' : ''}`}
-        style={{ paddingLeft: `${depth * 16 + 10}px` }}
+        style={{ paddingLeft: `${depth}vh` }}
         onClick={() => onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck)}
       >
         <div className={`tree-checkbox ${checked ? 'checked' : ''}`} />
@@ -267,7 +267,7 @@ export function TreeNode({
       )}
 
       {node.isDirectory && expanded && loadedChildren && loadedChildren.length === 0 && (
-        <div className="tree-empty" style={{ paddingLeft: `${(depth + 1) * 16 + 32}px` }}>
+        <div className="tree-empty" style={{ paddingLeft: `${(depth * 3)}vh` }}>
           Empty folder
         </div>
       )}

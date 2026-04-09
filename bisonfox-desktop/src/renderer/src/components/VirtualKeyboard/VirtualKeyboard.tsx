@@ -10,6 +10,7 @@ export function VirtualKeyboard({ currentValue, onChange }: VirtualKeyboardProps
   const [isCaps, setIsCaps] = useState(false)
 
   const rows = [
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
     ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
     ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
     ['Shift', '_', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'Backspace'],

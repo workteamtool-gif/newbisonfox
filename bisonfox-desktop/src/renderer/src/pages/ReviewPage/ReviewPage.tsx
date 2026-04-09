@@ -11,7 +11,7 @@ import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/W
 import { clientLogger } from '@renderer/utils/logger'
 
 export function ReviewPage(): JSX.Element | null {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } = useWizardStore()
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName, currentSubfolder } = useWizardStore()
 
   useDriveMonitor()
 
@@ -103,7 +103,7 @@ export function ReviewPage(): JSX.Element | null {
     try {
       await uploadApi.addDiskFiles(
         sessionId,
-        finalDisk.driveLabel,
+        currentDisk.driveLetter,
         finalDisk.selectedFiles,
         finalDisk.excludedFiles
       )
@@ -114,7 +114,7 @@ export function ReviewPage(): JSX.Element | null {
       setStep(UploadPage)
     } catch (err: any) {
       setSyncError(
-        err.message || 'Lost connection to the server. Please hit refresh and try again.'
+        err.message || 'אבד החיבור לשרת. אנא לחץ על רענון ונסה שוב.'
       )
     } finally {
       setSaving(false)
@@ -132,30 +132,31 @@ export function ReviewPage(): JSX.Element | null {
   return (
     <div className="wizard-layout">
       <div className="glass-card">
-        <p className="page-title">Double Check Selection</p>
+        <p className="page-title">בדיקה כפולה של הבחירה</p>
         <p className="page-subtitle">
-          Please review the files you&apos;ve selected from{' '}
-          <strong>{currentDisk.driveLabel}</strong>.
-          <br />
-          Subfolder:{' '}
-          <code style={{ color: 'var(--accent)' }}>{currentDisk.subfolder || '(root)'}</code>
+          אנא בדוק את הקבצים שבחרת <br />
+          {currentSubfolder && (
+            <>
+              תת-תיקייה: {currentSubfolder}
+            </>
+          )}
         </p>
 
-        <div className="review-disk">
+        <div className="review-disk" style={{ direction: 'ltr' }}>
           <div className="review-disk-head">
             <span>💿</span>
-            <span className="review-disk-title">{currentDisk.driveLabel}</span>
+            <span className="review-disk-title">{currentDisk.driveLetter}</span>
             <span className="info-icon" style={{ marginLeft: 'auto', marginRight: '5px' }}>
               ℹ️
             </span>
             <span className="review-disk-count">
-              {fileCount} root item{fileCount !== 1 ? 's' : ''} selected
+              נבחרו {fileCount} פריטים
             </span>
           </div>
 
           <div className="review-tree-container">
             {nodes.length === 0 ? (
-              <div className="review-empty-state">No files selected. Go back to add some!</div>
+              <div className="review-empty-state">לא נבחרו קבצים. חזור כדי להוסיף!</div>
             ) : (
               <FileTree
                 nodes={nodes}
@@ -180,13 +181,13 @@ export function ReviewPage(): JSX.Element | null {
               fontSize: '0.9rem'
             }}
           >
-            ⚠️ <strong>Sync Error:</strong> {syncError}
+            ⚠️ <strong>שגיאת סנכרון:</strong> {syncError}
           </div>
         )}
 
         <div className="divider" />
 
-        <div className="action-row">
+        <div className="action-row" style={{ justifyContent: 'space-between' }}>
           <button
             className="btn btn-secondary"
             onClick={() => {
@@ -195,7 +196,7 @@ export function ReviewPage(): JSX.Element | null {
             }}
             disabled={saving}
           >
-            ← Back to Select
+            ← חזור
           </button>
           <button
             className="btn btn-primary btn-lg"
@@ -204,10 +205,10 @@ export function ReviewPage(): JSX.Element | null {
           >
             {saving ? (
               <>
-                <span className="spin">⟳</span> Saving…
+                <span className="spin">⟳</span> שומר...
               </>
             ) : (
-              'Start Upload →'
+              <>התחל העלאה ←</>
             )}
           </button>
         </div>
