@@ -1,6 +1,6 @@
 .custom-select-container {
     position: relative;
-    width: 100px;
+    width: 5.21vw;
     flex-shrink: 0;
 }
 
@@ -26,16 +26,16 @@
 
 .custom-select-dropdown {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 0.67vh);
     left: 0;
     width: 100%;
     background: var(--bg-primary);
     border: 1px solid var(--border-accent);
     border-radius: var(--r-md);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0.83vh 3.33vh rgba(0, 0, 0, 0.6);
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 180px;
+    max-height: 15vh;
     z-index: 50;
     animation: slideDown .15s ease-out;
 }
@@ -64,7 +64,7 @@
 
 .prefix-chips {
     display: flex;
-    gap: 8px;
+    gap: 0.67vh;
     flex-wrap: wrap;
 }
 
@@ -92,5 +92,5 @@
     border-color: transparent;
     color: #fff;
     font-weight: 600;
-    box-shadow: 0 2px 12px rgba(99, 102, 241, .35);
+    box-shadow: 0 0.17vh 1vh rgba(99, 102, 241, .35);
 }

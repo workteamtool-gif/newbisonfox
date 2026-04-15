@@ -17,16 +17,15 @@
     --text-primary: #f1f5f9;
     --text-secondary: #bbbbbb;
 
-    --r-md: 14px;
-    --r-lg: 20px;
-    --r-xl: 26px;
+    --r-md: 1.17vh;
+    --r-lg: 1.67vh;
+    --r-xl: 2.17vh;
     --r-full: 9999px;
-    --shadow-btn: 0 4px 24px rgba(99, 102, 241, .38);
+    --shadow-btn: 0 0.33vh 2vh rgba(99, 102, 241, .38);
     --t-fast: 140ms cubic-bezier(.4, 0, .2, 1);
     --t-base: 240ms cubic-bezier(.4, 0, .2, 1);
     --font: 'Inter', system-ui, sans-serif;
     --font-display: 'Space Grotesk', system-ui, sans-serif;
-    overflow: hidden;
     overflow: hidden;
     user-select: none;
     /* Prevents users from accidentally highlighting UI text like a webpage */

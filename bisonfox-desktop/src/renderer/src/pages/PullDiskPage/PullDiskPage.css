@@ -7,12 +7,12 @@
 }
 
 .pull-disk-image {
-    border-radius: 40px;
+    border-radius: 3.33vh;
     width: 100%;
-    max-width: 600px;
-    height: 400px;
+    max-width: 31.25vw;
+    height: 33.33vh;
     object-fit: contain;
-    filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 1.25vh 2.08vh rgba(0, 0, 0, 0.5));
     animation: float 4s ease-in-out infinite;
 }
 
@@ -24,14 +24,14 @@
 
 @keyframes float {
     0% {
-        transform: translateY(0px);
+        transform: translateY(0);
     }
 
     50% {
-        transform: translateY(-12px);
+        transform: translateY(-1vh);
     }
 
     100% {
-        transform: translateY(0px);
+        transform: translateY(0);
     }
 }

@@ -22,7 +22,7 @@
 .choice-card:hover {
     border-color: var(--border-accent);
     background: rgba(99, 102, 241, .08);
-    transform: translateY(-2px);
+    transform: translateY(-0.17vh);
 }
 
 .choice-card.yes:hover {
@@ -51,7 +51,7 @@
 
 .another-disk-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(11.67vh, 1fr));
     gap: 1rem;
     margin-bottom: 2.5rem;
 }
@@ -74,7 +74,7 @@
 
 .failed-files-list {
     font-size: 0.85rem;
-    max-height: 80px;
+    max-height: 6.67vh;
     overflow-y: auto;
 }
 

@@ -51,8 +51,11 @@
 }
 
 .step-dot {
-    width: 30px;
-    height: 30px;
+    width: 2.5vh;
+    height: 2.5vh;
+    min-width: 2.5vh;
+    min-height: 2.5vh;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -67,13 +70,13 @@
 .step-dot.done {
     background: var(--grad-primary);
     color: #fff;
-    box-shadow: 0 0 14px rgba(99, 102, 241, .5);
+    box-shadow: 0 0 1.17vh rgba(99, 102, 241, .5);
 }
 
 .step-dot.active {
     background: var(--grad-primary);
     color: #fff;
-    box-shadow: 0 0 22px rgba(99, 102, 241, .7);
+    box-shadow: 0 0 1.83vh rgba(99, 102, 241, .7);
     transform: scale(1.12);
 }
 
@@ -84,8 +87,8 @@
 }
 
 .step-connector {
-    width: 36px;
-    height: 2px;
+    width: 3vh;
+    height: 0.17vh;
     background: rgba(255, 255, 255, .07);
     position: relative;
     overflow: hidden;

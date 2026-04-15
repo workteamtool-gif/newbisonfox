@@ -2,12 +2,12 @@
     background: var(--bg-glass);
     border: 1px solid var(--border-glass);
     border-radius: var(--r-xl);
-    backdrop-filter: blur(24px) saturate(130%);
-    -webkit-backdrop-filter: blur(24px) saturate(130%);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2vh) saturate(130%);
+    -webkit-backdrop-filter: blur(2vh) saturate(130%);
+    box-shadow: 0 2.08vh 4.17vh -1vh rgba(0, 0, 0, 0.6);
     padding: 2.5rem;
-    width: 1024px;
-    min-width: 1024px;
+    width: 53.33vw;
+    min-width: 53.33vw;
     position: relative;
     animation: fadeUp .35s ease both;
     transition: max-width var(--t-base);

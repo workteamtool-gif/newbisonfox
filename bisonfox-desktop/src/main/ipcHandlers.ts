@@ -89,11 +89,11 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     return { success: true, sessionId: session.id }
   })
 
-  ipcMain.handle('add-disk-files', (_, { sessionId, driveLabel, selectedFiles, excludedFiles }) => {
+  ipcMain.handle('add-disk-files', (_, { sessionId, driveLetter, selectedFiles, excludedFiles }) => {
     const session = sessionSingletonInstance.get(sessionId)
     if (!session) throw new Error('Session not found')
 
-    session.diskSessions.push({ driveLabel, selectedFiles, excludedFiles: excludedFiles ?? [] })
+    session.diskSessions.push({ driveLetter, selectedFiles, excludedFiles: excludedFiles ?? [] })
     sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
     return { success: true }
   })

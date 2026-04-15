@@ -23,7 +23,7 @@
 }
 
 .progress-track {
-    height: 6px;
+    height: 0.5vh;
     background: rgba(255, 255, 255, .06);
     border-radius: var(--r-full);
     overflow: hidden;
@@ -45,7 +45,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 40px;
+    width: 3.33vh;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .25));
     animation: shimmer 1.4s infinite;
 }

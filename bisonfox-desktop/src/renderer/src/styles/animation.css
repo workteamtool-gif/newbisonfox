@@ -1,7 +1,7 @@
 @keyframes fadeUp {
     from {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translateY(1.5vh);
     }
 
     to {
@@ -13,7 +13,7 @@
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-6px);
+        transform: translateY(-0.5vh);
     }
 
     to {
@@ -30,7 +30,7 @@
     }
 
     50% {
-        transform: translateY(-16px);
+        transform: translateY(-1.33vh);
     }
 }
 
@@ -38,11 +38,11 @@
 
     0%,
     100% {
-        box-shadow: 0 20px 60px rgba(99, 102, 241, .45);
+        box-shadow: 0 1.67vh 5vh rgba(99, 102, 241, .45);
     }
 
     50% {
-        box-shadow: 0 20px 80px rgba(99, 102, 241, .7);
+        box-shadow: 0 1.67vh 6.67vh rgba(99, 102, 241, .7);
     }
 }
 
@@ -54,7 +54,7 @@
     }
 
     50% {
-        transform: translateY(7px);
+        transform: translateY(0.58vh);
     }
 }
 
@@ -93,7 +93,7 @@
 @keyframes toast-slide-in {
     from {
         opacity: 0;
-        transform: translateY(-20px);
+        transform: translateY(-1.67vh);
     }
 
     to {

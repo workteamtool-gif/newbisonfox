@@ -38,7 +38,7 @@
 
 /* Overriding specific stat-card behavior for this page */
 .success-stat-card {
-    min-width: 110px;
+    min-width: 9.17vh;
 }
 
 .success-stat-card .stat-val {
@@ -51,7 +51,7 @@
     color: var(--accent-red);
     margin: 0 auto 2rem;
     text-align: left;
-    max-width: 600px;
+    max-width: 31.25vw;
     width: 100%;
 }
 
@@ -64,7 +64,7 @@
 
 .failed-files-list-wrapper {
     font-size: 0.85rem;
-    max-height: 100px;
+    max-height: 8.33vh;
     overflow-y: auto;
 }
 

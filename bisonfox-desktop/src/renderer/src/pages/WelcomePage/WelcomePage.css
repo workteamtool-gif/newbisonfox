@@ -10,13 +10,11 @@
 }
 
 .welcome-content {
-    /* Existing rules */
     text-align: center;
     position: relative;
     z-index: 1;
-    max-width: 560px;
+    max-width: 29.17vw;
 
-    /* Moved from inline styles */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,7 +31,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, .3);
+    text-shadow: 0 0.33vh 1.67vh rgba(0, 0, 0, .3);
 }
 
 .welcome-sub {
@@ -41,13 +39,13 @@
     color: #f8fafc;
     line-height: 1.7;
     margin-bottom: 2.5rem;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 0.17vh 0.33vh rgba(0, 0, 0, 0.5));
 }
 
 .image-mark {
     background: url('../../images/engineers.png') center/cover no-repeat;
-    width: 320px;
-    height: 220px;
+    width: 16.67vw;
+    height: 18.33vh;
     object-fit: cover;
     border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
     border-radius: var(--r-md);
