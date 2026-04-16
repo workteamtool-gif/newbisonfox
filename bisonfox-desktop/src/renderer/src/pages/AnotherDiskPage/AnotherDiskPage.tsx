@@ -1,10 +1,25 @@
+import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './AnotherDiskPage.css'
 import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
-  const { setStep, diskSessions, userName, sessionId } = useWizardStore()
+  const { setStep, diskSessions, userName, sessionId, reset } = useWizardStore()
+  const [countdown, setCountdown] = useState(10)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((currentCountdown) => {
+        if (currentCountdown <= 1) {
+          clearInterval(interval)
+          reset()
+        }
+        return currentCountdown - 1
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [reset])
 
   function handleYes(): void {
     clientLogger.info('AnotherDiskPage', `The user: ${userName} in session: ${sessionId} wants to add another disk,
@@ -113,6 +128,10 @@ export function AnotherDiskPage(): React.JSX.Element {
             <span className="choice-sub">עבור לעמוד הסיום</span>
           </div>
         </div>
+
+        <p className="another-disk-countdown" style={{ marginTop: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+          חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
+        </p>
       </div>
     </div>
   )
