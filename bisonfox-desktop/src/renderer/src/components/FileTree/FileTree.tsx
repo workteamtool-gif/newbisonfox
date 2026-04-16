@@ -30,16 +30,7 @@ export function FileTree({
   return (
     <div className="file-tree">
       {nodes.length === 0 ? (
-        <div
-          style={{
-            padding: '1rem',
-            color: 'var(--text-secondary)',
-            textAlign: 'center',
-            fontSize: '.85rem'
-          }}
-        >
-          No files found on this drive.
-        </div>
+        <div className="no-files-found">No files found on this drive.</div>
       ) : (
         nodes.map((node) => (
           <TreeNode

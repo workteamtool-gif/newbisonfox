@@ -1,4 +1,5 @@
 // ⚠️ CRITICAL: Must be the absolute first line before any other imports!
+import { exec } from 'child_process'
 // This unlocks Node's C++ I/O thread pool to match your Copy Engine concurrency.
 import './env'
 
@@ -91,6 +92,24 @@ app.whenReady().then(() => {
     if (level === 'ERROR') logger.error(fullContext, message, data)
     else if (level === 'WARN') logger.warn(fullContext, message, data)
     else logger.info(fullContext, message, data)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SYSTEM.DETECT_KEYBOARD, () => {
+    return new Promise<{ hasKeyboard: boolean }>((resolve) => {
+      const cmd = 'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
+      exec(cmd, { timeout: 5000 }, (err, stdout) => {
+        if (err) {
+          // On error, assume keyboard is present to avoid showing VK unexpectedly
+          logger.warn('KeyboardDetect', 'WMI query failed, assuming keyboard present', { error: err.message })
+          resolve({ hasKeyboard: true })
+          return
+        }
+        const count = parseInt(stdout.trim(), 10)
+        const hasKeyboard = !isNaN(count) && count > 0
+        logger.info('KeyboardDetect', `WMI keyboard count: ${count}, hasKeyboard: ${hasKeyboard}`)
+        resolve({ hasKeyboard })
+      })
+    })
   })
 
   // 2. Initialize the backend engine and register domain IPC handlers

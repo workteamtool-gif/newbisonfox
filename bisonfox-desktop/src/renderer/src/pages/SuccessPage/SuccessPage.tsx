@@ -8,7 +8,7 @@ export function SuccessPage(): JSX.Element {
   const { reset, userName } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions)
-  const [countdown, setCountdown] = useState(1115)
+  const [countdown, setCountdown] = useState(150)
 
   const totalFiles = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),

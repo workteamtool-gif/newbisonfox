@@ -6,6 +6,7 @@ import { SelectFilesPage, InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
+import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 
 export function SubfolderPage(): JSX.Element {
   const { setStep, currentSubfolder, setCurrentSubfolder, userName, sessionId, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
@@ -13,8 +14,7 @@ export function SubfolderPage(): JSX.Element {
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
 
-  const IS_TOUCHSCREEN = import.meta.env.VITE_IS_TOUCHSCREEN === 'true'
-  const [openKeyboard] = useState(IS_TOUCHSCREEN)
+  const openKeyboard = useKeyboardDetection()
   const showKeyboard = openKeyboard && !isCancelModalOpen
 
   // Signal keyboard visibility to the outer WizardLayout grid

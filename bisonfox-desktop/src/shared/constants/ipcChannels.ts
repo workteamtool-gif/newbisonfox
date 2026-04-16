@@ -1,6 +1,7 @@
 export const IPC_CHANNELS = {
   SYSTEM: {
-    LOG: 'log-from-client'
+    LOG: 'log-from-client',
+    DETECT_KEYBOARD: 'detect-keyboard'
   },
   SESSION: {
     VALIDATE_NAME: 'validate-name',

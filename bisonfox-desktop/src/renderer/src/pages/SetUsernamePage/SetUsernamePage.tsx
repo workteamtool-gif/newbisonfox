@@ -8,6 +8,7 @@ import { JSX } from 'react'
 import { InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
+import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
@@ -16,8 +17,7 @@ export function SetUsernamePage(): JSX.Element {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const IS_TOUCHSCREEN = import.meta.env.VITE_IS_TOUCHSCREEN === 'true'
-  const [openKeyboard] = useState(IS_TOUCHSCREEN)
+  const openKeyboard = useKeyboardDetection()
   const showKeyboard = openKeyboard && !isCancelModalOpen
 
   useEffect(() => {

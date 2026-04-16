@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWizardStore } from '../../store/useWizardStore'
 import { uploadApi } from '../../services/uploadApi'
-import { CancelModal } from '../CancelModal'
+import { CancelModal } from '../CancelModal/CancelModal'
 import { WizardHeader } from '../WizardHeader/WizardHeader'
 import { clientLogger } from '../../utils/logger'
 import './WizardLayout.css'

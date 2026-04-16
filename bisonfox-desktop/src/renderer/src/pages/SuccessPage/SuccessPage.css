@@ -1,15 +1,9 @@
 .success-card {
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .success-image {
     width: 100%;
-    max-width: 25%;
-    height: 30%;
-    object-fit: cover;
     border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
     border-radius: var(--r-md);
     margin-bottom: 1rem;

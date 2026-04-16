@@ -19,32 +19,19 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
 
   return (
     <header className="wizard-header">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
+      <div className="wizard-header-content">
         <div className="wizard-logo">BisonFox</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1vh' }}>
           {userName && (
             <div
-              style={{
-                fontSize: '0.85rem',
-                color: 'var(--text-secondary)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1vh'
-              }}
+              className='user-name'
             >
               <span className="pill-dot" style={{ background: 'var(--accent-green)' }}></span>
               {userName}
             </div>
           )}
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary cancel-btn"
             style={{
               padding: '0.5vh 1vh',
               fontSize: '0.8rem',
@@ -72,15 +59,9 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
                 style={{ position: 'relative', margin: '0 5vh' }}
               >
                 {status === 'done' ? '✓' : i + 1}
-                <span
+                <span className='phase'
                   style={{
-                    position: 'absolute',
-                    top: '35px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '0.7rem',
                     color: status === 'active' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    whiteSpace: 'nowrap',
                     fontWeight: status === 'active' ? 500 : 400
                   }}
                 >

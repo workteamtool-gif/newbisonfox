@@ -115,7 +115,7 @@ export function ReviewPage(): JSX.Element | null {
       setStep(UploadPage)
     } catch (err: any) {
       setSyncError(
-        err.message || 'אבד החיבור לשרת. אנא לחץ על רענון ונסה שוב.'
+        err.message || 'אבד החיבור לשרת'
       )
     } finally {
       setSaving(false)
@@ -143,7 +143,7 @@ export function ReviewPage(): JSX.Element | null {
           )}
         </p>
 
-        <div className="review-disk" style={{ direction: 'ltr' }}>
+        <div className="review-disk">
           <div className="review-disk-head">
             <span>💿</span>
             <span className="review-disk-title">{currentDisk.driveLetter}</span>
@@ -174,13 +174,7 @@ export function ReviewPage(): JSX.Element | null {
 
         {syncError && (
           <div
-            className="info-box"
-            style={{
-              borderColor: 'var(--accent-red)',
-              color: 'var(--accent-red)',
-              marginTop: '1.5rem',
-              fontSize: '0.9rem'
-            }}
+            className="info-box sync-error"
           >
             ⚠️ <strong>שגיאת סנכרון:</strong> {syncError}
           </div>

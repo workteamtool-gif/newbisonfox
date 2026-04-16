@@ -124,7 +124,7 @@
 }
 
 .pagination-btn {
-    padding: 0.17vh 0.67vh;  /* 2px 8px */
+    padding: 0.17vh 0.67vh;
     font-size: 0.75rem;
 }
 
@@ -141,7 +141,7 @@
 
 .pagination-jump-input {
     width: 3.67vh;
-    padding: 0.17vh 0.33vh;  /* 2px 4px */
+    padding: 0.17vh 0.33vh;
     font-size: 0.8rem;
     border-radius: 0.33vh;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -171,7 +171,7 @@
 }
 
 .pagination-search-input {
-    padding: 0.17vh 0.67vh;  /* 2px 8px */
+    padding: 0.17vh 0.67vh;
     font-size: 0.75rem;
     border-radius: 0.33vh;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -220,4 +220,11 @@
     100% {
         background: transparent;
     }
+}
+
+.no-files-found {
+    padding: 1rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: .85rem;
 }
