@@ -8,7 +8,7 @@ export interface ReadyUploadProps {
     preCalcTotal: number | null
 }
 
-export function ReadyUpload({
+export function CountingUpload({
     countingComplete,
     startUpload,
     preCalcTotal

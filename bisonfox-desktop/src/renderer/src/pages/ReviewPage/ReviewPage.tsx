@@ -183,6 +183,13 @@ export function ReviewPage(): JSX.Element | null {
         <NavigationOptions
           onBack={() => {
             clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
+            if (currentDisk) {
+              setCurrentDisk({
+                ...currentDisk,
+                selectedFiles: Array.from(selected),
+                excludedFiles: Array.from(excluded)
+              })
+            }
             setStep(SelectFilesPage)
           }}
           backDisabled={saving}

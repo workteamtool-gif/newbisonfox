@@ -4,9 +4,9 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
-import { ErrorUpload } from './UploadPageComponentes/ErrorUpload'
-import { ReadyUpload } from './UploadPageComponentes/ReadyUpload'
-import { UploadingUpload } from './UploadPageComponentes/UploadingUpload'
+import { ErrorUpload } from './UploadPageComponents/ErrorUpload'
+import { CountingUpload } from './UploadPageComponents/CountingUpload'
+import { UploadComponent } from './UploadPageComponents/UploadComponent'
 
 export function UploadPage(): JSX.Element | null {
   const {
@@ -61,10 +61,10 @@ export function UploadPage(): JSX.Element | null {
         )
         }
 
-        {/* === SCENARIO 2: READY === */}
+        {/* === SCENARIO 2: COUNTING === */}
         {
           !uploadError && phase === 'ready' && (
-            <ReadyUpload
+            <CountingUpload
               countingComplete={countingComplete}
               startUpload={startUpload}
               preCalcTotal={preCalcTotal} />
@@ -74,7 +74,7 @@ export function UploadPage(): JSX.Element | null {
         {/* === SCENARIO 3: UPLOADING / DONE === */}
         {
           !uploadError && phase !== 'ready' && (
-            <UploadingUpload
+            <UploadComponent
               showFailedReview={showFailedReview}
               uploadDone={uploadDone}
               phaseLabel={phaseLabel}

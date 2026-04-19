@@ -79,6 +79,7 @@ export function SubfolderPage(): JSX.Element {
           <NavigationOptions
             onBack={() => {
               clientLogger.info('SubfolderPage', `The user: ${userName} in session: ${sessionId} navigating back to InsertDiskPage`)
+              setCurrentSubfolder(subfolder.trim())
               setStep(InsertDiskPage)
             }}
           />

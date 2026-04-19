@@ -11,9 +11,12 @@ import { NavigationOptions } from '@renderer/components/NavigationOptions/Naviga
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 
 export function SetUsernamePage(): JSX.Element {
-  const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible } = useWizardStore()
-  const [prefix, setPrefix] = useState(PREFIX_OPTIONS[0])
-  const [name, setName] = useState('')
+  const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } = useWizardStore()
+  
+  const existingPrefix = PREFIX_OPTIONS.find(p => userName.startsWith(p.value)) || PREFIX_OPTIONS[0]
+  
+  const [prefix, setPrefix] = useState(existingPrefix)
+  const [name, setName] = useState(userName.startsWith(existingPrefix.value) ? userName.slice(existingPrefix.value.length) : '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 

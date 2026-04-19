@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { FileNode } from '@shared/entities/FileNode'
 import { driveApi } from '@renderer/services/driveApi'
@@ -6,7 +6,7 @@ import { FileTree } from '@renderer/components/FileTree'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
-import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
+import { SubfolderPage, ReviewPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
@@ -23,9 +23,11 @@ export function SelectFilesPage(): JSX.Element {
   const [jumpToPageInput, setJumpToPageInput] = useState('')
   const [scrollToPath, setScrollToPath] = useState<string | undefined>(undefined)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [excluded, setExcluded] = useState<Set<string>>(new Set())
+  const [selected, setSelected] = useState<Set<string>>(new Set(currentDisk?.selectedFiles || []))
+  const [excluded, setExcluded] = useState<Set<string>>(new Set(currentDisk?.excludedFiles || []))
   const [loading, setLoading] = useState(true)
+  const [searching, setSearching] = useState(false)
+  const searchGenRef = useRef(0)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -151,19 +153,31 @@ export function SelectFilesPage(): JSX.Element {
     []
   )
 
+  const handleCancelSearch = useCallback(() => {
+    searchGenRef.current++
+    setSearching(false)
+    setLoading(false)
+    useWizardStore.getState().setToast('החיפוש בוטל.', 'info')
+  }, [])
+
   const handleSearchRootSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault()
     const query = rootSearchQuery.trim()
-    if (!currentDisk || !query || loading) return
+    if (!currentDisk || !query || searching) return
 
-    setLoading(true)
+    const gen = ++searchGenRef.current
+    setSearching(true)
     setLoading(true)
     useWizardStore.getState().setToast(`מחפש בכונן עבור "${query}"...`, 'info')
 
     try {
       const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
+      if (gen !== searchGenRef.current) return // cancelled
+
       if (targetPage !== null) {
         const res = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
+        if (gen !== searchGenRef.current) return // cancelled
+
         setTree(res.nodes)
         setRootPage(targetPage)
         setRootHasMore(res.hasMore)
@@ -180,6 +194,8 @@ export function SelectFilesPage(): JSX.Element {
         }
       } else {
         const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
+        if (gen !== searchGenRef.current) return // cancelled
+
         if (deepMatch) {
           useWizardStore
             .getState()
@@ -191,6 +207,8 @@ export function SelectFilesPage(): JSX.Element {
             currentDisk.driveLetter!,
             rootTargetPage
           )
+          if (gen !== searchGenRef.current) return // cancelled
+
           setTree(res.nodes)
           setRootPage(rootTargetPage)
           setRootHasMore(res.hasMore)
@@ -204,9 +222,13 @@ export function SelectFilesPage(): JSX.Element {
         }
       }
     } catch {
+      if (gen !== searchGenRef.current) return // cancelled
       useWizardStore.getState().setToast('אופס, אירעה שגיאה במהלך החיפוש.', 'error')
     } finally {
-      setLoading(false)
+      if (gen === searchGenRef.current) {
+        setSearching(false)
+        setLoading(false)
+      }
     }
   }
 
@@ -246,7 +268,7 @@ export function SelectFilesPage(): JSX.Element {
         </div>
 
         {loading ? (
-          <p
+          <div
             style={{
               textAlign: 'center',
               color: 'var(--text-secondary)',
@@ -254,8 +276,17 @@ export function SelectFilesPage(): JSX.Element {
               fontSize: '.9rem'
             }}
           >
-            <span className="spin">⟳</span> קורא כונן...
-          </p>
+            <p><span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}</p>
+            {searching && (
+              <button
+                className="btn btn-secondary"
+                style={{ marginTop: '0.75rem' }}
+                onClick={handleCancelSearch}
+              >
+                ✕ ביטול חיפוש
+              </button>
+            )}
+          </div>
         ) : (
           <>
             <FileTree
@@ -325,11 +356,11 @@ export function SelectFilesPage(): JSX.Element {
                   value={rootSearchQuery}
                   onChange={(e) => setRootSearchQuery(e.target.value)}
                   className="pagination-search-input"
-                  disabled={loading}
+                  disabled={loading || searching}
                 />
                 <button
                   type="submit"
-                  disabled={!rootSearchQuery.trim() || loading}
+                  disabled={!rootSearchQuery.trim() || loading || searching}
                   className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
                 >
                   🔍
@@ -341,8 +372,15 @@ export function SelectFilesPage(): JSX.Element {
 
         <NavigationOptions
           onBack={() => {
-            clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
-            setStep(InsertDiskPage)
+            clientLogger.info('SelectFilesPage', 'User navigating back to SubfolderPage')
+            if (currentDisk) {
+              setCurrentDisk({
+                ...currentDisk,
+                selectedFiles: Array.from(selected),
+                excludedFiles: Array.from(excluded)
+              })
+            }
+            setStep(SubfolderPage)
           }}
           onForward={handleContinue}
           forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}
