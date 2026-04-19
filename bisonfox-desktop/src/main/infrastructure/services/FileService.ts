@@ -258,9 +258,9 @@ export class FileService implements IFileService {
   async countFiles(
     files: string[],
     excludedFiles?: string[],
-    onCount?: (count: number) => void,
+    onCount?: (count: number, size: number) => void,
     signal?: AbortSignal
-  ): Promise<number> {
+  ): Promise<{ count: number; size: number }> {
     return this.scanner.countFiles(files, EXCLUDED, COPY_CONCURRENCY, excludedFiles, onCount, signal)
   }
 
@@ -271,7 +271,7 @@ export class FileService implements IFileService {
     destination: string,
     options: CopyOptions
   ): Promise<void> {
-    const { basePath, excludedFiles, expectedTotal, signal, onScan, onProgress } = options
+    const { basePath, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } = options
 
     const internalController = new AbortController()
     const triggerExternalAbort = (): void => internalController.abort()
@@ -339,7 +339,8 @@ export class FileService implements IFileService {
         isScanningDone = true
       })
 
-    let completed = 0
+    let completedFiles = 0
+    let completedBytes = 0
     let lastBroadcastTime = Date.now()
 
     let reportTimer: NodeJS.Timeout | null = null
@@ -357,15 +358,17 @@ export class FileService implements IFileService {
           reportTimer = null
         }
         lastBroadcastTime = now
-        const total = expectedTotal ?? totalDiscovered
-        onProgress(file, pct, completed, failedCount, failedFiles, total)
+        const totalFiles = expectedTotal ?? totalDiscovered
+        const totalBytes = expectedTotalBytes ?? 0 // Unknown initially if not precalc
+        onProgress(file, pct, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes)
       } else if (!reportTimer) {
         reportTimer = setTimeout(
           () => {
             reportTimer = null
             lastBroadcastTime = Date.now()
-            const total = expectedTotal ?? totalDiscovered
-            onProgress(lastReportFile, lastReportPct, completed, failedCount, failedFiles, total)
+            const totalFiles = expectedTotal ?? totalDiscovered
+            const totalBytes = expectedTotalBytes ?? 0 
+            onProgress(lastReportFile, lastReportPct, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes)
           },
           REPORT_COPIED_FILES_INTERVAL_MS - (now - lastBroadcastTime)
         )
@@ -399,7 +402,8 @@ export class FileService implements IFileService {
               mkdirCache.add(dir)
             }
 
-            await this.copyOneFast(src, destPath, activeSignal)
+            const fileSize = await this.copyOneFast(src, destPath, activeSignal)
+            completedBytes += fileSize
             success = true
           } catch (err: any) {
             lastError = err.message || 'Unknown copy error'
@@ -410,7 +414,7 @@ export class FileService implements IFileService {
         if (activeSignal.aborted) break
 
         if (success) {
-          completed++
+          completedFiles++
           throttledReport(src, 100)
         } else {
           failedCount++
@@ -428,27 +432,29 @@ export class FileService implements IFileService {
     if (signal) signal.removeEventListener('abort', triggerExternalAbort)
     if (reportTimer) clearTimeout(reportTimer)
 
-    const finalTotal = expectedTotal ?? totalDiscovered
-    onProgress('__done__', 100, completed, failedCount, failedFiles, finalTotal)
+    const finalTotalFiles = expectedTotal ?? totalDiscovered
+    const finalTotalBytes = expectedTotalBytes ?? completedBytes
+    onProgress('__done__', 100, completedFiles, completedBytes, failedCount, failedFiles, finalTotalFiles, finalTotalBytes)
   }
 
-  private async copyOneFast(src: string, dest: string, signal?: AbortSignal): Promise<void> {
+  private async copyOneFast(src: string, dest: string, signal?: AbortSignal): Promise<number> {
     const st = await fs.promises.stat(src).catch(() => null)
     if (!st) throw new Error('File not accessible')
 
-    if (signal?.aborted) return
+    if (signal?.aborted) return 0
 
     if (st.size > HEAVY_FILE_THRESHOLD) {
       await heavyLock.acquire()
       try {
-        if (signal?.aborted) return
+        if (signal?.aborted) return 0
         await fs.promises.copyFile(src, dest)
       } finally {
         heavyLock.release()
       }
-      return
+      return st.size
     }
 
     await fs.promises.copyFile(src, dest)
+    return st.size
   }
 }

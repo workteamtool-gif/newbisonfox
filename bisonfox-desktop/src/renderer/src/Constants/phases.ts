@@ -13,18 +13,17 @@ import {
 export interface Phase {
   key: string
   label: string
-  steps: WizardStep[]
+  step: WizardStep
   loop?: boolean
 }
 
 export const PHASES: Phase[] = [
-  { key: 'setup', label: 'להתחיל את ההעברה', steps: [SetUsernamePage] },
-  {
-    key: 'prepare',
-    label: 'להכין את הקבצים',
-    steps: [InsertDiskPage, SubfolderPage, SelectFilesPage, ReviewPage],
-    loop: true
-  },
-  { key: 'transfer', label: 'להעביר את הקבצים', steps: [UploadPage], loop: true },
-  { key: 'wrapup', label: 'לסיים את ההעברה', steps: [PullDiskPage, AnotherDiskPage], loop: true }
+  { key: 'setName', label: 'להגדיר את השם', step: SetUsernamePage },
+  { key: 'insertDisk', label: 'להכניס את הדיסק', step: InsertDiskPage },
+  { key: 'subfolder', label: 'לבחור תת-תיקייה', step: SubfolderPage },
+  { key: 'selectFiles', label: 'לבחור קבצים', step: SelectFilesPage },
+  { key: 'review', label: 'לוודא בחירת קבצים', step: ReviewPage },
+  { key: 'upload', label: 'להעביר את הקבצים', step: UploadPage, loop: true },
+  { key: 'pullDisk', label: 'להוציא את הדיסק', step: PullDiskPage, loop: true },
+  { key: 'anotherDisk', label: 'להכניס דיסק נוסף', step: AnotherDiskPage, loop: true }
 ]

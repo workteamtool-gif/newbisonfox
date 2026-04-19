@@ -96,7 +96,6 @@ export function InsertDiskPage(): React.JSX.Element {
 
           {drives.length === 0 && !loading ? (
             <div className="info-box">
-              <span className="info-icon">ℹ️</span>
               <div>ממתין לחיבור כונן... אנא חבר את הכונן.</div>
             </div>
           ) : (

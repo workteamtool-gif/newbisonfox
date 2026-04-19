@@ -19,6 +19,8 @@ export function useUploadManager(): {
   overallPercentage: number
   currentDisk: DiskSession | null
   failedFilesList: { path: string; reason: string }[]
+  completedBytes: number
+  totalBytes: number
   startUpload: () => void
   retryFailed: () => void
   skipFailed: () => void
@@ -32,11 +34,14 @@ export function useUploadManager(): {
   const [completedCount, setCompletedCount] = useState(0)
   const [failedCount, setFailedCount] = useState(0)
   const [overallPercentage, setOverallPercentage] = useState(0)
+  const [completedBytesState, setCompletedBytesState] = useState(0)
+  const [totalBytesState, setTotalBytesState] = useState(0)
   const [failedFilesList, setFailedFilesList] = useState<{ path: string; reason: string }[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [retryKey, setRetryKey] = useState(0)
 
   const [preCalcTotal, setPreCalcTotal] = useState<number | null>(null)
+  const [preCalcTotalBytes, setPreCalcTotalBytes] = useState<number | null>(null)
   const [countingComplete, setCountingComplete] = useState(false)
 
   // Stable refs for SSE callbacks
@@ -44,10 +49,13 @@ export function useUploadManager(): {
   const failedRef = useRef(0)
   const totalRef = useRef(0)
 
+  const completedBytesRef = useRef(0)
+  const totalBytesRef = useRef(0)
+
   const recalcPct = useCallback(() => {
-    if (totalRef.current > 0) {
+    if (totalBytesRef.current > 0) {
       setOverallPercentage(
-        Math.round(((completedRef.current + failedRef.current) / totalRef.current) * 100)
+        Math.floor((completedBytesRef.current / totalBytesRef.current) * 100)
       )
     }
   }, [])
@@ -61,6 +69,7 @@ export function useUploadManager(): {
 
     setCountingComplete(false)
     setPreCalcTotal(0)
+    setPreCalcTotalBytes(0)
 
     const timeoutId = setTimeout(() => {
       if (cancelled) return
@@ -70,13 +79,17 @@ export function useUploadManager(): {
           currentDisk.selectedFiles,
           currentDisk.excludedFiles ?? [],
           controller.signal,
-          (count) => {
-            if (!cancelled) setPreCalcTotal(count)
+          (count, size) => {
+            if (!cancelled) {
+              setPreCalcTotal(count)
+              setPreCalcTotalBytes(size)
+            }
           }
         )
-        .then((count) => {
+        .then(({ count, size }) => {
           if (!cancelled) {
             setPreCalcTotal(count)
+            setPreCalcTotalBytes(size)
             setCountingComplete(true)
           }
         })
@@ -117,20 +130,28 @@ export function useUploadManager(): {
         setPhase('copying')
         if (msg.completed !== undefined) completedRef.current = msg.completed
         if (msg.failed !== undefined) failedRef.current = msg.failed
+        if (msg.completedBytes !== undefined) completedBytesRef.current = msg.completedBytes
+        if (msg.totalBytes !== undefined && msg.totalBytes > 0) totalBytesRef.current = msg.totalBytes
 
         setCompletedCount(completedRef.current)
         setFailedCount(failedRef.current)
+        setCompletedBytesState(completedBytesRef.current)
+        setTotalBytesState(totalBytesRef.current)
         recalcPct()
       } else if (msg.type === 'sync') {
         if (msg.completed !== undefined) completedRef.current = msg.completed
         if (msg.failed !== undefined) failedRef.current = msg.failed
+        if (msg.completedBytes !== undefined) completedBytesRef.current = msg.completedBytes
+        if (msg.totalBytes !== undefined && msg.totalBytes > 0) totalBytesRef.current = msg.totalBytes
 
         setCompletedCount(completedRef.current)
         setFailedCount(failedRef.current)
+        setCompletedBytesState(completedBytesRef.current)
+        setTotalBytesState(totalBytesRef.current)
 
-        if (totalRef.current > 0) {
+        if (totalBytesRef.current > 0) {
           setOverallPercentage(
-            Math.round((((msg.completed ?? 0) + (msg.failed ?? 0)) / totalRef.current) * 100)
+            Math.floor(((msg.completedBytes ?? 0) / totalBytesRef.current) * 100)
           )
           setPhase('copying')
         }
@@ -210,9 +231,11 @@ export function useUploadManager(): {
     setPhase('copying')
     setTotalDiscovered(preCalcTotal || 0)
     totalRef.current = preCalcTotal || 0
+    totalBytesRef.current = preCalcTotalBytes || 0
+    setTotalBytesState(preCalcTotalBytes || 0)
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder).catch((err: any) => {
+    uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
       clientLogger.error(
         'UploadManager',
         `For user: ${userName} in session: ${sessionId} failed to upload.`,
@@ -241,11 +264,12 @@ export function useUploadManager(): {
     setOverallPercentage(0)
     setTotalDiscovered(filesToRetry.length)
     totalRef.current = filesToRetry.length
+    totalBytesRef.current = 0
     setRetryKey((k) => k + 1)
     setPhase('copying')
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, filesToRetry, subfolder).catch((err: any) => {
+    uploadApi.startUpload(sessionId, filesToRetry, subfolder, 0).catch((err: any) => {
       clientLogger.error(
         'UploadManager',
         `For user: ${userName} in session: ${sessionId} retry failed.`,
@@ -275,6 +299,8 @@ export function useUploadManager(): {
     overallPercentage,
     currentDisk,
     failedFilesList,
+    completedBytes: completedBytesState,
+    totalBytes: totalBytesState,
     startUpload,
     retryFailed,
     skipFailed,

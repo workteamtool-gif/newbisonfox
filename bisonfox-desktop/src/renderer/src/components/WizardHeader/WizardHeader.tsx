@@ -14,7 +14,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
 
   if (step === WelcomePage || step === SuccessPage) return null
 
-  let activePhaseIdx = PHASES.findIndex((p) => p.steps.includes(step))
+  let activePhaseIdx = PHASES.findIndex((p) => p.step === step)
   if (activePhaseIdx === -1) activePhaseIdx = 0
 
   return (

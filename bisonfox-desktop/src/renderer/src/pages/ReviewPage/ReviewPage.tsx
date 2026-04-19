@@ -112,6 +112,7 @@ export function ReviewPage(): JSX.Element | null {
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
       clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedFiles} files`)
+
       setStep(UploadPage)
     } catch (err: any) {
       setSyncError(
@@ -133,7 +134,7 @@ export function ReviewPage(): JSX.Element | null {
   return (
     <div className="wizard-layout">
       <div className="glass-card">
-        <p className="page-title">בדיקה כפולה של הבחירה</p>
+        <p className="page-title">בדיקה נוספת של הבחירה  </p>
         <p className="page-subtitle">
           אנא בדוק את הקבצים שבחרת <br />
           {currentSubfolder && (
@@ -147,9 +148,6 @@ export function ReviewPage(): JSX.Element | null {
           <div className="review-disk-head">
             <span>💿</span>
             <span className="review-disk-title">{currentDisk.driveLetter}</span>
-            <span className="info-icon" style={{ marginLeft: 'auto', marginRight: '5px' }}>
-              ℹ️
-            </span>
             <span className="review-disk-count">
               נבחרו {fileCount} פריטים
             </span>

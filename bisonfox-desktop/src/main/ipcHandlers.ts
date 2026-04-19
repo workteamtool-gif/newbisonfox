@@ -52,19 +52,19 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
   })
 
   ipcMain.handle('start-count-files', async (_, { scanId, selectedPaths, excludedPaths }) => {
-    const onCount = (count: number): void => pushToFrontend(`count-files-${scanId}`, { count })
+    const onCount = (count: number, size: number): void => pushToFrontend(`count-files-${scanId}`, { count, size })
 
     const controller = new AbortController()
     countFileControllers.set(scanId, controller)
 
     try {
-      const total = await fileService.countFiles(
+      const { count, size } = await fileService.countFiles(
         selectedPaths,
         excludedPaths,
         onCount,
         controller.signal
       )
-      pushToFrontend(`count-files-${scanId}`, { done: true, count: total })
+      pushToFrontend(`count-files-${scanId}`, { done: true, count, size })
     } catch (err: any) {
       pushToFrontend(`count-files-${scanId}`, { error: err.message })
     } finally {
@@ -110,8 +110,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     return { success: true }
   })
 
-  ipcMain.handle('start-upload', async (_, { sessionId, files, subfolder, expectedTotal }) => {
-    uploadManager.startUpload(sessionId, { files, subfolder, expectedTotal })
+  ipcMain.handle('start-upload', async (_, { sessionId, files, subfolder, expectedTotalFiles, expectedTotalBytes }) => {
+    uploadManager.startUpload(sessionId, { files, subfolder, expectedTotalFiles, expectedTotalBytes })
     return { success: true, message: 'Upload started' }
   })
 

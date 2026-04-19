@@ -27,7 +27,7 @@
 
 .toast-success {
     --toast-bg: linear-gradient(135deg, #0d3320, #14532d);
-    --toast-border: #22c55e;
+    --toast-border: hsl(142, 71%, 45%);
     --toast-border-glow: rgba(34, 197, 94, 0.25);
 }
 

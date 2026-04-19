@@ -125,16 +125,18 @@ export class FileScanner implements IFileScanner {
     excludedDirectories: Set<string>,
     parallelWorkers = 1,
     excludedFiles?: string[],
-    onCount?: (c: number) => void,
+    onCount?: (c: number, s: number) => void,
     signal?: AbortSignal
-  ): Promise<number> {
-    if (!initialPaths || initialPaths.length === 0) return 0;
+  ): Promise<{ count: number; size: number }> {
+    if (!initialPaths || initialPaths.length === 0) return { count: 0, size: 0 };
 
     const excludedFilesSet = new Set<string>(excludedFiles ?? []);
     let count = 0;
+    let size = 0;
     let lastReport = Date.now();
     let isDone = false;
     let activeReads = 0;
+    let activeStats = 0;
 
     // The engine's raw directory queue
     const queue: string[] = [];
@@ -149,6 +151,7 @@ export class FileScanner implements IFileScanner {
             queue.push(p);
           } else {
             count++;
+            size += stat.size;
           }
         } catch {
         }
@@ -156,17 +159,27 @@ export class FileScanner implements IFileScanner {
     );
 
     if (queue.length === 0) {
-      if (onCount && !signal?.aborted) onCount(count);
-      return count;
+      if (onCount && !signal?.aborted) onCount(count, size);
+      return { count, size };
     }
 
     return new Promise((resolve) => {
 
       const checkDone = () => {
-        if (queue.length === 0 && activeReads === 0 && !isDone) {
+        if (queue.length === 0 && activeReads === 0 && activeStats === 0 && !isDone) {
           isDone = true;
-          if (onCount && !signal?.aborted) onCount(count);
-          resolve(count);
+          if (onCount && !signal?.aborted) onCount(count, size);
+          resolve({ count, size });
+        }
+      };
+
+      const reportProgress = () => {
+        if (onCount) {
+          const now = Date.now();
+          if (now - lastReport > 500) {
+            lastReport = now;
+            onCount(count, size);
+          }
         }
       };
 
@@ -174,7 +187,7 @@ export class FileScanner implements IFileScanner {
         if (isDone || signal?.aborted) {
           if (!isDone) {
             isDone = true;
-            resolve(count);
+            resolve({ count, size });
           }
           return;
         }
@@ -187,6 +200,8 @@ export class FileScanner implements IFileScanner {
             activeReads--;
 
             if (!err && entries) {
+              const filesToStat: string[] = [];
+
               for (let i = 0; i < entries.length; i++) {
                 if (signal?.aborted) break;
 
@@ -200,16 +215,21 @@ export class FileScanner implements IFileScanner {
                   queue.push(fullPath);
                 } else if (ent.isFile()) {
                   count++;
+                  filesToStat.push(fullPath);
                 }
               }
 
-              if (onCount) {
-                const now = Date.now();
-                if (now - lastReport > 500) {
-                  lastReport = now;
-                  onCount(count);
-                }
+              for (let i = 0; i < filesToStat.length; i++) {
+                activeStats++;
+                fs.stat(filesToStat[i], (errStat, stats) => {
+                  activeStats--;
+                  if (!errStat) size += stats.size;
+                  reportProgress();
+                  checkDone();
+                });
               }
+
+              reportProgress();
             }
 
             processQueue();

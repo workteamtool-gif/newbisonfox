@@ -25,14 +25,23 @@
     transform: translateY(-0.17vh);
 }
 
-.choice-card.yes:hover {
-    border-color: rgba(16, 185, 129, .5);
-    background: rgba(16, 185, 129, .08);
+
+.choice-card.no {
+    background: rgba(53, 94, 59, .8);
+}
+
+.choice-card.yes {
+    background: rgba(94, 53, 59, .8);
 }
 
 .choice-card.no:hover {
+    border-color: rgba(16, 185, 129, .5);
+    background: rgba(16, 185, 129, .3);
+}
+
+.choice-card.yes:hover {
     border-color: rgba(239, 68, 68, .4);
-    background: rgba(239, 68, 68, .07);
+    background: rgba(239, 68, 68, .3);
 }
 
 .choice-emoji {

@@ -8,8 +8,8 @@ export const uploadApi = {
     selectedPaths: string[],
     excludedPaths: string[],
     signal?: AbortSignal,
-    onCount?: (c: number) => void
-  ): Promise<number> => {
+    onCount?: (c: number, s: number) => void
+  ): Promise<{ count: number; size: number }> => {
     clientLogger.info('API', `Starting background file count session (IPC) for session ${sessionId}...`)
     const scanId = Math.random().toString(36).substring(2, 10)
 
@@ -22,11 +22,11 @@ export const uploadApi = {
           unsubscribe()
           reject(new Error(data.error))
         } else if (data.done) {
-          clientLogger.info('API', `File count complete! Total: ${data.count}`)
+          clientLogger.info('API', `File count complete! Total: ${data.count}, Bytes: ${data.size}`)
           unsubscribe()
-          resolve(data.count ?? 0)
+          resolve({ count: data.count ?? 0, size: data.size ?? 0 })
         } else if (data.count !== undefined && onCount) {
-          onCount(data.count)
+          onCount(data.count, data.size ?? 0)
         }
       })
 
@@ -74,13 +74,14 @@ export const uploadApi = {
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.CANCEL, { sessionId })
   },
 
-  startUpload: async (sessionId: string, files: string[], subfolder: string) => {
+  startUpload: async (sessionId: string, files: string[], subfolder: string, expectedTotalBytes?: number) => {
     clientLogger.info('API', `Sending Start Upload command for session ${sessionId}...`)
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.START, {
       sessionId,
       files,
       subfolder,
-      expectedTotal: files.length
+      expectedTotal: files.length,
+      expectedTotalBytes
     })
   },
 
@@ -99,21 +100,25 @@ export const uploadApi = {
           type: 'done',
           percent: 100,
           completed: data.completed,
+          completedBytes: data.completedBytes,
           failed: data.failed,
           failedFiles: data.failedFiles || [],
-          total: data.total
+          total: data.total,
+          totalBytes: data.totalBytes
         })
         unsubscribe()
       } else if (data.type === 'discovery') {
-        onMessage({ type: 'discovery', count: data.count })
+        onMessage({ type: 'discovery', count: data.count, size: data.size })
       } else if (data.type === 'progress') {
         onMessage({
           type: 'progress',
           file: data.file,
           percent: data.percent,
           completed: data.completed,
+          completedBytes: data.completedBytes,
           failed: data.failed,
-          total: data.total
+          total: data.total,
+          totalBytes: data.totalBytes
         })
       } else {
         onMessage({ ...data, type: data.type || 'sync' })

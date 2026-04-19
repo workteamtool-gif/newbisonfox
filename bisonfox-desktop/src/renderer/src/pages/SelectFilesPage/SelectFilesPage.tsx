@@ -240,7 +240,6 @@ export function SelectFilesPage(): JSX.Element {
         </p>
 
         <div className="info-box">
-          <span className="info-icon">ℹ️</span>
           <span>
             נבחרו {selectedCount} פריטים
           </span>

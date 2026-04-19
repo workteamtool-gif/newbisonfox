@@ -1,5 +1,4 @@
 import React, { JSX } from 'react'
-
 export interface UploadingUploadProps {
     showFailedReview: boolean
     uploadDone: boolean
@@ -14,6 +13,8 @@ export interface UploadingUploadProps {
     skipFailed: () => void
     retryFailed: () => void
     loadingVideo: string
+    completedBytes: number
+    totalBytes: number
 }
 
 export function UploadingUpload({
@@ -29,8 +30,18 @@ export function UploadingUpload({
     MAX_FAILED_FILES_TO_SHOW,
     skipFailed,
     retryFailed,
-    loadingVideo
+    loadingVideo,
+    completedBytes,
+    totalBytes
 }: UploadingUploadProps): React.JSX.Element {
+
+    const formatSize = (bytes: number) => {
+        if (!bytes || bytes === 0) return '0 B'
+        const k = 1024
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+        const i = Math.floor(Math.log(bytes) / Math.log(k))
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    }
 
     return (
         <div style={{ height: '720px' }}>
@@ -126,6 +137,13 @@ export function UploadingUpload({
                     <div className="stat-lbl">נכשלו</div>
                 </div>
                 <div className="stat-card">
+                    <div className="stat-val" style={{ fontSize: '1.2rem', direction: 'ltr' }}>
+                        {formatSize(completedBytes)} / {formatSize(totalBytes)}
+                    </div>
+                    <div className="stat-lbl">גודל הועתק</div>
+                </div>
+
+                <div className="stat-card">
                     <div className="stat-val">{overallPercentage}%</div>
                     <div className="stat-lbl">סה"כ</div>
                 </div>
@@ -207,7 +225,7 @@ export function UploadingUpload({
                             justifyContent: 'space-between'
                         }}
                     >
-                        <button className="btn btn-secondary" onClick={skipFailed}>
+                        <button className="btn" style={{ background: 'hsl(142, 71%, 45%, .8)' }} onClick={skipFailed}>
                             דלג על פריטים שנכשלו
                         </button>
                         <button className="btn btn-primary" onClick={retryFailed}>

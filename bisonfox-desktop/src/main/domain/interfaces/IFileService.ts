@@ -6,15 +6,18 @@ export interface CopyOptions {
   basePath?: string
   excludedFiles?: string[]
   expectedTotal?: number
+  expectedTotalBytes?: number
   signal?: AbortSignal
   onScan?: (count: number) => void
   onProgress: (
     file: string,
     percent: number,
-    completed: number,
+    completedFiles: number,
+    completedBytes: number,
     failedCount: number,
     failedFiles: { path: string; reason: string }[],
-    total: number
+    totalFiles: number,
+    totalBytes: number
   ) => void
 }
 
@@ -38,7 +41,7 @@ export interface IFileService {
   countFiles(
     files: string[],
     excludedFiles?: string[],
-    onCount?: (count: number) => void,
+    onCount?: (count: number, size: number) => void,
     signal?: AbortSignal
-  ): Promise<number>
+  ): Promise<{ count: number; size: number }>
 }

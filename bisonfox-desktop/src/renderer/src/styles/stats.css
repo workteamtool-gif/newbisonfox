@@ -1,5 +1,6 @@
 .upload-stats {
-    display: grid;
+    display: flex;
+    justify-content: space-around;
     grid-template-columns: repeat(4, 1fr);
     gap: .9rem;
     margin-bottom: 1.4rem;

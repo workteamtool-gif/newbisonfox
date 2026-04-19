@@ -57,7 +57,7 @@ export function SuccessPage(): JSX.Element {
             <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
               {diskSessions.length}
             </div>
-            <div className="stat-lbl">Session{diskSessions.length !== 1 ? 's' : ''} Processed</div>
+            <div className="stat-lbl">סה"כ העברות שעובדו</div>
           </div>
           <div className="stat-card">
             <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
@@ -66,14 +66,14 @@ export function SuccessPage(): JSX.Element {
             <div className="stat-val" style={{ color: 'var(--accent-green)', fontSize: '1.8rem' }}>
               {totalFiles.toLocaleString()}
             </div>
-            <div className="stat-lbl">Total Files Uploaded</div>
+            <div className="stat-lbl">סה"כ קבצים שהועלו</div>
           </div>
         </div>
 
         {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">
             <h4 className="failed-files-header">
-              ⚠️ {failedCountTotal} file(s) could not be copied
+              ⚠️ {failedCountTotal} קבצים לא הועלו
             </h4>
             <div className="failed-files-list-wrapper">
               <ul className="failed-files-list">
@@ -98,7 +98,7 @@ export function SuccessPage(): JSX.Element {
         </p>
 
         <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={reset}>
-          ↩ Start Over Now
+          ↩ לחזור הביתה כעת
         </button>
       </div>
     </div>

@@ -4,10 +4,13 @@ export interface ProgressMessage {
   percent?: number
   message?: string
   count?: number
+  size?: number
   completed?: number
+  completedBytes?: number
   failed?: number
   failedFiles?: { path: string; reason: string }[]
   total?: number
+  totalBytes?: number
   progress?: Record<string, number>
   status?: string
 }

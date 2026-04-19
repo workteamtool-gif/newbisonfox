@@ -6,7 +6,7 @@ import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
   const { setStep, diskSessions, userName, sessionId, reset } = useWizardStore()
-  const [countdown, setCountdown] = useState(10)
+  const [countdown, setCountdown] = useState(150)
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -67,7 +67,7 @@ export class UploadManager {
     const session = this.sessionSingletonInstance.get(sessionId)
     if (!session) return
 
-    const { files, subfolder, expectedTotal } = body
+    const { files, subfolder, expectedTotal, expectedTotalBytes } = body
 
     const rawBaseDir = process.env.UPLOAD_BASE_DIR
     if (!rawBaseDir || rawBaseDir.trim() === '') {
@@ -140,26 +140,29 @@ export class UploadManager {
         basePath,
         excludedFiles: allExcluded,
         expectedTotal,
+        expectedTotalBytes,
         signal: controller.signal, // Connects the scanner and 64 workers to this controller
         onScan: (count) => {
           this.notifier.notifyProgress(session.id, { type: 'discovery', count })
         },
-        onProgress: (file, percent, completed, failedCount, failedFiles, total) => {
+        onProgress: (file, percent, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes) => {
           if (file === '__done__') {
             this.sessionSingletonInstance.update(session.id, {
-              completedCount: completed,
+              completedCount: completedFiles,
               failedCount: failedCount,
               failedFiles: failedFiles,
-              totalCount: total,
+              totalCount: totalFiles,
               status: 'complete'
             })
 
             this.notifier.notifyProgress(session.id, {
               type: 'done',
-              completed,
+              completed: completedFiles,
+              completedBytes: completedBytes,
               failed: failedCount,
               failedFiles,
-              total
+              total: totalFiles,
+              totalBytes: totalBytes
             })
             this.activeUploads.delete(session.id)
             return
@@ -176,19 +179,21 @@ export class UploadManager {
               lastSessionWrite = now
               this.sessionSingletonInstance.update(session.id, {
                 progress: current.progress,
-                completedCount: completed,
+                completedCount: completedFiles,
                 failedCount: failedCount,
                 failedFiles: failedFiles,
-                totalCount: total
+                totalCount: totalFiles
               })
             }
             this.notifier.notifyProgress(session.id, {
               type: 'progress',
               file,
               percent,
-              completed,
+              completed: completedFiles,
+              completedBytes: completedBytes,
               failed: failedCount,
-              total
+              total: totalFiles,
+              totalBytes: totalBytes
             })
           }
         }

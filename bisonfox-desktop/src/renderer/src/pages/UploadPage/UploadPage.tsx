@@ -4,8 +4,6 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
 import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
-import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
-import { clientLogger } from '@renderer/utils/logger'
 import { ErrorUpload } from './UploadPageComponentes/ErrorUpload'
 import { ReadyUpload } from './UploadPageComponentes/ReadyUpload'
 import { UploadingUpload } from './UploadPageComponentes/UploadingUpload'
@@ -26,7 +24,9 @@ export function UploadPage(): JSX.Element | null {
     startUpload,
     retryFailed,
     skipFailed,
-    setStep
+    setStep,
+    completedBytes,
+    totalBytes
   } = useUploadManager()
 
   useDriveMonitor()
@@ -65,11 +65,9 @@ export function UploadPage(): JSX.Element | null {
         {
           !uploadError && phase === 'ready' && (
             <ReadyUpload
-              setStep={setStep}
-              ReviewPage={ReviewPage}
               countingComplete={countingComplete}
-              preCalcTotal={preCalcTotal}
-              startUpload={startUpload} />
+              startUpload={startUpload}
+              preCalcTotal={preCalcTotal} />
           )
         }
 
@@ -90,6 +88,8 @@ export function UploadPage(): JSX.Element | null {
               skipFailed={skipFailed}
               retryFailed={retryFailed}
               loadingVideo={loadingVideo}
+              completedBytes={completedBytes}
+              totalBytes={totalBytes}
             />)
         }
       </div >
