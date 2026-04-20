@@ -1,9 +1,10 @@
 .glass-card {
-    background: var(--bg-glass);
-    border: 1px solid var(--border-glass);
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.4));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: var(--r-xl);
-    backdrop-filter: blur(2vh) saturate(130%);
-    -webkit-backdrop-filter: blur(2vh) saturate(130%);
+    backdrop-filter: blur(2.5vh) saturate(140%);
+    -webkit-backdrop-filter: blur(2.5vh) saturate(140%);
     box-shadow: 0 2.08vh 4.17vh -1vh rgba(0, 0, 0, 0.6);
     padding: 2.5rem;
     width: 53.33vw;

@@ -12,9 +12,9 @@ import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } = useWizardStore()
-  
+
   const existingPrefix = PREFIX_OPTIONS.find(p => userName.startsWith(p.value)) || PREFIX_OPTIONS[0]
-  
+
   const [prefix, setPrefix] = useState(existingPrefix)
   const [name, setName] = useState(userName.startsWith(existingPrefix.value) ? userName.slice(existingPrefix.value.length) : '')
   const [error, setError] = useState('')
@@ -23,12 +23,29 @@ export function SetUsernamePage(): JSX.Element {
   const openKeyboard = useKeyboardDetection()
   const showKeyboard = openKeyboard && !isCancelModalOpen
 
+  const maxLength = Number(import.meta.env.VITE_USERNAME_LENGTH)
+  const validPattern = /^[a-zA-Z0-9_]+$/
+  const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
+
   useEffect(() => {
     setKeyboardVisible(showKeyboard)
     return () => setKeyboardVisible(false)
   }, [showKeyboard, setKeyboardVisible])
 
   const fullName = prefix.value + name.trim()
+
+  function ValidateName(name: string): void {
+    const trimmedName = name.trim()
+    if (trimmedName && reserved.test(trimmedName)) {
+      setError('שם המשתמש שבחרת הינו אסור לשימוש במערכת')
+      return
+    }
+    if (trimmedName && !validPattern.test(trimmedName)) {
+      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.')
+      return
+    }
+    setError('')
+  }
 
   async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault()
@@ -84,12 +101,12 @@ export function SetUsernamePage(): JSX.Element {
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
               placeholder="For example: bison"
-              maxLength={20}
+              maxLength={maxLength}
               value={name}
               style={{ direction: 'ltr' }}
               onChange={(e) => {
-                setName(e.target.value.slice(0, 20))
-                setError('')
+                ValidateName(e.target.value)
+                setName(e.target.value)
               }}
               autoFocus
             />
@@ -118,7 +135,7 @@ export function SetUsernamePage(): JSX.Element {
         <VirtualKeyboard
           currentValue={name}
           onChange={(newVal) => {
-            setName(newVal.slice(0, 20))
+            setName(newVal.slice(0, maxLength))
             setError('')
           }}
         />

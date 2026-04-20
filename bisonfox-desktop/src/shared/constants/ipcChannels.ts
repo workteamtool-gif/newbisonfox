@@ -5,6 +5,7 @@ export const IPC_CHANNELS = {
   },
   SESSION: {
     VALIDATE_NAME: 'validate-name',
+    VALIDATE_SUBFOLDER: 'validate-subfolder',
     CREATE: 'create-session'
   },
   DRIVE: {

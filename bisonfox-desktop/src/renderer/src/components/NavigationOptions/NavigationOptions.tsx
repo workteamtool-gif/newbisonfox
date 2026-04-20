@@ -1,18 +1,12 @@
 import React from 'react'
 
 interface NavigationOptionsProps {
-  /** Called when back button is clicked. If omitted, back button is not rendered. */
   onBack?: () => void
-  /** Label for the back button. Defaults to '→ חזור' */
   backLabel?: React.ReactNode
-  /** Whether the back button should be disabled */
   backDisabled?: boolean
 
-  /** Called when forward button is clicked. If omitted, forward is a submit button. */
   onForward?: () => void
-  /** Label for the forward button. Defaults to 'המשך ←' */
   forwardLabel?: React.ReactNode
-  /** Whether the forward button should be disabled */
   forwardDisabled?: boolean
 }
 

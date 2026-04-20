@@ -6,6 +6,7 @@ import { UploadManager } from './application/UploadManager'
 import { sessionSingleton } from './application/UploadSession'
 import { scanManager } from './application/ScanManager'
 import { NameValidator } from './domain/validators/NameValidator'
+import { SubfolderValidator } from './domain/validators/SubfolderValidator'
 
 export interface AppDependencies {
   diskService: IDiskService
@@ -14,6 +15,7 @@ export interface AppDependencies {
 }
 
 const nameValidator = new NameValidator()
+const subfolderValidator = new SubfolderValidator()
 const sessionSingletonInstance = sessionSingleton.getInstance()
 const countFileControllers = new Map<string, AbortController>()
 
@@ -29,6 +31,10 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_NAME, (_, { name }) => {
     return nameValidator.validate(name)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SUBFOLDER, (_, { name }) => {
+    return subfolderValidator.validate(name)
   })
 
   ipcMain.handle(IPC_CHANNELS.DRIVE.LIST, async () => {

@@ -1,23 +1,28 @@
-import { INameValidator, ValidationResult } from '../interfaces/INameValidator'
+import { INameValidator } from '../interfaces/IValidators/INameValidator'
+import { ValidationResult } from '../entities/ValidationInfo'
 
 export class NameValidator implements INameValidator {
-  private static readonly MAX_LENGTH = 50
+  private static readonly MAX_LENGTH = Number(process.env.VITE_USERNAME_LENGTH)
   private static readonly VALID_PATTERN = /^[a-zA-Z0-9_]+$/
+  private static readonly RESERVED_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
  
    validate(name: string): ValidationResult {
      const trimmed = (name ?? '').trim()
  
      if (!trimmed) {
-       return { valid: false, message: 'Name is required.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.' }
      }
      if (trimmed.length > NameValidator.MAX_LENGTH) {
        return {
          valid: false,
-         message: `Name must not exceed ${NameValidator.MAX_LENGTH} characters.`
+         message: `שם המשתמש אינו תקין. עליו להכיל עד ${NameValidator.MAX_LENGTH} תווים.`
        }
      }
+     if (NameValidator.RESERVED_PATTERN.test(trimmed)) {
+       return { valid: false, message: 'שם המשתמש שבחרת הינו אסור לשימוש במערכת' }
+     }
      if (!NameValidator.VALID_PATTERN.test(trimmed)) {
-       return { valid: false, message: 'Name must contain letters, numbers and underscores only.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.' }
      }
 
     return { valid: true }

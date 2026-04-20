@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { sessionApi } from '@renderer/services/sessionApi'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { JSX } from 'react'
@@ -13,9 +14,27 @@ export function SubfolderPage(): JSX.Element {
   useDriveMonitor()
   const [subfolder, setSubfolder] = useState(currentSubfolder)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const openKeyboard = useKeyboardDetection()
   const showKeyboard = openKeyboard && !isCancelModalOpen
+
+  const validPattern = /^[a-zA-Z0-9 _-]+$/
+  const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+
+  function ValidateSubfolder(name: string): void {
+    const trimmedName = name.trim()
+    if (trimmedName && reserved.test(trimmedName)) {
+      setError('שם המשתמש שבחרת הינו אסור לשימוש במערכת')
+      return
+    }
+    if (trimmedName && !validPattern.test(trimmedName)) {
+      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.')
+      return
+    }
+
+    setError('')
+  }
 
   // Signal keyboard visibility to the outer WizardLayout grid
   useEffect(() => {
@@ -23,13 +42,39 @@ export function SubfolderPage(): JSX.Element {
     return () => setKeyboardVisible(false)
   }, [showKeyboard, setKeyboardVisible])
 
-  function handleSubmit(e: React.FormEvent): void {
+  async function handleSubmit(e: React.FormEvent): Promise<void> {
     e.preventDefault()
+    setLoading(true)
+    setError('')
+
     const trimmed = subfolder.trim()
-    if (trimmed && !/^[a-zA-Z0-9\s-_]+$/.test(trimmed)) {
-      setError('השם יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקווים תחתונים.')
+    if (trimmed && reserved.test(trimmed)) {
+      setError('שם התיקייה שבחרת הינו אסור לשימוש במערכת')
+      setLoading(false)
       return
     }
+    if (trimmed && !/^[a-zA-Z0-9 _-]+$/.test(trimmed)) {
+      setError('השם יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקווים תחתונים.')
+      setLoading(false)
+      return
+    }
+
+    // Backend validation only if a subfolder is provided
+    if (trimmed) {
+      try {
+        const result = await sessionApi.validateSubfolder(trimmed)
+        if (!result.valid) {
+          setError(result.message || 'שם התיקייה אינו תקין.')
+          setLoading(false)
+          return
+        }
+      } catch {
+        setError('Connection error. Make sure the backend is running.')
+        setLoading(false)
+        return
+      }
+    }
+
     setCurrentSubfolder(trimmed)
     if (trimmed) {
       clientLogger.info('SubfolderPage', `For user: ${userName} in session: ${sessionId} specified subfolder: "${trimmed}"`)
@@ -37,10 +82,12 @@ export function SubfolderPage(): JSX.Element {
       clientLogger.info('SubfolderPage', `For user: ${userName} in session: ${sessionId} did not specify a subfolder`)
     }
     setStep(SelectFilesPage)
+    setLoading(false)
   }
 
   const trimmedSubfolder = subfolder.trim()
   const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
+  const maxLength = Number(import.meta.env.VITE_SUBFOLDER_LENGTH)
 
   return (
     <>
@@ -63,12 +110,12 @@ export function SubfolderPage(): JSX.Element {
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
               placeholder="For example: project_alpha"
-              maxLength={20}
+              maxLength={maxLength}
               value={subfolder}
               style={{ direction: 'ltr' }}
               onChange={(e) => {
-                setSubfolder(e.target.value.slice(0, 20))
-                setError('')
+                ValidateSubfolder(e.target.value)
+                setSubfolder(e.target.value)
               }}
               autoFocus
             />
@@ -82,6 +129,8 @@ export function SubfolderPage(): JSX.Element {
               setCurrentSubfolder(subfolder.trim())
               setStep(InsertDiskPage)
             }}
+            forwardLabel={loading ? <><span className="spin">⟳</span> בודק...</> : <>המשך ←</>}
+            forwardDisabled={loading || !subfolder.trim() || error !== ''}
           />
         </form>
       </div>
@@ -89,7 +138,7 @@ export function SubfolderPage(): JSX.Element {
         <VirtualKeyboard
           currentValue={subfolder}
           onChange={(newVal) => {
-            setSubfolder(newVal.slice(0, 20))
+            setSubfolder(newVal.slice(0, maxLength))
             setError('')
           }}
         />
