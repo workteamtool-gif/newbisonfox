@@ -23,6 +23,7 @@ export function useUploadManager(): {
   totalBytes: number
   startUpload: () => void
   retryFailed: () => void
+  retryAll: () => void
   skipFailed: () => void
   setStep: (step: WizardStep) => void
 } {
@@ -287,6 +288,42 @@ export function useUploadManager(): {
     setStep(PullDiskPage)
   }
 
+  const retryAll = (): void => {
+    if (!sessionId || !currentDisk) return
+
+    clientLogger.info(
+      'UploadManager',
+      `For user: ${userName} in session: ${sessionId} retrying ALL ${currentDisk.selectedFiles.length} original files (failures exceeded tracking limit).`
+    )
+
+    // Reset state completely
+    setUploadDone(false)
+    setFailedFilesList([])
+    setFailedCount(0)
+    failedRef.current = 0
+    setCompletedCount(0)
+    completedRef.current = 0
+    completedBytesRef.current = 0
+    setCompletedBytesState(0)
+    setOverallPercentage(0)
+    setTotalDiscovered(preCalcTotal || currentDisk.selectedFiles.length)
+    totalRef.current = preCalcTotal || currentDisk.selectedFiles.length
+    totalBytesRef.current = preCalcTotalBytes || 0
+    setTotalBytesState(preCalcTotalBytes || 0)
+    setRetryKey((k) => k + 1)
+    setPhase('copying')
+
+    const subfolder = currentDisk.subfolder || ''
+    uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
+      clientLogger.error(
+        'UploadManager',
+        `For user: ${userName} in session: ${sessionId} retry-all failed.`,
+        err
+      )
+      setUploadError(err.message || 'Retry all failed.')
+    })
+  }
+
   return {
     phase,
     uploadError,
@@ -303,6 +340,7 @@ export function useUploadManager(): {
     totalBytes: totalBytesState,
     startUpload,
     retryFailed,
+    retryAll,
     skipFailed,
     setStep
   }

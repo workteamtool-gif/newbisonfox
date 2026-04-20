@@ -15,6 +15,7 @@ export interface UploadComponentProps {
     MAX_FAILED_FILES_TO_SHOW: number
     skipFailed: () => void
     retryFailed: () => void
+    retryAll: () => void
     loadingVideo: string
     completedBytes: number
     totalBytes: number
@@ -33,6 +34,7 @@ export function UploadComponent({
     MAX_FAILED_FILES_TO_SHOW,
     skipFailed,
     retryFailed,
+    retryAll,
     loadingVideo,
     completedBytes,
     totalBytes
@@ -74,6 +76,7 @@ export function UploadComponent({
                     MAX_FAILED_FILES_TO_SHOW={MAX_FAILED_FILES_TO_SHOW}
                     skipFailed={skipFailed}
                     retryFailed={retryFailed}
+                    retryAll={retryAll}
                 />
             )}
 

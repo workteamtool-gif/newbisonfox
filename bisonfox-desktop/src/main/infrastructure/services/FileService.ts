@@ -15,7 +15,7 @@ const ITEMS_IN_ONE_PAGE = Number(process.env.VITE_ITEMS_IN_ONE_PAGE) || 48
 const FAIL_INTERVAL_MS = Number(process.env.FAIL_INTERVAL_MS) || 500
 const FAIL_RETRIES = Number(process.env.FAIL_RETRIES) || 5
 const REPORT_COPIED_FILES_INTERVAL_MS = Number(process.env.REPORT_COPIED_FILES_INTERVAL_MS) || 500
-const MAX_REPORTED_FAILURES = Number(process.env.MAX_REPORTED_FAILURES) || 10_000
+const MAX_REPORTED_FAILURES = Number(process.env.VITE_MAX_REPORTED_FAILURES) || 10_000
 
 /**
  * A custom Semaphore to strictly limit how many massive files can copy concurrently.

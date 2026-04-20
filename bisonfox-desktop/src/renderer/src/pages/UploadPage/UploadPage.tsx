@@ -23,6 +23,7 @@ export function UploadPage(): JSX.Element | null {
     failedFilesList,
     startUpload,
     retryFailed,
+    retryAll,
     skipFailed,
     setStep,
     completedBytes,
@@ -87,6 +88,7 @@ export function UploadPage(): JSX.Element | null {
               MAX_FAILED_FILES_TO_SHOW={MAX_FAILED_FILES_TO_SHOW}
               skipFailed={skipFailed}
               retryFailed={retryFailed}
+              retryAll={retryAll}
               loadingVideo={loadingVideo}
               completedBytes={completedBytes}
               totalBytes={totalBytes}
