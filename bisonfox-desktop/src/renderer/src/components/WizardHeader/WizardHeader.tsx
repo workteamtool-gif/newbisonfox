@@ -1,7 +1,6 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
-import { PHASES } from '@renderer/Constants/phases'
 import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
 
 interface WizardHeaderProps {
@@ -13,9 +12,6 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
   const userName = useWizardStore((s) => s.userName)
 
   if (step === WelcomePage || step === SuccessPage) return null
-
-  let activePhaseIdx = PHASES.findIndex((p) => p.step === step)
-  if (activePhaseIdx === -1) activePhaseIdx = 0
 
   return (
     <header className="wizard-header">
@@ -47,31 +43,6 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
         </div>
       </div>
 
-      <div className="step-indicator">
-        {PHASES.map((phase, i) => {
-          const status = i < activePhaseIdx ? 'done' : i === activePhaseIdx ? 'active' : 'pending'
-          return (
-            <React.Fragment key={phase.key}>
-              {i > 0 && <div className={`step-connector ${i <= activePhaseIdx ? 'done' : ''}`} />}
-              <div
-                className={`step-dot ${status}`}
-                title={phase.label}
-                style={{ position: 'relative', margin: '0 5vh' }}
-              >
-                {status === 'done' ? '✓' : i + 1}
-                <span className='phase'
-                  style={{
-                    color: status === 'active' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    fontWeight: status === 'active' ? 500 : 400
-                  }}
-                >
-                  {phase.label}
-                </span>
-              </div>
-            </React.Fragment>
-          )
-        })}
-      </div>
     </header>
   )
 }

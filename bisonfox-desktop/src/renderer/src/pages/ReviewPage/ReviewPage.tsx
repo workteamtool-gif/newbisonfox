@@ -132,7 +132,6 @@ export function ReviewPage(): JSX.Element | null {
   const fileCount = selected.size
 
   return (
-    <div className="wizard-layout">
       <div className="glass-card">
         <p className="page-title">בדיקה נוספת של הבחירה  </p>
         <p className="page-subtitle">
@@ -198,6 +197,5 @@ export function ReviewPage(): JSX.Element | null {
           forwardDisabled={selected.size === 0 || saving}
         />
       </div>
-    </div>
   )
 }

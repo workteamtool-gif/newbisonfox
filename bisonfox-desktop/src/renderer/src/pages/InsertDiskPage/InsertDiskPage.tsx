@@ -74,7 +74,6 @@ export function InsertDiskPage(): React.JSX.Element {
   }
 
   return (
-    <div className="wizard-layout">
       <div className="glass-card">
         <div className="disk-visual">
           <div className="disk-emoji">💿</div>
@@ -141,6 +140,5 @@ export function InsertDiskPage(): React.JSX.Element {
           forwardDisabled={!selectedLetter}
         />
       </div>
-    </div>
   )
 }

@@ -4,12 +4,15 @@ import { uploadApi } from '../../services/uploadApi'
 import { CancelModal } from '../CancelModal/CancelModal'
 import { WizardHeader } from '../WizardHeader/WizardHeader'
 import { clientLogger } from '../../utils/logger'
+import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
 import './WizardLayout.css'
+import { WizardBody } from '../WizardBody/WizardBody'
 interface Props {
   children: React.ReactNode
 }
 
 export function WizardLayout({ children }: Props): React.JSX.Element {
+  const step = useWizardStore((s) => s.step)
   const reset = useWizardStore((s) => s.reset)
   const sessionId = useWizardStore((s) => s.sessionId)
   const userName = useWizardStore((s) => s.userName)
@@ -46,7 +49,9 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     reset()
   }
 
-  const layoutClass = `wizard-layout${isKeyboardVisible ? ' wizard-layout--with-keyboard' : ''}`
+  const showSteppersAndHeader = step !== WelcomePage && step !== SuccessPage
+
+  const layoutClass = `wizard-layout${isKeyboardVisible ? ' wizard-layout--with-keyboard' : ''}${!showSteppersAndHeader ? ' wizard-layout--no-header' : ''}`
 
   return (
     <div className={layoutClass}>
@@ -55,8 +60,11 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
         onClose={() => setCancelModalOpen(false)}
         onConfirm={handleConfirmCancel}
       />
-      <WizardHeader onCancelClick={() => setCancelModalOpen(true)} />
-      {children}
+      {showSteppersAndHeader && (<WizardHeader onCancelClick={() => setCancelModalOpen(true)} />)}
+
+      <WizardBody showSteppersAndHeader={showSteppersAndHeader}>
+        {children}
+      </WizardBody>
     </div>
   )
 }

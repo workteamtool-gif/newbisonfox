@@ -12,10 +12,11 @@
     --accent-orange: #f59e0b;
 
     --grad-primary: linear-gradient(135deg, #6366f1, #8b5cf6);
+    --grad-headline: linear-gradient(135deg, #ffffff, #916de4);
     --grad-green: linear-gradient(135deg, #10b981, #059669);
 
     --text-primary: #f1f5f9;
-    --text-secondary: #bbbbbb;
+    --text-secondary: #FFFFFF;
 
     --r-md: 1.17vh;
     --r-lg: 1.67vh;

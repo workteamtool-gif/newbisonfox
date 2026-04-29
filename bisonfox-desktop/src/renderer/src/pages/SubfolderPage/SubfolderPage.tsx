@@ -48,16 +48,6 @@ export function SubfolderPage(): JSX.Element {
     setError('')
 
     const trimmed = subfolder.trim()
-    if (trimmed && reserved.test(trimmed)) {
-      setError('שם התיקייה שבחרת הינו אסור לשימוש במערכת')
-      setLoading(false)
-      return
-    }
-    if (trimmed && !/^[a-zA-Z0-9 _-]+$/.test(trimmed)) {
-      setError('השם יכול להכיל רק אותיות, מספרים, רווחים, מקפים וקווים תחתונים.')
-      setLoading(false)
-      return
-    }
 
     // Backend validation only if a subfolder is provided
     if (trimmed) {
@@ -130,7 +120,7 @@ export function SubfolderPage(): JSX.Element {
               setStep(InsertDiskPage)
             }}
             forwardLabel={loading ? <><span className="spin">⟳</span> בודק...</> : <>המשך ←</>}
-            forwardDisabled={loading || !subfolder.trim() || error !== ''}
+            forwardDisabled={loading || error !== ''}
           />
         </form>
       </div>

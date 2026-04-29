@@ -254,8 +254,7 @@ export function SelectFilesPage(): JSX.Element {
   const selectedCount = selected.size
 
   return (
-    <div className="wizard-layout">
-      <div className="glass-card" style={{ height: '80vh' }}>
+      <div className="glass-card">
         <p className="page-title">בחירת קבצים ותיקיות</p>
         <p className="page-subtitle">
           בחר מה להעתיק . סמן פריטים למטה - בחירת תיקייה כוללת את כל תוכנה בהעלאה.
@@ -387,6 +386,5 @@ export function SelectFilesPage(): JSX.Element {
           forwardDisabled={selected.size === 0 || saving}
         />
       </div>
-    </div>
   )
 }

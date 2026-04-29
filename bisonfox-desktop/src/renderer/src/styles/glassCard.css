@@ -9,6 +9,11 @@
     padding: 2.5rem;
     width: 53.33vw;
     min-width: 53.33vw;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     animation: fadeUp .35s ease both;
     transition: max-width var(--t-base);

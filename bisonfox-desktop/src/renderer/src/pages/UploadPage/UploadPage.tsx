@@ -54,7 +54,6 @@ export function UploadPage(): JSX.Element | null {
   const MAX_FAILED_FILES_TO_SHOW = 20
 
   return (
-    <div className="wizard-layout">
       <div className="glass-card">
         {/* === SCENARIO 1: ERROR === */}
         {uploadError && (
@@ -95,6 +94,5 @@ export function UploadPage(): JSX.Element | null {
             />)
         }
       </div >
-    </div >
   )
 }

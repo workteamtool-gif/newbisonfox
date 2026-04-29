@@ -20,7 +20,6 @@ export function PullDiskPage(): JSX.Element | null {
   }
 
   return (
-    <div className="wizard-layout">
       <div className="glass-card" style={{ textAlign: 'center' }}>
         <p className="page-title">הוצאת הכונן</p>
         <p className="page-subtitle">
@@ -38,6 +37,5 @@ export function PullDiskPage(): JSX.Element | null {
           </button>
         </div>
       </div>
-    </div>
   )
 }
