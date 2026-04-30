@@ -18,8 +18,9 @@
     gap: .7rem;
     justify-content: flex-end;
     margin-top: auto;
-    padding-top: 1.5rem; /* Ensures minimal gap if space is tight */
+    padding: 1.5rem 0 2rem;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .divider {

@@ -31,9 +31,7 @@ export class DiskService implements IDiskService {
       const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]
 
       const drives: DriveInfo[] = []
-      const hiddenDrivesEnv = process.env.HIDDEN_DRIVES || 'C:'
       const whitelistDrivesEnv = process.env.WHITELIST_DRIVES || 'X:'
-      const hiddenDrives = hiddenDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
       const whitelistDrives = whitelistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
       for (const rawDrive of rawDrives) {
