@@ -14,7 +14,6 @@ console.log("lalal " + import.meta.env.VITE_MAX_REPORTED_FAILURES)
 export function FailedItemsUpload({
     failedCount,
     failedFilesList,
-    MAX_FAILED_FILES_TO_SHOW,
     skipFailed,
     retryFailed,
     retryAll
@@ -56,7 +55,7 @@ export function FailedItemsUpload({
                     }}
                 >
                     <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-                        {failedFilesList.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
+                        {failedFilesList.slice(0, MAX_TRACKED_FAILURES).map((f, i) => (
                             <li key={i} style={{ marginBottom: '0.5rem', wordBreak: 'break-all' }}>
                                 <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
                                     {f.path}
@@ -68,12 +67,12 @@ export function FailedItemsUpload({
                                         opacity: 0.85
                                     }}
                                 >
-                                    סיבה: {f.reason}
+                                    reason: {f.reason}
                                 </div>
                             </li>
                         ))}
                     </ul>
-                    {failedCount > MAX_FAILED_FILES_TO_SHOW && (
+                    {failedCount > MAX_TRACKED_FAILURES && (
                         <div
                             style={{
                                 fontStyle: 'italic',
@@ -82,7 +81,7 @@ export function FailedItemsUpload({
                                 direction: 'rtl'
                             }}
                         >
-                            ...ועוד {failedCount - MAX_FAILED_FILES_TO_SHOW} (רק {MAX_FAILED_FILES_TO_SHOW} הכשלונות הראשונים מוצגים).
+                            ...ועוד {failedCount - MAX_TRACKED_FAILURES} (רק {MAX_TRACKED_FAILURES} הכשלונות הראשונים מוצגים).
                         </div>
                     )}
                 </div>

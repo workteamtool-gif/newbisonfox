@@ -10,7 +10,7 @@ function PageRouter(): React.JSX.Element {
   const Step = useWizardStore((s) => s.step)
 
   return (
-    <Suspense fallback={<div>Loading step...</div>}>
+    <Suspense fallback={<div>העמוד טוען...</div>}>
       <Step />
     </Suspense>
   )

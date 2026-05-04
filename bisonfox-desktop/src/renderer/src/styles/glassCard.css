@@ -12,11 +12,10 @@
     height: 75vh;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
     position: relative;
     animation: fadeUp .35s ease both;
     transition: max-width var(--t-base);
+    overflow: hidden;
 }
 
 .wizard-layout--with-keyboard .glass-card {

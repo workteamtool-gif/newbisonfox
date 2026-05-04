@@ -19,7 +19,6 @@ export function ReviewPage(): JSX.Element | null {
   const [nodes, setNodes] = useState<FileNode[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [excluded, setExcluded] = useState<Set<string>>(new Set())
-  const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
   const [saving, setSaving] = useState(false)
   const [syncError, setSyncError] = useState<string | null>(null)
 
@@ -132,70 +131,67 @@ export function ReviewPage(): JSX.Element | null {
   const fileCount = selected.size
 
   return (
-      <div className="glass-card">
-        <p className="page-title">בדיקה נוספת של הבחירה  </p>
-        <p className="page-subtitle">
-          אנא בדוק את הקבצים שבחרת <br />
-          {currentSubfolder && (
-            <>
-              תת-תיקייה: {currentSubfolder}
-            </>
-          )}
-        </p>
-
-        <div className="review-disk">
-          <div className="review-disk-head">
-            <span>💿</span>
-            <span className="review-disk-title">{currentDisk.driveLetter}</span>
-            <span className="review-disk-count">
-              נבחרו {fileCount} פריטים
-            </span>
-          </div>
-
-          <div className="review-tree-container">
-            {nodes.length === 0 ? (
-              <div className="review-empty-state">לא נבחרו קבצים. חזור כדי להוסיף!</div>
-            ) : (
-              <FileTree
-                nodes={nodes}
-                selected={selected}
-                excluded={excluded}
-                onToggleSelect={handleToggleSelect}
-                onLoadChildren={handleLoadChildren}
-                autoExpandMap={autoExpandMap}
-                onAutoExpand={setAutoExpandMap}
-              />
-            )}
-          </div>
-        </div>
-
-        {syncError && (
-          <div
-            className="info-box sync-error"
-          >
-            ⚠️ <strong>שגיאת סנכרון:</strong> {syncError}
-          </div>
+    <div className="glass-card">
+      <p className="page-title">בדיקה נוספת של הבחירה  </p>
+      <p className="page-subtitle">
+        אנא בדוק את הקבצים שבחרת <br />
+        {currentSubfolder && (
+          <>
+            תת-תיקייה: {currentSubfolder}
+          </>
         )}
+      </p>
 
-        <div className="divider" />
-
-        <NavigationOptions
-          onBack={() => {
-            clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
-            if (currentDisk) {
-              setCurrentDisk({
-                ...currentDisk,
-                selectedFiles: Array.from(selected),
-                excludedFiles: Array.from(excluded)
-              })
-            }
-            setStep(SelectFilesPage)
-          }}
-          backDisabled={saving}
-          onForward={handleStartUpload}
-          forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>התחל העלאה ←</>}
-          forwardDisabled={selected.size === 0 || saving}
-        />
+      <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>
+        <span>
+          💿 <strong>{currentDisk.driveLetter}</strong>
+        </span>
+        <span>
+          נבחרו {fileCount} פריטים
+        </span>
       </div>
+
+      {nodes.length === 0 ? (
+        <div className="review-empty-state">לא נבחרו קבצים. חזור כדי להוסיף!</div>
+      ) : (
+        <FileTree
+          nodes={nodes}
+          selected={selected}
+          excluded={excluded}
+          onToggleSelect={handleToggleSelect}
+          onLoadChildren={handleLoadChildren}
+          autoExpandMap={{}}
+          onAutoExpand={() => { }}
+        />
+      )}
+
+      {syncError && (
+        <div
+          className="info-box sync-error"
+        >
+          ⚠️ <strong>שגיאת סנכרון:</strong> {syncError}
+        </div>
+      )}
+
+      <div className="divider" />
+
+      <NavigationOptions
+        onBack={() => {
+          clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
+          if (currentDisk) {
+            setCurrentDisk({
+              ...currentDisk,
+              selectedFiles: Array.from(selected),
+              excludedFiles: Array.from(excluded)
+            })
+          }
+          setStep(SelectFilesPage)
+        }}
+        backDisabled={saving}
+        onForward={handleStartUpload}
+        forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>התחל העלאה ←</>}
+        forwardDisabled={selected.size === 0 || saving}
+      />
+    </div>
   )
 }

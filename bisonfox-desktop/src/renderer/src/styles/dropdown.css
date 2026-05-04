@@ -24,22 +24,6 @@
     transform: rotate(180deg);
 }
 
-.custom-select-dropdown {
-    position: absolute;
-    top: calc(100% + 0.67vh);
-    left: 0;
-    width: 100%;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-accent);
-    border-radius: var(--r-md);
-    box-shadow: 0 0.83vh 3.33vh rgba(0, 0, 0, 0.6);
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 15vh;
-    z-index: 50;
-    animation: slideDown .15s ease-out;
-}
-
 .custom-select-option {
     padding: .75rem 1rem;
     cursor: pointer;

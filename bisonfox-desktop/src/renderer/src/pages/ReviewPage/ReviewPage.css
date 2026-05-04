@@ -1,36 +1,3 @@
-.review-disk {
-    border: 1px solid rgba(255, 255, 255, .07);
-    border-radius: var(--r-md);
-    overflow: hidden;
-    margin-bottom: 1.2rem;
-    direction: ltr;
-}
-
-.review-disk-head {
-    display: flex;
-    align-items: center;
-    gap: .7rem;
-    padding: .8rem 1.1rem;
-    background: rgba(255, 255, 255, .03);
-    border-bottom: 1px solid rgba(255, 255, 255, .06);
-}
-
-.review-disk-title {
-    font-weight: 600;
-    font-size: .9rem;
-}
-
-.review-disk-count {
-    font-size: .78rem;
-}
-
-.review-tree-container {
-    max-height: 33.33vh;
-    overflow-y: auto;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 0 0 0.67vh 0.67vh;
-    background: rgba(0, 0, 0, 0.1);
-}
 
 .review-empty-state {
     padding: 2rem;
