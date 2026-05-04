@@ -74,71 +74,69 @@ export function InsertDiskPage(): React.JSX.Element {
   }
 
   return (
-      <div className="glass-card">
-        <div className="disk-visual">
-          <div className="disk-emoji">💿</div>
-          <div className="disk-arrow">↓</div>
-          <div className="pc-emoji">💻</div>
-        </div>
-
-        <p className="page-title">חבר כונן חיצוני</p>
-        <p className="page-subtitle">
-          אנא חבר את הכונן החיצוני. אנו נמצא אותו באופן אוטומטי</p>
-        <div className="form-group">
-          <label
-            className="form-label"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
-          >
-            <span>בחר כונן</span>
-            {loading && <span className="badge badge-info pulse">סורק...</span>}
-          </label>
-
-          {drives.length === 0 && !loading ? (
-            <div className="info-box">
-              <div>ממתין לחיבור כונן... אנא חבר את הכונן.</div>
-            </div>
-          ) : (
-            <div className="drive-list">
-              {drives.map((drive) => (
-                <div
-                  key={drive.letter}
-                  className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
-                  onClick={() => drive.selectable && setSelectedLetter(drive.letter)}
-                  style={!drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
-                  title={drive.disabledReason || ''}
-                >
-                  <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
-                  <div className="drive-info">
-                    <div className="drive-name">
-                      ({drive.letter})
-                    </div>
-                    <div className="drive-meta">
-                      {drive.selectable
-                        ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
-                        : drive.disabledReason || <>לא זמין</>}
-                    </div>
-                  </div>
-                  {drive.selectable && <div className="drive-check">✓</div>}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <NavigationOptions
-          onBack={() => {
-            if (diskSessions.length > 0) {
-              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
-              setStep(SuccessPage)
-            } else {
-              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
-              setStep(SetUsernamePage)
-            }
-          }}
-          backLabel={diskSessions.length > 0 ? 'סיום העברה' : '→ חזור'}
-          onForward={handleContinue}
-          forwardDisabled={!selectedLetter}
-        />
+    <div className="glass-card">
+      <div className="disk-visual">
+        <div className="disk-emoji">💿</div>
+        <div className="disk-arrow">↓</div>
+        <div className="pc-emoji">💻</div>
       </div>
+
+      <p className="page-title" style={{ marginBottom: '1rem' }}>חבר כונן חיצוני</p>
+      <div className="form-group" style={{ gap: '1rem' }}>
+        <label
+          className="form-label"
+          style={{ display: 'flex', justifyContent: 'space-between' }}
+        >
+          <span>בחר כונן:</span>
+          {loading && <span className="badge badge-info pulse">סורק...</span>}
+        </label>
+
+        {drives.length === 0 && !loading ? (
+          <div className="info-box">
+            <div>ממתין לחיבור כונן... אנא חבר את הכונן.</div>
+          </div>
+        ) : (
+          <div className="drive-list">
+            {drives.map((drive) => (
+              <div
+                key={drive.letter}
+                className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
+                onClick={() => drive.selectable && setSelectedLetter(drive.letter)}
+                style={!drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
+                title={drive.disabledReason || ''}
+              >
+                <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
+                <div className="drive-info">
+                  <div className="drive-name">
+                    ({drive.letter})
+                  </div>
+                  <div className="drive-meta">
+                    {drive.selectable
+                      ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
+                      : drive.disabledReason || <>לא זמין</>}
+                  </div>
+                </div>
+                {drive.selectable && <div className="drive-check">✓</div>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <NavigationOptions
+        onBack={() => {
+          if (diskSessions.length > 0) {
+            clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
+            setStep(SuccessPage)
+          } else {
+            clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
+            setStep(SetUsernamePage)
+          }
+        }}
+        backLabel={diskSessions.length > 0 ? 'סיום העברה' : '→ חזור'}
+        onForward={handleContinue}
+        forwardDisabled={!selectedLetter}
+      />
+    </div>
   )
 }

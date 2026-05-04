@@ -78,7 +78,7 @@ export function SetUsernamePage(): JSX.Element {
         <form onSubmit={handleSubmit}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="form-group">
-              <label className="form-label" style={{ fontSize: '2vh' }}>קידומת:</label>
+              <label className="form-label">קידומת:</label>
               <div className="prefix-chips" style={{ direction: 'ltr' }}>
                 {PREFIX_OPTIONS.map((opt) => (
                   <button
@@ -95,7 +95,7 @@ export function SetUsernamePage(): JSX.Element {
 
             <div className="form-group">
               <label className="form-label" htmlFor="name-input">
-                שם
+                שם:
               </label>
               <input
                 id="name-input"
@@ -115,7 +115,7 @@ export function SetUsernamePage(): JSX.Element {
             </div>
 
             {name.trim() && (<>
-              <div style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
+              <div className="form-label" style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
               <div className="username-preview" style={{ direction: 'ltr' }}>
                 <strong>{fullName}</strong>
               </div></>
