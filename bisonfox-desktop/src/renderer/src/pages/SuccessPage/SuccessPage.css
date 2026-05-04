@@ -3,8 +3,9 @@
 }
 
 .success-image {
-    height: 50%;
-    border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
+    max-height: 15vh;
+    max-width: 100%;
+    object-fit: contain;
     border-radius: var(--r-md);
     margin-bottom: 1rem;
 }

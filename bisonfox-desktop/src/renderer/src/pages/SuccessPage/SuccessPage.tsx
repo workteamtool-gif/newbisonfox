@@ -8,7 +8,7 @@ export function SuccessPage(): JSX.Element {
   const { reset, userName } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions)
-  const [countdown, setCountdown] = useState(1500)
+  const [countdown, setCountdown] = useState(150)
 
   const totalFiles = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
@@ -39,11 +39,9 @@ export function SuccessPage(): JSX.Element {
 
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">
-        עבודה יפה<strong>{userName}</strong>! כל <strong>{totalFiles}</strong> הקבצים מ{' '}
-        <strong>{snapshot.length}</strong> הדיסקים הועלו בהצלחה!
         {destinationUserEndpoint && (
           <span>
-            {' '}ניתן לראות את הקבצים בתיקיה: <strong>{destinationUserEndpoint}\{userName}</strong>
+            {' '}ניתן לראות את הקבצים בתיקייה: <strong>{destinationUserEndpoint}\{userName}</strong>
           </span>
         )}
       </p>
@@ -92,13 +90,15 @@ export function SuccessPage(): JSX.Element {
         </div>
       )}
 
-      <p className="success-countdown">
-        חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
-      </p>
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <p className="success-countdown" style={{ marginBottom: '1rem' }}>
+          חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
+        </p>
 
-      <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={reset}>
-        ↩ לחזור הביתה כעת
-      </button>
+        <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={reset}>
+          ↩ לחזור הביתה כעת
+        </button>
+      </div>
     </div>
   )
 }
