@@ -38,8 +38,8 @@
 
 .form-input:focus {
     border-color: var(--accent);
-    background: rgba(99, 102, 241, .06);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, .15);
+    background: rgba(20, 184, 166, .06);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, .15);
 }
 
 .form-input.error {

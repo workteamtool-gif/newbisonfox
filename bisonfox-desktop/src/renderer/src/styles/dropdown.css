@@ -51,7 +51,7 @@
 }
 
 .custom-select-option:hover {
-    background-color: rgba(99, 102, 241, .15);
+    background-color: rgba(20, 184, 166, .15);
 }
 
 .custom-select-option.selected {
@@ -84,7 +84,7 @@
 .prefix-chip:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(99, 102, 241, .08);
+    background: rgba(20, 184, 166, .08);
 }
 
 .prefix-chip.active {
@@ -92,5 +92,5 @@
     border-color: transparent;
     color: #fff;
     font-weight: 600;
-    box-shadow: 0 0.17vh 1vh rgba(99, 102, 241, .35);
+    box-shadow: 0 0.17vh 1vh rgba(20, 184, 166, .35);
 }

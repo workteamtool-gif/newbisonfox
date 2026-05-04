@@ -21,9 +21,9 @@
 }
 
 .badge-info {
-    background: rgba(99, 102, 241, .12);
+    background: rgba(20, 184, 166, .12);
     color: var(--accent);
-    border: 1px solid rgba(99, 102, 241, .25);
+    border: 1px solid rgba(20, 184, 166, .25);
 }
 
 .badge-error {

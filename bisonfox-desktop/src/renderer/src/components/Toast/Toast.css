@@ -44,9 +44,9 @@
 }
 
 .toast-info {
-    --toast-bg: linear-gradient(135deg, #0c1929, #1e3a5f);
-    --toast-border: #3b82f6;
-    --toast-border-glow: rgba(59, 130, 246, 0.25);
+    --toast-bg: linear-gradient(135deg, #071a1e, #0c403b);
+    --toast-border: #14b8a6;
+    --toast-border-glow: rgba(20, 184, 166, 0.25);
 }
 
 .toast-icon {

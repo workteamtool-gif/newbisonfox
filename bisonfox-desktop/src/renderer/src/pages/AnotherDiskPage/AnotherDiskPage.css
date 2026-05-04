@@ -21,7 +21,7 @@
 
 .choice-card:hover {
     border-color: var(--border-accent);
-    background: rgba(99, 102, 241, .08);
+    background: rgba(20, 184, 166, .08);
     transform: translateY(-0.17vh);
 }
 

@@ -1,8 +1,8 @@
 .username-preview {
     padding: .65rem 1rem;
     border-radius: var(--r-md, 8px);
-    background: rgba(99, 102, 241, .08);
-    border: 1px solid rgba(99, 102, 241, .2);
+    background: rgba(20, 184, 166, .08);
+    border: 1px solid rgba(20, 184, 166, .2);
     color: var(--text-secondary, #aaa);
     font-size: .9rem;
     margin-bottom: .5rem;

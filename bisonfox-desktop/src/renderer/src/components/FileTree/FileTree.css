@@ -25,13 +25,13 @@
 }
 
 .tree-row:hover {
-    background: rgba(99, 102, 241, .08);
-    border-color: rgba(99, 102, 241, .15);
+    background: rgba(20, 184, 166, .08);
+    border-color: rgba(20, 184, 166, .15);
 }
 
 .tree-row.selected {
-    background: rgba(99, 102, 241, .12);
-    border-color: rgba(99, 102, 241, .3);
+    background: rgba(20, 184, 166, .12);
+    border-color: rgba(20, 184, 166, .3);
 }
 
 /* --- Custom Checkbox --- */
@@ -214,7 +214,7 @@
 
 @keyframes highlightPulse {
     0% {
-        background: rgba(59, 130, 246, 0.4);
+        background: rgba(20, 184, 166, 0.4);
     }
 
     100% {

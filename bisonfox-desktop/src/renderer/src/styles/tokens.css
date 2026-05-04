@@ -1,28 +1,29 @@
 :root {
-    --bg-primary: #060912;
-    --bg-secondary: #0c1220;
-    --bg-glass: rgba(255, 255, 255, 0.08);
-    --bg-glass-hover: rgba(255, 255, 255, 0.12);
-    --border-glass: rgba(255, 255, 255, 0.15);
+    --bg-primary: #0a1014;
+    --bg-secondary: #111b22;
+    --bg-glass: rgba(255, 255, 255, 0.07);
+    --bg-glass-hover: rgba(255, 255, 255, 0.11);
+    --border-glass: rgba(255, 255, 255, 0.13);
+    --border-accent: rgba(20, 184, 166, 0.4);
 
-    --accent: #6366f1;
-    --accent-cyan: #06b6d4;
-    --accent-green: #10b981;
-    --accent-red: #ef4444;
-    --accent-orange: #f59e0b;
+    --accent: #14b8a6;
+    --accent-cyan: #5eead4;
+    --accent-green: #34d399;
+    --accent-red: #f87171;
+    --accent-orange: #f97316;
 
-    --grad-primary: linear-gradient(135deg, #ec9e55, #ec9e55);
-    --grad-headline: linear-gradient(135deg, #ec9e55, #ec9e55);
-    --grad-green: linear-gradient(135deg, #10b981, #059669);
+    --grad-primary: linear-gradient(135deg, #f97316, #fb923c);
+    --grad-headline: linear-gradient(135deg, #f97316, #fb923c);
+    --grad-green: linear-gradient(135deg, #34d399, #10b981);
 
-    --text-primary: #ffffff;
-    --text-secondary: #ffffff;
+    --text-primary: #fef7ed;
+    --text-secondary: #000000;
 
     --r-md: 1.17vh;
     --r-lg: 1.67vh;
     --r-xl: 2.17vh;
     --r-full: 9999px;
-    --shadow-btn: 0 0.33vh 2vh rgba(99, 102, 241, .38);
+    --shadow-btn: 0 0.33vh 2vh rgba(20, 184, 166, .35);
     --t-fast: 140ms cubic-bezier(.4, 0, .2, 1);
     --t-base: 240ms cubic-bezier(.4, 0, .2, 1);
     --font: 'Inter', system-ui, sans-serif;

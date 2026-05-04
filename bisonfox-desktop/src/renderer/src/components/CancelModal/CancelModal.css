@@ -12,3 +12,17 @@
     z-index: 9999;
     direction: rtl;
 }
+
+.cancel-modal .glass-card {
+    width: 28vw;
+    min-width: 28vw;
+    height: auto;
+    max-height: 50vh;
+    padding: 2rem;
+    text-align: center;
+}
+
+.cancel-modal .cancel-modal-buttons {
+    margin-top: auto;
+    padding-top: 1.5rem;
+}

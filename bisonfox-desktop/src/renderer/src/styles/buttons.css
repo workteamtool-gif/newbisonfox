@@ -45,13 +45,13 @@
 }
 
 .btn-primary:hover {
-    box-shadow: 0 6px 32px rgba(99, 102, 241, .55);
+    box-shadow: 0 6px 32px rgba(20, 184, 166, .55);
     transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, .07);
-    color: var(--text-secondary);
+    background: #fef7ed0a;
+    color: var(--text-primary);
     border: 1px solid rgba(255, 255, 255, .09);
 }
 

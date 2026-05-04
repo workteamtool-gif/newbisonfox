@@ -1,5 +1,5 @@
 .glass-card {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.4));
+    background: linear-gradient(145deg, rgba(16, 52, 52, 0.45), rgba(12, 24, 28, 0.4));
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: var(--r-xl);

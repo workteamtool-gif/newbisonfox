@@ -41,7 +41,7 @@ export function VideoUpload({
                     style={{
                         position: 'absolute',
                         inset: 0,
-                        background: 'linear-gradient(to top, rgba(6,12,32,0.9) 0%, transparent 60%)',
+                        background: 'linear-gradient(to top, rgba(10,16,20,0.9) 0%, transparent 60%)',
                         display: 'flex',
                         alignItems: 'flex-end',
                         padding: '1rem 1.4rem',

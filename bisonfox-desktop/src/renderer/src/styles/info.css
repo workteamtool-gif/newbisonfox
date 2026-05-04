@@ -3,8 +3,8 @@
     align-items: center;
     gap: .7rem;
     padding: .9rem 1.1rem;
-    background: rgba(99, 102, 241, .07);
-    border: 1px solid rgba(99, 102, 241, .2);
+    background: rgba(20, 184, 166, .07);
+    border: 1px solid rgba(20, 184, 166, .2);
     border-radius: var(--r-md);
     font-size: .86rem;
     color: var(--text-secondary);

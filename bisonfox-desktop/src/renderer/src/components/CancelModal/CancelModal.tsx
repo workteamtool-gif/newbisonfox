@@ -19,10 +19,10 @@ export function CancelModal({
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
             ביטול העברה?
           </h2>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.5 }}>
+          <p style={{ marginBottom: '2rem', lineHeight: 1.5 }}>
             האם אתה בטוח שברצונך לבטל את ההעברה הזו? כל הקבצים, התיקיות וההתקדמות שלך יימחקו.
           </p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <div className="cancel-modal-buttons" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <button className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
               לא, להמשיך
             </button>

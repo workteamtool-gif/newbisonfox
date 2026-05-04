@@ -38,11 +38,11 @@
 
     0%,
     100% {
-        box-shadow: 0 1.67vh 5vh rgba(99, 102, 241, .45);
+        box-shadow: 0 1.67vh 5vh rgba(20, 184, 166, .45);
     }
 
     50% {
-        box-shadow: 0 1.67vh 6.67vh rgba(99, 102, 241, .7);
+        box-shadow: 0 1.67vh 6.67vh rgba(20, 184, 166, .7);
     }
 }
 
