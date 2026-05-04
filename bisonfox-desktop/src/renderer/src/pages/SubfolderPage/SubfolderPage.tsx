@@ -91,7 +91,7 @@ export function SubfolderPage(): JSX.Element {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <label className="form-label" htmlFor="subfolder-input">
               שם תת-תיקייה (אופציונלי)
             </label>

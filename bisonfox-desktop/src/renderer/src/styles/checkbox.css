@@ -52,12 +52,12 @@
 }
 
 .tree-toggle {
+    color: var(--text-primary);
     width: 1.5vh;
     height: 1.5vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-secondary);
     font-size: .75rem;
     flex-shrink: 0;
     cursor: pointer;

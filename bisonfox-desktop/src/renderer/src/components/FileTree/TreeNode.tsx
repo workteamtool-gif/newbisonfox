@@ -203,7 +203,7 @@ export function TreeNode({
   }
 
   return (
-    <div className="tree-node">
+    <div>
       <div
         ref={rowRef}
         className={`tree-row ${checked ? 'selected' : ''} ${highlighted ? 'highlighted-node' : ''}`}

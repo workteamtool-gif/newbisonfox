@@ -43,7 +43,7 @@
 
 .page-subtitle {
     font-size: .95rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     line-height: 1.65;
     margin-bottom: 1.75rem;
 }

@@ -76,49 +76,51 @@ export function SetUsernamePage(): JSX.Element {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label" style={{ fontSize: '2vh' }}>קידומת:</label>
-            <div className="prefix-chips" style={{ direction: 'ltr' }}>
-              {PREFIX_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={`prefix-chip ${prefix.value === opt.value ? 'active' : ''}`}
-                  onClick={() => setPrefix(opt)}
-                >
-                  {opt.label}
-                </button>
-              ))}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <div className="form-group">
+              <label className="form-label" style={{ fontSize: '2vh' }}>קידומת:</label>
+              <div className="prefix-chips" style={{ direction: 'ltr' }}>
+                {PREFIX_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`prefix-chip ${prefix.value === opt.value ? 'active' : ''}`}
+                    onClick={() => setPrefix(opt)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="name-input">
-              שם
-            </label>
-            <input
-              id="name-input"
-              className={`form-input ${error ? 'error' : ''}`}
-              type="text"
-              placeholder="For example: bison"
-              maxLength={maxLength}
-              value={name}
-              style={{ direction: 'ltr' }}
-              onChange={(e) => {
-                ValidateName(e.target.value)
-                setName(e.target.value)
-              }}
-              autoFocus
-            />
-            {error && <span className="form-msg error">⚠ {error}</span>}
-          </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="name-input">
+                שם
+              </label>
+              <input
+                id="name-input"
+                className={`form-input ${error ? 'error' : ''}`}
+                type="text"
+                placeholder="For example: bison"
+                maxLength={maxLength}
+                value={name}
+                style={{ direction: 'ltr' }}
+                onChange={(e) => {
+                  ValidateName(e.target.value)
+                  setName(e.target.value)
+                }}
+                autoFocus
+              />
+              {error && <span className="form-msg error">⚠ {error}</span>}
+            </div>
 
-          {name.trim() && (<>
-            <div style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
-            <div className="username-preview" style={{ direction: 'ltr' }}>
-              <strong>{fullName}</strong>
-            </div></>
-          )}
+            {name.trim() && (<>
+              <div style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
+              <div className="username-preview" style={{ direction: 'ltr' }}>
+                <strong>{fullName}</strong>
+              </div></>
+            )}
+          </div>
 
           <NavigationOptions
             onBack={() => {

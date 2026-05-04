@@ -39,7 +39,6 @@
     width: 2vh;
     height: 2vh;
     flex-shrink: 0;
-    border: 1px solid var(--text-secondary);
     border-radius: 0.33vh;
     transition: all 0.2s;
     display: flex;
@@ -72,13 +71,11 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--text-secondary);
     border-radius: 0.33vh;
     font-size: 0.9rem;
 }
 
 .tree-toggle:hover {
-    background: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
 }
 
@@ -130,7 +127,6 @@
 
 .pagination-text {
     font-size: 0.8rem;
-    color: var(--text-secondary);
 }
 
 .pagination-jump-form {
