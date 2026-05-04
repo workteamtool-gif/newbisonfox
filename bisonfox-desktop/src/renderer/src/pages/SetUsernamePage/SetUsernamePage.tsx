@@ -72,7 +72,7 @@ export function SetUsernamePage(): JSX.Element {
       <div className="glass-card">
         <p className="page-title">מה שם המשתמש שלך?</p>
         <p className="page-subtitle">
-          הזן שם משתמש כדי להתחיל. עליו להכיל רק אותיות, מספרים וקווים תחתונים (מקסימום 20 תווים).
+          עליו להכיל רק אותיות, מספרים וקווים תחתונים (מקסימום 20 תווים).
         </p>
 
         <form onSubmit={handleSubmit}>

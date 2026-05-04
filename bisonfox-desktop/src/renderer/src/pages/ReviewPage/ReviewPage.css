@@ -35,7 +35,6 @@
 .review-empty-state {
     padding: 2rem;
     text-align: center;
-    color: var(--text-secondary);
 }
 
 .sync-error {

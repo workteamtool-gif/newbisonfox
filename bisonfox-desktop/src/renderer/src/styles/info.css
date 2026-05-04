@@ -7,7 +7,6 @@
     border: 1px solid rgba(20, 184, 166, .2);
     border-radius: var(--r-md);
     font-size: .86rem;
-    color: var(--text-secondary);
     margin-bottom: 1.4rem;
 }
 

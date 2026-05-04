@@ -31,8 +31,8 @@ export class DiskService implements IDiskService {
       const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]
 
       const drives: DriveInfo[] = []
-      const whitelistDrivesEnv = process.env.WHITELIST_DRIVES || 'X:'
-      const whitelistDrives = whitelistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
+      const blacklistDrivesEnv = process.env.BLACKLIST_DRIVES || 'C:,X:'
+      const blacklistDrives = blacklistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
       for (const rawDrive of rawDrives) {
         const rawDeviceId = rawDrive.DeviceID // e.g., "D:"
@@ -41,7 +41,7 @@ export class DiskService implements IDiskService {
           logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: rawDrive })
         } else {
             const upperDeviceId = rawDeviceId.toUpperCase()
-            if (whitelistDrives.includes(upperDeviceId)) {              
+            if (!blacklistDrives.includes(upperDeviceId)) {              
             const driveType = parseInt(rawDrive.DriveType) || 0
             const size = parseInt(rawDrive.Size) || 0
             
