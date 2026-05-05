@@ -47,14 +47,10 @@ export function AnotherDiskPage(): React.JSX.Element {
       <p className="page-title">כונן נוסף?</p>
 
       <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
-        נהדר! סיימת לעבד את הכונן הקודם בהצלחה.
-      </p>
-
-      <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
         סיכום של כל ההעברות:
       </p>
 
-      <div className="stats-dashboard another-disk-stats">
+      <div className="another-disk-stats">
         <div className="stat-card">
           <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
             📤

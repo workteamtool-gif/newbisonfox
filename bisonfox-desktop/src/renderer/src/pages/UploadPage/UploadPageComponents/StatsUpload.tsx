@@ -15,7 +15,6 @@ export function StatsUpload({
     shown,
     completedCount,
     failedCount,
-    overallPercentage,
     completedBytes,
     totalBytes
 }: StatsUploadProps): React.JSX.Element {
@@ -57,10 +56,6 @@ export function StatsUpload({
                     <div className="stat-lbl">גודל הועתק</div>
                 </div>
 
-                <div className="stat-card">
-                    <div className="stat-val">{overallPercentage}%</div>
-                    <div className="stat-lbl">סה"כ</div>
-                </div>
             </div>
         </>
     )

@@ -113,7 +113,7 @@ export function FailedItemsUpload({
                                 borderRadius: 'var(--r-md)',
                                 fontSize: '0.8rem',
                                 color: 'var(--text-secondary)',
-                                direction: 'rtl'
+                                textAlign: 'right'
                             }}
                         >
                             ⚠️ נכשלו יותר מ-{MAX_TRACKED_FAILURES.toLocaleString()} קבצים. המערכת לא שמרה את כל הכשלונות. לחיצה על "נסה שוב את כל הקבצים" תעלה מחדש את כל הקבצים שנבחרו.

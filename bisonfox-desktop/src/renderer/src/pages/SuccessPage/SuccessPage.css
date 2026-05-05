@@ -88,3 +88,15 @@
 .success-countdown strong {
     color: var(--accent);
 }
+
+.image-mark {
+    background: url('../../images/liking.png') center/cover no-repeat;
+    justify-content: center;
+    margin: 0 auto;
+    width: 35vw;
+    height: 35vh;
+    object-fit: cover;
+    border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
+    border-radius: var(--r-md);
+    margin-bottom: 2rem;
+}

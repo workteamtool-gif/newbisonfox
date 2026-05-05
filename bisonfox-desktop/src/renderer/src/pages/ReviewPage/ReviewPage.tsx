@@ -12,7 +12,7 @@ import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function ReviewPage(): JSX.Element | null {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName, currentSubfolder } = useWizardStore()
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } = useWizardStore()
 
   useDriveMonitor()
 
@@ -134,12 +134,7 @@ export function ReviewPage(): JSX.Element | null {
     <div className="glass-card">
       <p className="page-title">בדיקה נוספת של הבחירה  </p>
       <p className="page-subtitle">
-        אנא בדוק את הקבצים שבחרת <br />
-        {currentSubfolder && (
-          <>
-            תת-תיקייה: {currentSubfolder}
-          </>
-        )}
+        אנא בדוק את הקבצים שבחרת
       </p>
 
       <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>

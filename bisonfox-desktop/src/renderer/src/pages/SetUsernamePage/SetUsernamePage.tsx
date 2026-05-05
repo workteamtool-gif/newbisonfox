@@ -71,9 +71,6 @@ export function SetUsernamePage(): JSX.Element {
     <>
       <div className="glass-card">
         <p className="page-title">מה שם המשתמש שלך?</p>
-        <p className="page-subtitle">
-          עליו להכיל רק אותיות, מספרים וקווים תחתונים (מקסימום 20 תווים).
-        </p>
 
         <form onSubmit={handleSubmit}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -114,12 +111,12 @@ export function SetUsernamePage(): JSX.Element {
               {error && <span className="form-msg error">⚠ {error}</span>}
             </div>
 
-            {name.trim() && (<>
+            <div style={{ visibility: name.trim() ? 'visible' : 'hidden' }}>
               <div className="form-label" style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
               <div className="username-preview" style={{ direction: 'ltr' }}>
-                <strong>{fullName}</strong>
-              </div></>
-            )}
+                <strong>{fullName}&nbsp;</strong>
+              </div>
+            </div>
           </div>
 
           <NavigationOptions

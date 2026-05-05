@@ -127,7 +127,7 @@ export const uploadApi = {
 
     return {
       close: () => {
-        clientLogger.debug('IPC', 'Closing upload stream manually.')
+        clientLogger.info('IPC', 'Closing upload stream manually.')
         unsubscribe()
       }
     }

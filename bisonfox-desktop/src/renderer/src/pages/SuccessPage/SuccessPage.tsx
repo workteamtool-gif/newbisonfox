@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import likingImage from '@renderer/images/liking.png'
 import './SuccessPage.css'
 import { JSX } from 'react'
 
@@ -35,7 +34,7 @@ export function SuccessPage(): JSX.Element {
 
   return (
     <div className="glass-card success-card">
-      <img src={likingImage} alt="Upload Successful" className="success-image" />
+      <div className="image-mark" aria-hidden="true"></div>
 
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">

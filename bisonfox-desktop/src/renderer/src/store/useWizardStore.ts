@@ -25,7 +25,7 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     setStep: (step: React.LazyExoticComponent<() => React.JSX.Element | null>) => set({ step }),
 
     setUserName: (userName) => {
-      clientLogger.debug('Store', `Username set to: ${userName}`)
+      clientLogger.info('WizardStore', `Username set to: ${userName}`)
       set({ userName })
     },
 
@@ -64,7 +64,7 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     setToast: (message, type = 'info') => set({ toast: { message, type } }),
 
     reset: () => {
-      clientLogger.info('Store', 'Wizard reset triggered.')
+      clientLogger.info('WizardStore', 'Wizard reset triggered.')
       set(INITIAL_DATA)
     },
     setCancelModalOpen: (isCancelModalOpen) => set({ isCancelModalOpen }),

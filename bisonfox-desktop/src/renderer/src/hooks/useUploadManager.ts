@@ -40,6 +40,7 @@ export function useUploadManager(): {
   const [failedFilesList, setFailedFilesList] = useState<{ path: string; reason: string }[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [retryKey, setRetryKey] = useState(0)
+  const [accumulatedCopied, setAccumulatedCopied] = useState(0)
 
   const [preCalcTotal, setPreCalcTotal] = useState<number | null>(null)
   const [preCalcTotalBytes, setPreCalcTotalBytes] = useState<number | null>(null)
@@ -145,7 +146,7 @@ export function useUploadManager(): {
         if (msg.completedBytes !== undefined) completedBytesRef.current = msg.completedBytes
         if (msg.totalBytes !== undefined && msg.totalBytes > 0) totalBytesRef.current = msg.totalBytes
 
-        setCompletedCount(completedRef.current)
+        setCompletedCount(accumulatedCopied + completedRef.current)
         setFailedCount(failedRef.current)
         setCompletedBytesState(completedBytesRef.current)
         setTotalBytesState(totalBytesRef.current)
@@ -181,9 +182,11 @@ export function useUploadManager(): {
       finalCount = totalRef.current
     }
 
-    setCompletedCount(finalCount)
+    const totalSuccess = accumulatedCopied + finalCount
+
+    setCompletedCount(totalSuccess)
     setFailedCount(failedRef.current)
-    setCompletedFiles(finalCount)
+    setCompletedFiles(totalSuccess)
 
     const failed: { path: string; reason: string }[] = msg.failedFiles || []
     setFailedFilesList(failed)
@@ -191,7 +194,7 @@ export function useUploadManager(): {
     useWizardStore
       .getState()
       .updateLastDiskSession({
-        copiedCount: finalCount,
+        copiedCount: totalSuccess,
         failedCount: failedRef.current,
         failedFiles: failed
       })
@@ -228,6 +231,7 @@ export function useUploadManager(): {
     setCompletedCount(0)
     completedRef.current = 0
     setOverallPercentage(0)
+    setAccumulatedCopied(0)
 
     setPhase('copying')
     setTotalDiscovered(preCalcTotal || 0)
@@ -255,15 +259,15 @@ export function useUploadManager(): {
       `For user: ${userName} in session: ${sessionId} user decided to retry copying for ${filesToRetry.length} failed files.`
     )
 
-    // Reset state for the retry round
     setUploadDone(false)
     setFailedFilesList([])
     setFailedCount(0)
     failedRef.current = 0
-    setCompletedCount(0)
+    const newAccumulated = accumulatedCopied + completedRef.current
+    setAccumulatedCopied(newAccumulated)
+    setCompletedCount(newAccumulated)
     completedRef.current = 0
     setOverallPercentage(0)
-    setTotalDiscovered(filesToRetry.length)
     totalRef.current = filesToRetry.length
     totalBytesRef.current = 0
     setRetryKey((k) => k + 1)
@@ -306,6 +310,7 @@ export function useUploadManager(): {
     completedBytesRef.current = 0
     setCompletedBytesState(0)
     setOverallPercentage(0)
+    setAccumulatedCopied(0)
     setTotalDiscovered(preCalcTotal || currentDisk.selectedFiles.length)
     totalRef.current = preCalcTotal || currentDisk.selectedFiles.length
     totalBytesRef.current = preCalcTotalBytes || 0

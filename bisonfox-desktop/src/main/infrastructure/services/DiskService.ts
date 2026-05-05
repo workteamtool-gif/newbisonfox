@@ -38,7 +38,7 @@ export class DiskService implements IDiskService {
         const rawDeviceId = rawDrive.DeviceID // e.g., "D:"
 
         if (!rawDeviceId) {
-          logger.debug('DiskService', 'Skipping drive: No DeviceID found', { drive: rawDrive })
+          logger.info('DiskService', 'Skipping drive: No DeviceID found', { drive: rawDrive })
         } else {
             const upperDeviceId = rawDeviceId.toUpperCase()
             if (!blacklistDrives.includes(upperDeviceId)) {              
@@ -76,7 +76,6 @@ export class DiskService implements IDiskService {
 
       return drives
     } catch (err: any) {
-      // Don't fail silently! Log it so we can debug PowerShell execution policies if needed.
       logger.error('DiskService', 'Failed to list Windows drives', { error: err.message })
       return []
     }

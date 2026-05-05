@@ -8,7 +8,6 @@ const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
 
 export const driveApi = {
   listDrives: async (): Promise<DriveInfo[]> => {
-    clientLogger.debug('API', 'Requesting drive list via IPC')
     const result = await window.api.invoke(IPC_CHANNELS.DRIVE.LIST)
     return result ?? []
   },
