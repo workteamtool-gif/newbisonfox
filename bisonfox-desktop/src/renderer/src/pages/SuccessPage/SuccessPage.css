@@ -79,7 +79,7 @@
 }
 
 .success-countdown {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 0.85rem;
     margin-bottom: 1rem;
     direction: rtl;
@@ -89,14 +89,12 @@
     color: var(--accent);
 }
 
-.image-mark {
+.success-card .image-mark {
     background: url('../../images/liking.png') center/cover no-repeat;
-    justify-content: center;
-    margin: 0 auto;
-    width: 35vw;
-    height: 35vh;
+    width: 20vw;
+    height: 22vh;
     object-fit: cover;
     border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
     border-radius: var(--r-md);
-    margin-bottom: 2rem;
+    margin: 0 auto 1.5rem;
 }

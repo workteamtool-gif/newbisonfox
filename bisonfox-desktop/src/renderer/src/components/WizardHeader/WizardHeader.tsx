@@ -27,22 +27,20 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
             </div>
           )}
           <button
-            className="btn btn-secondary cancel-btn"
+            className="btn btn-secondary"
             style={{
               padding: '0.5vh 1vh',
               fontSize: '0.8rem',
               background: 'transparent',
-              border: '1px solid rgba(255,100,100,0.3)',
-              color: '#ff7b7b'
+              border: '2px solid rgba(255, 0, 0)',
+              color: '#ff0000'
             }}
             onClick={onCancelClick}
-            title="Cancel Session & Return Home"
           >
             ביטול העברה
           </button>
         </div>
       </div>
-
     </header>
   )
 }

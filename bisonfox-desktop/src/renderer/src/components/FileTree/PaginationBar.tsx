@@ -88,7 +88,7 @@ export function PaginationBar({
       <form onSubmit={handleSearch} className="pagination-search-form">
         <input
           type="text"
-          placeholder="Jump to file..."
+          placeholder="Search file or folder..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pagination-search-input"

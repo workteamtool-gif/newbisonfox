@@ -254,137 +254,137 @@ export function SelectFilesPage(): JSX.Element {
   const selectedCount = selected.size
 
   return (
-      <div className="glass-card">
-        <p className="page-title">בחירת קבצים ותיקיות</p>
-        <p className="page-subtitle">
-          בחר מה להעתיק . סמן פריטים למטה - בחירת תיקייה כוללת את כל תוכנה בהעלאה.
-        </p>
+    <div className="glass-card">
+      <p className="page-title">בחירת קבצים ותיקיות</p>
+      <p className="page-subtitle">
+        בחר מה להעתיק . סמן פריטים למטה - בחירת תיקייה כוללת את כל תוכנה בהעלאה.
+      </p>
 
-        <div className="info-box">
-          <span>
-            נבחרו {selectedCount} פריטים
-          </span>
-        </div>
-
-        {loading ? (
-          <div
-            style={{
-              textAlign: 'center',
-              color: 'var(--text-secondary)',
-              padding: '2rem',
-              fontSize: '.9rem'
-            }}
-          >
-            <p><span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}</p>
-            {searching && (
-              <button
-                className="btn btn-secondary"
-                style={{ marginTop: '0.75rem' }}
-                onClick={handleCancelSearch}
-              >
-                ✕ ביטול חיפוש
-              </button>
-            )}
-          </div>
-        ) : (
-          <>
-            <FileTree
-              nodes={tree}
-              selected={selected}
-              excluded={excluded}
-              onToggleSelect={handleToggleSelect}
-              onLoadChildren={handleLoadChildren}
-              autoExpandMap={autoExpandMap}
-              onAutoExpand={(map, targetPath) => {
-                setAutoExpandMap(map)
-                if (targetPath) setScrollToPath(targetPath)
-              }}
-              scrollToPath={scrollToPath}
-              onScrolled={() => setScrollToPath(undefined)}
-            />
-
-            <div
-              className="tree-pagination-bar"
-              style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
-            >
-              <button
-                className="btn btn-secondary pagination-btn"
-                onClick={handleLoadPrevRoot}
-                disabled={rootPage <= 1 || loading}
-              >
-                Previous
-              </button>
-
-              <form
-                className="pagination-jump-form"
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const page = parseInt(jumpToPageInput, 10)
-                  if (!isNaN(page)) {
-                    handleJumpToPage(page)
-                    setJumpToPageInput('')
-                  }
-                }}
-              >
-                <span className="pagination-text">Page</span>
-                <input
-                  type="number"
-                  min={1}
-                  max={rootTotalPages}
-                  placeholder={String(rootPage)}
-                  value={jumpToPageInput}
-                  onChange={(e) => setJumpToPageInput(e.target.value)}
-                  className="pagination-jump-input"
-                  disabled={loading}
-                />
-                <span className="pagination-text">{rootTotalPages}</span>
-              </form>
-
-              <button
-                className="btn btn-secondary pagination-btn"
-                onClick={handleLoadNextRoot}
-                disabled={!rootHasMore || loading}
-              >
-                Next
-              </button>
-
-              <form onSubmit={handleSearchRootSubmit} className="pagination-search-form" style={{ direction: 'ltr' }}>
-                <input
-                  type="text"
-                  placeholder="Jump to file..."
-                  value={rootSearchQuery}
-                  onChange={(e) => setRootSearchQuery(e.target.value)}
-                  className="pagination-search-input"
-                  disabled={loading || searching}
-                />
-                <button
-                  type="submit"
-                  disabled={!rootSearchQuery.trim() || loading || searching}
-                  className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
-                >
-                  🔍
-                </button>
-              </form>
-            </div>
-          </>
-        )}
-
-        <NavigationOptions
-          onBack={() => {
-            clientLogger.info('SelectFilesPage', 'User navigating back to SubfolderPage')
-            if (currentDisk) {
-              setCurrentDisk({
-                ...currentDisk,
-                selectedFiles: Array.from(selected),
-                excludedFiles: Array.from(excluded)
-              })
-            }
-            setStep(SubfolderPage)
-          }}
-          onForward={handleContinue}
-          forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}
-          forwardDisabled={selected.size === 0 || saving}
-        />
+      <div className="info-box">
+        <span>
+          נבחרו {selectedCount} פריטים
+        </span>
       </div>
+
+      {loading ? (
+        <div
+          style={{
+            textAlign: 'center',
+            color: 'var(--text-primary)',
+            padding: '2rem',
+            fontSize: '.9rem'
+          }}
+        >
+          <p><span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}</p>
+          {searching && (
+            <button
+              className="btn btn-secondary"
+              style={{ marginTop: '0.75rem' }}
+              onClick={handleCancelSearch}
+            >
+              ✕ ביטול חיפוש
+            </button>
+          )}
+        </div>
+      ) : (
+        <>
+          <FileTree
+            nodes={tree}
+            selected={selected}
+            excluded={excluded}
+            onToggleSelect={handleToggleSelect}
+            onLoadChildren={handleLoadChildren}
+            autoExpandMap={autoExpandMap}
+            onAutoExpand={(map, targetPath) => {
+              setAutoExpandMap(map)
+              if (targetPath) setScrollToPath(targetPath)
+            }}
+            scrollToPath={scrollToPath}
+            onScrolled={() => setScrollToPath(undefined)}
+          />
+
+          <div
+            className="tree-pagination-bar"
+            style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
+          >
+            <button
+              className="btn btn-secondary pagination-btn"
+              onClick={handleLoadPrevRoot}
+              disabled={rootPage <= 1 || loading}
+            >
+              Previous
+            </button>
+
+            <form
+              className="pagination-jump-form"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const page = parseInt(jumpToPageInput, 10)
+                if (!isNaN(page)) {
+                  handleJumpToPage(page)
+                  setJumpToPageInput('')
+                }
+              }}
+            >
+              <span className="pagination-text">Page</span>
+              <input
+                type="number"
+                min={1}
+                max={rootTotalPages}
+                placeholder={String(rootPage)}
+                value={jumpToPageInput}
+                onChange={(e) => setJumpToPageInput(e.target.value)}
+                className="pagination-jump-input"
+                disabled={loading}
+              />
+              <span className="pagination-text">{rootTotalPages}</span>
+            </form>
+
+            <button
+              className="btn btn-secondary pagination-btn"
+              onClick={handleLoadNextRoot}
+              disabled={!rootHasMore || loading}
+            >
+              Next
+            </button>
+
+            <form onSubmit={handleSearchRootSubmit} className="pagination-search-form" style={{ direction: 'ltr' }}>
+              <input
+                type="text"
+                placeholder="Search file or folder..."
+                value={rootSearchQuery}
+                onChange={(e) => setRootSearchQuery(e.target.value)}
+                className="pagination-search-input"
+                disabled={loading || searching}
+              />
+              <button
+                type="submit"
+                disabled={!rootSearchQuery.trim() || loading || searching}
+                className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
+              >
+                🔍
+              </button>
+            </form>
+          </div>
+        </>
+      )}
+
+      <NavigationOptions
+        onBack={() => {
+          clientLogger.info('SelectFilesPage', 'User navigating back to SubfolderPage')
+          if (currentDisk) {
+            setCurrentDisk({
+              ...currentDisk,
+              selectedFiles: Array.from(selected),
+              excludedFiles: Array.from(excluded)
+            })
+          }
+          setStep(SubfolderPage)
+        }}
+        onForward={handleContinue}
+        forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}
+        forwardDisabled={selected.size === 0 || saving}
+      />
+    </div>
   )
 }

@@ -14,16 +14,6 @@
     font-size: 1.05rem;
 }
 
-.custom-select-chevron {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    transition: transform var(--t-fast);
-}
-
-.custom-select-chevron.open {
-    transform: rotate(180deg);
-}
-
 .custom-select-option {
     padding: .75rem 1rem;
     cursor: pointer;

@@ -21,6 +21,8 @@ export function ReviewPage(): JSX.Element | null {
   const [excluded, setExcluded] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
   const [syncError, setSyncError] = useState<string | null>(null)
+  const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
+  const [scrollToPath, setScrollToPath] = useState<string | undefined>()
 
   useEffect(() => {
     if (!currentDisk) return
@@ -155,8 +157,13 @@ export function ReviewPage(): JSX.Element | null {
           excluded={excluded}
           onToggleSelect={handleToggleSelect}
           onLoadChildren={handleLoadChildren}
-          autoExpandMap={{}}
-          onAutoExpand={() => { }}
+          autoExpandMap={autoExpandMap}
+          onAutoExpand={(map, targetPath) => {
+            setAutoExpandMap(map)
+            if (targetPath) setScrollToPath(targetPath)
+          }}
+          scrollToPath={scrollToPath}
+          onScrolled={() => setScrollToPath(undefined)}
         />
       )}
 

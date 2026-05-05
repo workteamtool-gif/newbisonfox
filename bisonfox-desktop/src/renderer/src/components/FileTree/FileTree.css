@@ -93,13 +93,13 @@
 }
 
 .tree-size {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 0.75rem;
     flex-shrink: 0;
 }
 
 .tree-empty {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 0.8rem;
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
@@ -123,10 +123,18 @@
 .pagination-btn {
     padding: 0.17vh 0.67vh;
     font-size: 0.75rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255);
+}
+
+.pagination-btn:disabled {
+    opacity: 1;
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .pagination-text {
     font-size: 0.8rem;
+    color: rgba(255, 255, 255);
 }
 
 .pagination-jump-form {
@@ -155,6 +163,10 @@
     margin: 0;
 }
 
+.pagination-jump-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
 .pagination-jump-input:focus {
     outline: none;
     border-color: var(--accent);
@@ -171,16 +183,25 @@
     font-size: 0.75rem;
     border-radius: 0.33vh;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.4);
     color: var(--text-primary);
     width: 15vh;
+    height: 3vh;
     transition: border-color 0.2s, background 0.2s;
 }
 
 .pagination-search-input:focus {
     outline: none;
     border-color: var(--accent);
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.pagination-search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pagination-btn::placeholder {
+    color: rgba(255, 255, 255);
 }
 
 .pagination-search-btn {
@@ -220,7 +241,7 @@
 
 .no-files-found {
     padding: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     text-align: center;
     font-size: .85rem;
 }

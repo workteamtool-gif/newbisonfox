@@ -20,7 +20,7 @@ export function CancelModal({
             ביטול העברה?
           </h2>
           <p style={{ marginBottom: '2rem', lineHeight: 1.5 }}>
-            האם אתה בטוח שברצונך לבטל את ההעברה הזו? כל הקבצים, התיקיות וההתקדמות שלך יימחקו.
+            האם אתה בטוח שברצונך לבטל את ההעברה הזו? כל ההתקדמות שלך תימחק.
           </p>
           <div className="cancel-modal-buttons" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
             <button className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>

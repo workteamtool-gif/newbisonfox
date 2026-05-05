@@ -99,7 +99,6 @@ export function SubfolderPage(): JSX.Element {
               id="subfolder-input"
               className={`form-input ${error ? 'error' : ''}`}
               type="text"
-              placeholder="For example: project_alpha"
               maxLength={maxLength}
               value={subfolder}
               style={{ direction: 'ltr' }}

@@ -45,7 +45,7 @@
 }
 
 .tree-size {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: .75rem;
     flex-shrink: 0;
     font-family: monospace;

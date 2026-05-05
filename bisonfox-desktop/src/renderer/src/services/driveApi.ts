@@ -1,4 +1,3 @@
-import { clientLogger } from '@renderer/utils/logger'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { FileNode } from '@shared/entities/FileNode'

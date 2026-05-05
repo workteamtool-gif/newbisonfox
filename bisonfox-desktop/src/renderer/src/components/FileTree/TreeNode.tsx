@@ -150,7 +150,7 @@ export function TreeNode({
 
   useEffect(() => {
     if (scrollToPath && node.path === scrollToPath && rowRef.current) {
-      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
       setHighlighted(true)
       if (onScrolled) onScrolled()
 

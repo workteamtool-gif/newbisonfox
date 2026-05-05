@@ -98,7 +98,6 @@ export function SetUsernamePage(): JSX.Element {
                 id="name-input"
                 className={`form-input ${error ? 'error' : ''}`}
                 type="text"
-                placeholder="For example: bison"
                 maxLength={maxLength}
                 value={name}
                 style={{ direction: 'ltr' }}

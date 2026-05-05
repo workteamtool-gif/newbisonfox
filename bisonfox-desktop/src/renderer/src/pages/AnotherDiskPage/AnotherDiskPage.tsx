@@ -124,7 +124,7 @@ export function AnotherDiskPage(): React.JSX.Element {
         </div>
       </div>
 
-      <p className="another-disk-countdown" style={{ marginTop: '1.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+      <p className="another-disk-countdown" style={{ marginTop: '1.5rem', color: 'var(--text-primary)', fontSize: '0.9rem' }}>
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
     </div>

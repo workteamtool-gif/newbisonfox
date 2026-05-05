@@ -17,5 +17,4 @@
 .wizard-layout.wizard-layout--no-header {
     grid-template-rows: 1fr;
     align-items: center;
-    padding-top: 3rem;
 }
