@@ -39,9 +39,12 @@ export function SuccessPage(): JSX.Element {
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">
         {destinationUserEndpoint && (
-          <span>
-            {' '}ניתן לראות את הקבצים בתיקייה: <strong>{destinationUserEndpoint}\{userName}</strong>
-          </span>
+          <p className="page-subtitle">
+            המסלול לנתונים ייראה כך: <br />
+            <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
+              {destinationUserEndpoint}\{userName}
+            </code>
+          </p>
         )}
       </p>
 

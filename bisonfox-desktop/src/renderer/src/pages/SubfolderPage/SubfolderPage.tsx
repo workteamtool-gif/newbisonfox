@@ -86,7 +86,7 @@ export function SubfolderPage(): JSX.Element {
         <p className="page-subtitle">
           המסלול לנתונים ייראה כך: <br />
           <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
-            {destinationUserEndpoint}\{userName}\{trimmedSubfolder}
+            {`${destinationUserEndpoint}\\${userName}${trimmedSubfolder ? `\\${trimmedSubfolder}` : ''}`}
           </code>
         </p>
 
