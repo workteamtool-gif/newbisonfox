@@ -7,12 +7,12 @@ export interface IFileScanner {
     basePath: string,
     excludedDirectories: Set<string>,
     parallelWorkers: number,
-    onScan?: (count: number, size?: number) => void,
-    excludedPaths?: Set<string>,
-    onFile?: (fullPath: string, relativePath: string) => void,
-    onDir?: (relDir: string) => void,
-    onScanError?: (filePath: string, errorMessage: string) => void,
-    signal?: AbortSignal
+    onScan: (count: number, size?: number) => void,
+    excludedPaths: Set<string>,
+    onFile: (fullPath: string, relativePath: string) => void,
+    onDir: (relDir: string) => void,
+    onScanError: (filePath: string, errorMessage: string) => void,
+    signal: AbortSignal
   ): Promise<{ fullPath: string; relativePath: string }[]>
 
   /**
@@ -22,8 +22,8 @@ export interface IFileScanner {
     initialPaths: string[],
     excludedDirectories: Set<string>,
     parallelWorkers: number,
-    excludedFiles?: string[],
-    onCount?: (count: number, size: number) => void,
-    signal?: AbortSignal
+    excludedFiles: string[],
+    onCount: (count: number, size: number) => void,
+    signal: AbortSignal
   ): Promise<{ count: number; size: number }>
 }

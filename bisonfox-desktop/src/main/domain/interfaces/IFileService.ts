@@ -8,7 +8,7 @@ export interface CopyOptions {
   expectedTotal?: number
   expectedTotalBytes?: number
   signal?: AbortSignal
-  onScan?: (count: number) => void
+  onScan: (count: number) => void
   onProgress: (
     file: string,
     percent: number,

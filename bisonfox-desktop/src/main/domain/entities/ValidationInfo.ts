@@ -1,4 +1,4 @@
-export interface ValidationResult {
-  valid: boolean
-  message?: string
+export type ValidationResult = {
+    valid: boolean
+    message?: string
 }
