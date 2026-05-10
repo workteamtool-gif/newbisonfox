@@ -67,36 +67,36 @@ export function StatsUpload({
         <>
             <div className="upload-stats">
                 <div className="stat-card">
-                    <div className="stat-val">
+                    <div className="stat-val" style={{ fontSize: '0.8rem' }}>
                         {totalDiscovered > 0 ? totalDiscovered.toLocaleString() : shown}
                     </div>
                     <div className="stat-lbl">סה"כ קבצים</div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-val">{completedCount.toLocaleString()}</div>
+                    <div className="stat-val" style={{ fontSize: '0.8rem' }}>{completedCount.toLocaleString()}</div>
                     <div className="stat-lbl">הועתקו</div>
                 </div>
                 <div className="stat-card">
                     <div
                         className="stat-val"
-                        style={{ color: failedCount > 0 ? 'var(--accent-red)' : undefined }}
+                        style={{ color: failedCount > 0 ? 'var(--accent-red)' : undefined, fontSize: '0.8rem' }}
                     >
                         {failedCount > 0 ? failedCount.toLocaleString() : '—'}
                     </div>
                     <div className="stat-lbl">נכשלו</div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-val" style={{ fontSize: '1.2rem', direction: 'ltr' }}>
+                    <div className="stat-val" style={{ fontSize: '0.8rem', direction: 'ltr' }}>
                         {formatSize(completedBytes)} / {formatSize(totalBytes)}
                     </div>
                     <div className="stat-lbl">גודל הועתק</div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-val">{overallPercentage}%</div>
+                    <div className="stat-val" style={{ fontSize: '0.8rem' }}>{overallPercentage}%</div>
                     <div className="stat-lbl">סה"כ</div>
                 </div>
                 <div className="stat-card">
-                    <div className="stat-val" style={{ fontSize: '1.25rem', direction: 'rtl' }}>
+                    <div className="stat-val" style={{ fontSize: '0.8rem', direction: 'rtl' }}>
                         {etaLabel}
                     </div>
                     <div className="stat-lbl">זמן משוער לסיום</div>

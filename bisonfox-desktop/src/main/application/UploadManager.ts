@@ -141,7 +141,7 @@ export class UploadManager {
         excludedFiles: allExcluded,
         expectedTotal,
         expectedTotalBytes,
-        signal: controller.signal, // Connects the scanner and 8 workers to this controller
+        signal: controller.signal, // Connects the scanner and workers to this controller
         onScan: (count) => {
           this.notifier.notifyProgress(session.id, { type: 'discovery', count })
         },

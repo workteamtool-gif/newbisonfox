@@ -38,7 +38,7 @@ export function CountingUpload({
                 <span style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</span>
                 <span style={{ color: 'var(--text-primary)' }}>
                     <span className="spin">⟳</span>
-                    {preCalcTotal
+                    {preCalcTotal !== null && preCalcTotal > 0
                         ? ` נמצאו ${preCalcTotal.toLocaleString()} קבצים עד כה...`
                         : ' סופרים קבצים...'}
                 </span>

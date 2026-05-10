@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/Logger'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
-import { Result } from '@main/domain/entities/Result'
+import { PathResult } from '@main/domain/entities/PathResult'
 
 /** Normalise Windows drive letter to uppercase for consistent path.relative calls. */
 function normalizeDriveCase(p: string): string {
@@ -27,8 +27,8 @@ export class FileScanner implements IFileScanner {
     onDir: (relDir: string) => void,
     onScanError: (filePath: string, errorMessage: string) => void,
     signal: AbortSignal,
-  ): Promise<Result[]> {
-    const results: Result[] = [];
+  ): Promise<PathResult[]> {
+    const results: PathResult[] = [];
     let foundCount = 0;
     const normalizedBase = normalizeDriveCase(basePath);
 
@@ -66,7 +66,7 @@ export class FileScanner implements IFileScanner {
      * Picks a folder from the queue, reads it, and adds sub-folders back to the queue.
      */
     const worker = async (): Promise<void> => {
-      while (!signal?.aborted && !isDone) {
+      while (!signal.aborted && !isDone) {
         // Get next folder to scan
         const item = queue.shift();
 
@@ -84,7 +84,7 @@ export class FileScanner implements IFileScanner {
         activeWorkers++;
         const currentPath = item.path;
 
-        if (excludedPaths?.has(currentPath)) {
+        if (excludedPaths.has(currentPath)) {
           activeWorkers--;
           continue;
         }
@@ -164,22 +164,26 @@ export class FileScanner implements IFileScanner {
     // 1. Initial Sorting: Separate direct files from directories
     await Promise.all(
       initialPaths.map(async (currentPath) => {
-        if (excludedFilesSet.has(currentPath) || excludedFilesSet.has(path.basename(currentPath))) return;
-        try {
-          const stat = await fs.promises.stat(currentPath);
-          if (stat.isDirectory()) {
-            queue.push(currentPath);
-          } else {
-            count++;
-            size += stat.size;
+        if ((!excludedFilesSet.has(currentPath) && !excludedFilesSet.has(path.basename(currentPath)))) {
+          try {
+            const stat = await fs.promises.stat(currentPath);
+            if (stat.isDirectory()) {
+              queue.push(currentPath);
+            } else {
+              count++;
+              size += stat.size;
+            }
+          } catch {
           }
-        } catch {
         }
       })
     );
 
     if (queue.length === 0) {
-      if (onCount && !signal?.aborted) onCount(count, size);
+      if (!signal.aborted) {
+        onCount(count, size);
+      }
+
       return { count, size };
     }
 
@@ -188,7 +192,10 @@ export class FileScanner implements IFileScanner {
       const checkDone = () => {
         if (queue.length === 0 && activeReads === 0 && activeStats === 0 && !isDone) {
           isDone = true;
-          if (onCount && !signal?.aborted) onCount(count, size);
+          if (!signal.aborted) {
+            onCount(count, size);
+          }
+
           resolve({ count, size });
         }
       };
@@ -204,7 +211,7 @@ export class FileScanner implements IFileScanner {
       };
 
       const processQueue = () => {
-        if (isDone || signal?.aborted) {
+        if (isDone || signal.aborted) {
           if (!isDone) {
             isDone = true;
             resolve({ count, size });
@@ -223,17 +230,17 @@ export class FileScanner implements IFileScanner {
               const filesToStat: string[] = [];
 
               for (let i = 0; i < entries.length; i++) {
-                if (signal?.aborted) break;
+                if (signal.aborted) break;
 
-                const ent = entries[i];
-                if (excludedDirectories.has(ent.name)) continue;
+                const entry = entries[i];
+                if (excludedDirectories.has(entry.name)) continue;
 
-                const fullPath = path.join(currentDir, ent.name);
+                const fullPath = path.join(currentDir, entry.name);
                 if (excludedFilesSet.has(fullPath)) continue;
 
-                if (ent.isDirectory()) {
+                if (entry.isDirectory()) {
                   queue.push(fullPath);
-                } else if (ent.isFile()) {
+                } else if (entry.isFile()) {
                   count++;
                   filesToStat.push(fullPath);
                 }

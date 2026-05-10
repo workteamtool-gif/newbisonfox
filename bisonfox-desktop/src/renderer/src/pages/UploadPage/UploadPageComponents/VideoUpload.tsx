@@ -20,7 +20,8 @@ export function VideoUpload({
                     position: 'relative',
                     boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     border: '1px solid var(--border-glass)',
-                    height: '60%'
+                    flex: 1,
+                    minHeight: 0
                 }}
             >
                 <video

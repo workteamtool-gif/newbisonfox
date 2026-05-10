@@ -40,7 +40,7 @@ export function UploadComponent({
     totalBytes
 }: UploadComponentProps): React.JSX.Element {
     return (
-        <div style={{ height: '720px' }}>
+        <div style={{ height: '720px', display: 'flex', flexDirection: 'column' }}>
             <p className="page-title">
                 {showFailedReview
                     ? <>⚠️ חלק מהקבצים נכשלו</>
@@ -97,7 +97,7 @@ export function UploadComponent({
 
             {/* Overall progress bar — hide during failed review */}
             {!showFailedReview && (
-                <div className="progress-item" style={{ marginBottom: '1.4rem' }}>
+                <div className="progress-item" style={{ marginTop: 'auto', marginBottom: '3.5rem' }}>
                     <div className="progress-header">
                         <span
                             className="progress-name"

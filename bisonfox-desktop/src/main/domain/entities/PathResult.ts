@@ -1,0 +1,1 @@
+export type PathResult = { fullPath: string; relativePath: string }

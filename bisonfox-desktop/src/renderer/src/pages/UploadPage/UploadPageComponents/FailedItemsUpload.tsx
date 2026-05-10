@@ -28,7 +28,10 @@ export function FailedItemsUpload({
                 style={{
                     borderColor: 'var(--accent-red)',
                     background: 'rgba(239, 68, 68, 0.05)',
+                    display: 'flex',
                     flexDirection: 'column',
+                    flex: 1,
+                    minHeight: 0,
                     gap: '0.75rem',
                     marginBottom: '1.5rem',
                     textAlign: 'left',
@@ -48,7 +51,8 @@ export function FailedItemsUpload({
                 </h4>
                 <div
                     style={{
-                        maxHeight: '400px',
+                        flex: 1,
+                        minHeight: 0,
                         overflowY: 'auto',
                         fontSize: '0.82rem',
                         width: '100%'
