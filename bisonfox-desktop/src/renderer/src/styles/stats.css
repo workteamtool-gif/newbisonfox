@@ -5,6 +5,10 @@
     margin-bottom: 1.4rem;
 }
 
+.upload-stats--4cols {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .stat-card {
     text-align: center;
     padding: .9rem;

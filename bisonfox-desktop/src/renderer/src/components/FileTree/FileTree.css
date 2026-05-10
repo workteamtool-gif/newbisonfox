@@ -175,7 +175,6 @@
 .pagination-search-form {
     display: flex;
     gap: 0.33vh;
-    margin-left: auto;
 }
 
 .pagination-search-input {
@@ -188,6 +187,8 @@
     width: 15vh;
     height: 3vh;
     transition: border-color 0.2s, background 0.2s;
+    margin-left: 3vh;
+
 }
 
 .pagination-search-input:focus {

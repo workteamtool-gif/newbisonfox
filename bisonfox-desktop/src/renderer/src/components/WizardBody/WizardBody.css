@@ -4,7 +4,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: linear-gradient(to bottom, rgba(20, 184, 166, 0.35), rgba(249, 115, 22, 0.3));
     border-top: 1px solid rgba(2px solid rgba(255, 255, 255, 0.5));
     padding: 0 3rem 0;
 }
@@ -23,7 +22,8 @@
     align-items: center;
     gap: 0;
     margin-bottom: 3rem;
-    padding-top: 1vh;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
 }
 
 .step-dot {

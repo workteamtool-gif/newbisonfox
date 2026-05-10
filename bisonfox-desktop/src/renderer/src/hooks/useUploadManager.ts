@@ -210,7 +210,7 @@ export function useUploadManager(): {
     } else {
       const top3Failed = failed
         .slice(0, 3)
-        .map((f) => `${f.path} (Reason: ${f.reason})`)
+        .map((f) => `${f.path} (REASON: ${f.reason})`)
         .join(', ')
       clientLogger.error(
         'UploadManager',

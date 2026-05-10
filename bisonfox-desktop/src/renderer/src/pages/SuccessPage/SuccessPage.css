@@ -44,9 +44,9 @@
     border-color: var(--accent-red);
     background: rgba(239, 68, 68, 0.05);
     color: var(--accent-red);
-    margin: 0 auto 2rem;
+    margin: 0 auto 1rem;
     text-align: left;
-    max-width: 31.25vw;
+    max-width: 40vw;
     width: 100%;
 }
 
@@ -59,7 +59,7 @@
 
 .failed-files-list-wrapper {
     font-size: 0.85rem;
-    max-height: 8.33vh;
+    max-height: 15vh;
     overflow-y: auto;
 }
 
@@ -87,14 +87,4 @@
 
 .success-countdown strong {
     color: var(--accent);
-}
-
-.success-card .image-mark {
-    background: url('../../images/liking.png') center/cover no-repeat;
-    width: 20vw;
-    height: 22vh;
-    object-fit: cover;
-    border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
-    border-radius: var(--r-md);
-    margin: 0 auto 1.5rem;
 }

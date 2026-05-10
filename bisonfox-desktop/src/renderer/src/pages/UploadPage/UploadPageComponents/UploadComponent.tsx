@@ -66,6 +66,7 @@ export function UploadComponent({
                 overallPercentage={overallPercentage}
                 completedBytes={completedBytes}
                 totalBytes={totalBytes}
+                showTotalReview={!showFailedReview}
             />
 
             {/* Failed files review panel */}

@@ -8,11 +8,11 @@ import { sessionApi } from '@renderer/services/sessionApi'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function InsertDiskPage(): React.JSX.Element {
-  const { setStep, setCurrentDisk, diskSessions, userName, sessionId, setSessionId } = useWizardStore()
+  const { setStep, setCurrentDisk, currentDisk, diskSessions, userName, sessionId, setSessionId } = useWizardStore()
 
   const [drives, setDrives] = useState<DriveInfo[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedLetter, setSelectedLetter] = useState<string>('')
+  const [selectedLetter, setSelectedLetter] = useState<string>(currentDisk?.driveLetter || '')
 
   useEffect(() => {
     let isMounted = true

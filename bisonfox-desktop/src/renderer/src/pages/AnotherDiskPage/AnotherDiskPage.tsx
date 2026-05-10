@@ -81,7 +81,7 @@ export function AnotherDiskPage(): React.JSX.Element {
               {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
                 <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem' }}>
                   <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>סיבה: {f.reason}</div>
+                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>REASON: {f.reason}</div>
                 </li>
               ))}
             </ul>

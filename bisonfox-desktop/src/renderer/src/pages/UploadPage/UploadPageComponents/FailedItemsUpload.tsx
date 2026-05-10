@@ -71,7 +71,7 @@ export function FailedItemsUpload({
                                         opacity: 0.85
                                     }}
                                 >
-                                    reason: {f.reason}
+                                    REASON: {f.reason}
                                 </div>
                             </li>
                         ))}

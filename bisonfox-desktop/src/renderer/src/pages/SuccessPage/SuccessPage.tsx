@@ -34,7 +34,6 @@ export function SuccessPage(): JSX.Element {
 
   return (
     <div className="glass-card success-card">
-      <div className="image-mark" aria-hidden="true"></div>
 
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">

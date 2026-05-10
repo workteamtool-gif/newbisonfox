@@ -8,6 +8,7 @@ export interface StatsUploadProps {
     overallPercentage: number
     completedBytes: number
     totalBytes: number
+    showTotalReview: boolean
 }
 
 function formatEta(seconds: number): string {
@@ -27,7 +28,8 @@ export function StatsUpload({
     failedCount,
     overallPercentage,
     completedBytes,
-    totalBytes
+    totalBytes,
+    showTotalReview
 }: StatsUploadProps): React.JSX.Element {
     // Track when bytes first started flowing so we can derive a stable speed
     const startedAtRef = useRef<number | null>(null)
@@ -65,7 +67,7 @@ export function StatsUpload({
 
     return (
         <>
-            <div className="upload-stats">
+            <div className={`upload-stats ${!showTotalReview ? 'upload-stats--4cols' : ''}`}>
                 <div className="stat-card">
                     <div className="stat-val" style={{ fontSize: '0.8rem' }}>
                         {totalDiscovered > 0 ? totalDiscovered.toLocaleString() : shown}
@@ -91,16 +93,20 @@ export function StatsUpload({
                     </div>
                     <div className="stat-lbl">גודל הועתק</div>
                 </div>
-                <div className="stat-card">
-                    <div className="stat-val" style={{ fontSize: '0.8rem' }}>{overallPercentage}%</div>
-                    <div className="stat-lbl">סה"כ</div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-val" style={{ fontSize: '0.8rem', direction: 'rtl' }}>
-                        {etaLabel}
-                    </div>
-                    <div className="stat-lbl">זמן משוער לסיום</div>
-                </div>
+                {showTotalReview && (
+                    <>
+                        <div className="stat-card">
+                            <div className="stat-val" style={{ fontSize: '0.8rem' }}>{overallPercentage}%</div>
+                            <div className="stat-lbl">סה"כ</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-val" style={{ fontSize: '0.8rem', direction: 'rtl' }}>
+                                {etaLabel}
+                            </div>
+                            <div className="stat-lbl">זמן משוער לסיום</div>
+                        </div>
+                    </>
+                )}
             </div>
         </>
     )
