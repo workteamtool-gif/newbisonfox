@@ -44,7 +44,8 @@ export function FailedItemsUpload({
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        color: 'var(--accent-red)'
+                        color: 'var(--accent-red)',
+                        fontSize: '2rem',
                     }}
                 >
                     ⚠️ לא ניתן היה להעתיק {failedCount.toLocaleString()} קבצים
@@ -54,7 +55,7 @@ export function FailedItemsUpload({
                         flex: 1,
                         minHeight: 0,
                         overflowY: 'auto',
-                        fontSize: '0.82rem',
+                        fontSize: '1.5rem',
                         width: '100%'
                     }}
                 >
@@ -66,7 +67,6 @@ export function FailedItemsUpload({
                                 </div>
                                 <div
                                     style={{
-                                        fontSize: '0.75rem',
                                         color: 'var(--accent-red)',
                                         opacity: 0.85
                                     }}
@@ -82,10 +82,10 @@ export function FailedItemsUpload({
                                 fontStyle: 'italic',
                                 color: 'var(--text-secondary)',
                                 marginTop: '0.3rem',
-                                direction: 'rtl'
+                                direction: 'ltr'
                             }}
                         >
-                            ...ועוד {failedCount - MAX_TRACKED_FAILURES} (רק {MAX_TRACKED_FAILURES} הכשלונות הראשונים מוצגים).
+                            Only {MAX_TRACKED_FAILURES} first failed files are shown. There are more {failedCount - MAX_TRACKED_FAILURES} failed files
                         </div>
                     )}
                 </div>
@@ -98,7 +98,8 @@ export function FailedItemsUpload({
                         width: '100%',
                         justifyItems: 'flex-end',
                         flexWrap: 'wrap',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        fontSize: '1.7rem'
                     }}
                 >
                     <button className="btn" style={{ background: 'hsl(142, 71%, 45%, .8)' }} onClick={skipFailed}>
@@ -115,9 +116,8 @@ export function FailedItemsUpload({
                                 background: 'rgba(251, 191, 36, 0.08)',
                                 border: '1px solid rgba(251, 191, 36, 0.3)',
                                 borderRadius: 'var(--r-md)',
-                                fontSize: '0.8rem',
-                                color: 'var(--text-secondary)',
-                                textAlign: 'right'
+                                fontSize: '1.8rem',
+                                color: 'var(--text-secondary)'
                             }}
                         >
                             ⚠️ נכשלו יותר מ-{MAX_TRACKED_FAILURES.toLocaleString()} קבצים. המערכת לא שמרה את כל הכשלונות. לחיצה על "נסה שוב את כל הקבצים" תעלה מחדש את כל הקבצים שנבחרו.

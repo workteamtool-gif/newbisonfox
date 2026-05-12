@@ -256,9 +256,6 @@ export function SelectFilesPage(): JSX.Element {
   return (
     <div className="glass-card">
       <p className="page-title">בחירת קבצים ותיקיות</p>
-      <p className="page-subtitle">
-        בחר מה להעתיק . סמן פריטים למטה - בחירת תיקייה כוללת את כל תוכנה בהעלאה.
-      </p>
 
       <div className="info-box">
         <span>

@@ -1,6 +1,6 @@
 .tree-checkbox {
-    width: 1.5vh;
-    height: 1.5vh;
+    width: 31vh;
+    height: 31vh;
     border-radius: 0.33vh;
     border: 2px solid rgba(255, 255, 255, .2);
     display: flex;
@@ -24,7 +24,6 @@
 }
 
 .tree-icon {
-    font-size: 1.1rem;
     flex-shrink: 0;
     filter: grayscale(0.2);
     transition: var(--t-fast);
@@ -42,6 +41,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 500;
+    font-size: 2rem;
 }
 
 .tree-size {
@@ -53,8 +53,8 @@
 
 .tree-toggle {
     color: var(--text-primary);
-    width: 1.5vh;
-    height: 1.5vh;
+    width: 3vh;
+    height: 3vh;
     display: flex;
     align-items: center;
     justify-content: center;

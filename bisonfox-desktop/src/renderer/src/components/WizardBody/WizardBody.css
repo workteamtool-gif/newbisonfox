@@ -4,16 +4,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-top: 1px solid rgba(2px solid rgba(255, 255, 255, 0.5));
+    border-top: 1px solid rgba(255, 255, 255, 0.52);
     padding: 0 3rem 0;
 }
 
 .phase {
     position: absolute;
-    top: 35px;
+    top: 3rem;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     white-space: nowrap;
 }
 
@@ -24,19 +24,20 @@
     margin-bottom: 3rem;
     padding-top: 2vh;
     padding-bottom: 2vh;
+
 }
 
 .step-dot {
-    width: 2.5vh;
-    height: 2.5vh;
-    min-width: 2.5vh;
-    min-height: 2.5vh;
+    width: 4vh;
+    height: 4vh;
+    min-width: 4vh;
+    min-height: 4vh;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: .7rem;
+    font-size: 1rem;
     font-weight: 700;
     transition: var(--t-base);
     position: relative;
@@ -64,8 +65,8 @@
 }
 
 .step-connector {
-    width: 3vh;
-    height: 0.17vh;
+    width: 5vh;
+    height: 0.25vh;
     background: #055c64;
     position: relative;
     overflow: hidden;

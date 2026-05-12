@@ -5,8 +5,6 @@
     border-radius: var(--r-xl);
     box-shadow: 0 2.08vh 4.17vh -1vh rgba(0, 0, 0, 0.6);
     padding: 2.5rem;
-    width: 53.33vw;
-    min-width: 53.33vw;
     height: 75vh;
     display: flex;
     flex-direction: column;
@@ -14,6 +12,7 @@
     animation: fadeUp .35s ease both;
     transition: max-width var(--t-base);
     overflow: hidden;
+    width: 100%;
 }
 
 .wizard-layout--with-keyboard .glass-card {

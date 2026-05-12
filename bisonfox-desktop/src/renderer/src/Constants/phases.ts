@@ -27,3 +27,16 @@ export const PHASES: Phase[] = [
   { key: 'pullDisk', label: 'להוציא את הדיסק', step: PullDiskPage, loop: true },
   { key: 'anotherDisk', label: 'להכניס דיסק נוסף', step: AnotherDiskPage, loop: true }
 ]
+
+export interface PhaseGroup {
+  key: string
+  label: string
+  steps: WizardStep[]
+}
+
+export const PHASE_GROUPS: PhaseGroup[] = [
+  { key: 'setup', label: 'הכנה להעברה', steps: [SetUsernamePage, InsertDiskPage, SubfolderPage] },
+  { key: 'select', label: 'בחירת קבצים', steps: [SelectFilesPage, ReviewPage] },
+  { key: 'upload', label: 'העברה', steps: [UploadPage] },
+  { key: 'finish', label: 'סיום', steps: [PullDiskPage, AnotherDiskPage] }
+]

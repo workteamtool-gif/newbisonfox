@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardBody.css'
-import { PHASES } from '@renderer/Constants/phases'
+import { PHASE_GROUPS } from '@renderer/Constants/phases'
 
 interface WizardBodyProps {
     children: React.ReactNode
@@ -10,20 +10,20 @@ interface WizardBodyProps {
 
 export function WizardBody({ children, showSteppersAndHeader }: WizardBodyProps): React.JSX.Element | null {
     const step = useWizardStore((s) => s.step)
-    let activePhaseIdx = PHASES.findIndex((p) => p.step === step)
-    if (activePhaseIdx === -1) activePhaseIdx = 0
+    let activeGroupIdx = PHASE_GROUPS.findIndex((g) => g.steps.includes(step))
+    if (activeGroupIdx === -1) activeGroupIdx = 0
     return (
         <div className="wizard-bottom-zone">
             {showSteppersAndHeader && (
                 <div className="step-indicator">
-                    {PHASES.map((phase, i) => {
-                        const status = i < activePhaseIdx ? 'done' : i === activePhaseIdx ? 'active' : 'pending'
+                    {PHASE_GROUPS.map((group, i) => {
+                        const status = i < activeGroupIdx ? 'done' : i === activeGroupIdx ? 'active' : 'pending'
                         return (
-                            <React.Fragment key={phase.key}>
-                                {i > 0 && <div className={`step-connector ${i <= activePhaseIdx ? 'done' : ''}`} />}
+                            <React.Fragment key={group.key}>
+                                {i > 0 && <div className={`step-connector ${i <= activeGroupIdx ? 'done' : ''}`} />}
                                 <div
                                     className={`step-dot ${status}`}
-                                    title={phase.label}
+                                    title={group.label}
                                     style={{ position: 'relative', margin: '0 5vh' }}
                                 >
                                     {status === 'done' ? '✓' : i + 1}
@@ -33,7 +33,7 @@ export function WizardBody({ children, showSteppersAndHeader }: WizardBodyProps)
                                             fontWeight: status === 'active' ? 500 : 400
                                         }}
                                     >
-                                        {phase.label}
+                                        {group.label}
                                     </span>
                                 </div>
                             </React.Fragment>
@@ -47,3 +47,4 @@ export function WizardBody({ children, showSteppersAndHeader }: WizardBodyProps)
         </div>
     )
 }
+

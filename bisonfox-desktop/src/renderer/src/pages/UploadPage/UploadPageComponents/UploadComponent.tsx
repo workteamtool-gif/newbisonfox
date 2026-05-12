@@ -98,7 +98,7 @@ export function UploadComponent({
 
             {/* Overall progress bar — hide during failed review */}
             {!showFailedReview && (
-                <div className="progress-item" style={{ marginTop: 'auto', marginBottom: '3.5rem' }}>
+                <div>
                     <div className="progress-header">
                         <span
                             className="progress-name"
