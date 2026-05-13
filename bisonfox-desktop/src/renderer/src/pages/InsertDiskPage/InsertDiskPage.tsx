@@ -83,20 +83,19 @@ export function InsertDiskPage(): React.JSX.Element {
 
       <p className="page-title" style={{ marginBottom: '1rem' }}>חבר כונן חיצוני</p>
       <div className="form-group" style={{ gap: '1rem' }}>
-        <label
-          className="form-label"
-          style={{ display: 'flex', justifyContent: 'space-between' }}
-        >
-          <span>בחר כונן:</span>
-          {loading && <span className="badge badge-info pulse">סורק...</span>}
-        </label>
 
         {drives.length === 0 && !loading ? (
-          <div className="info-box">
-            <div>ממתין לחיבור כונן... אנא חבר את הכונן.</div>
+          <div className="info-box" style={{ fontSize: "2rem" }}>
+            ממתין לחיבור כונן...
           </div>
-        ) : (
-          <div className="drive-list">
+        ) : (<>
+          <label
+            className="form-label"
+            style={{ display: 'flex', justifyContent: 'space-between' }}
+          >
+            <span>בחר כונן:</span>
+            {loading && <span className="badge badge-info pulse">סורק...</span>}
+          </label>          <div className="drive-list">
             {drives.map((drive) => (
               <div
                 key={drive.letter}
@@ -119,7 +118,7 @@ export function InsertDiskPage(): React.JSX.Element {
                 {drive.selectable && <div className="drive-check">✓</div>}
               </div>
             ))}
-          </div>
+          </div></>
         )}
       </div>
 

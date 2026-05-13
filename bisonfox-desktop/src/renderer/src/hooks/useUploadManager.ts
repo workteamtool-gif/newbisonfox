@@ -4,8 +4,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { uploadApi } from '@renderer/services/uploadApi'
 import { UploadPhase } from '@renderer/entites/Upload'
 import { DiskSession } from '@shared/entities/DiskSession'
-import { WizardStep } from '@renderer/entites/Wizard'
-import { PullDiskPage } from '@renderer/entites/Wizard'
+import { WizardStep, AnotherDiskPage } from '@renderer/entites/Wizard'
 
 export function useUploadManager(): {
   phase: UploadPhase
@@ -206,7 +205,7 @@ export function useUploadManager(): {
         'UploadManager',
         `For user: ${userName} in session: ${sessionId} copied successfully ${finalCount} files.`
       )
-      setTimeout(() => setStep(PullDiskPage), 1800)
+      setTimeout(() => setStep(AnotherDiskPage), 1800)
     } else {
       const top3Failed = failed
         .slice(0, 3)
@@ -289,7 +288,7 @@ export function useUploadManager(): {
       'UploadManager',
       `For user: ${userName} in session: ${sessionId} skipping ${failedFilesList.length} failed file(s).`
     )
-    setStep(PullDiskPage)
+    setStep(AnotherDiskPage)
   }
 
   const retryAll = (): void => {

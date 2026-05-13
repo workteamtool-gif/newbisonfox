@@ -28,9 +28,6 @@ export const ReviewPage = React.lazy(() =>
 export const UploadPage = React.lazy(() =>
   import('@renderer/pages/UploadPage/UploadPage').then((m) => ({ default: m.UploadPage }))
 )
-export const PullDiskPage = React.lazy(() =>
-  import('@renderer/pages/PullDiskPage/PullDiskPage').then((m) => ({ default: m.PullDiskPage }))
-)
 export const AnotherDiskPage = React.lazy(() =>
   import('@renderer/pages/AnotherDiskPage/AnotherDiskPage').then((m) => ({
     default: m.AnotherDiskPage
@@ -48,7 +45,6 @@ export type WizardStep =
   | typeof SelectFilesPage
   | typeof ReviewPage
   | typeof UploadPage
-  | typeof PullDiskPage
   | typeof AnotherDiskPage
   | typeof SuccessPage
 

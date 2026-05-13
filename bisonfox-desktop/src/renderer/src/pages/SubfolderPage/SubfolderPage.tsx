@@ -74,21 +74,12 @@ export function SubfolderPage(): JSX.Element {
     setStep(SelectFilesPage)
     setLoading(false)
   }
-
-  const trimmedSubfolder = subfolder.trim()
-  const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
   const maxLength = Number(import.meta.env.VITE_SUBFOLDER_LENGTH)
 
   return (
     <>
       <div className="glass-card">
         <p className="page-title">תן שם לתיקיית הכונן</p>
-        <p className="page-subtitle">
-          המסלול לנתונים ייראה כך: <br />
-          <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
-            {`${destinationUserEndpoint}\\${userName}${trimmedSubfolder ? `\\${trimmedSubfolder}` : ''}`}
-          </code>
-        </p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>

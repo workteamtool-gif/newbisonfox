@@ -2,6 +2,7 @@ import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
 import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
+import iconImg from '@renderer/images/icon.png'
 
 interface WizardHeaderProps {
   onCancelClick: () => void
@@ -16,7 +17,10 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
   return (
     <header className="wizard-header">
       <div className="wizard-header-content">
-        <div className="wizard-logo">BisonFox</div>
+        <div className="wizard-logo">
+          <img src={iconImg} alt="LightningFox" className="wizard-logo-icon" />
+          lightning Fox
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1vh' }}>
           {userName && (
             <div

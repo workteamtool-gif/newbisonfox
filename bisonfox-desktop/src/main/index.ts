@@ -80,7 +80,7 @@ function createWindow(): void {
 // --- LIFECYCLE: BOOTSTRAP ---
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.bisonfox')
+  electronApp.setAppUserModelId('com.lightningfox')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)

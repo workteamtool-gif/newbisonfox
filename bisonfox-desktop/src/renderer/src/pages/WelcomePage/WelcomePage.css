@@ -24,7 +24,6 @@
     font-family: var(--font-display);
     font-size: 3.6rem;
     font-weight: 800;
-    line-height: 1.1;
     margin-bottom: 1.1rem;
     background: linear-gradient(170deg, #ffffff 0%, #cbd5e1 100%);
     -webkit-background-clip: text;
@@ -39,14 +38,4 @@
     line-height: 1.7;
     margin-bottom: 2.5rem;
     filter: drop-shadow(0 0.17vh 0.33vh rgba(0, 0, 0, 0.5));
-}
-
-.image-mark {
-    background: url('../../images/engineers.png') center/cover no-repeat;
-    width: 35vw;
-    height: 35vh;
-    object-fit: cover;
-    border: 2px solid var(--border-glass, rgba(255, 255, 255, 0.2));
-    border-radius: var(--r-md);
-    margin-bottom: 2rem;
 }

@@ -13,8 +13,24 @@ html {
 
 body {
     font-family: var(--font);
-    background: linear-gradient(to top, #FF924D, #9AD3DA);
+    background: url('../images/backgroundImage.png') center / cover no-repeat fixed;
     color: var(--text-primary);
+    position: relative;
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(5, 12, 20, 0.45) 0%, rgba(5, 12, 20, 0.7) 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+body>* {
+    position: relative;
+    z-index: 1;
 }
 
 ::-webkit-scrollbar {

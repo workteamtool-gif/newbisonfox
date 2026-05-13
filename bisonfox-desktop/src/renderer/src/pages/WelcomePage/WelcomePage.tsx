@@ -2,6 +2,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WelcomePage.css'
 import { JSX } from 'react'
 import { SetUsernamePage } from '@renderer/entites/Wizard'
+import iconImg from '@renderer/images/icon.png'
 
 export function WelcomePage(): JSX.Element {
   const setStep = useWizardStore((s) => s.setStep)
@@ -9,9 +10,13 @@ export function WelcomePage(): JSX.Element {
   return (
     <div className="welcome-page">
       <div className="welcome-content glass-card">
-        <div className="image-mark" aria-hidden="true"></div>
-
-        <h1 className="welcome-title">BisonFox</h1>
+        <img src={iconImg} style={
+          {
+            width: '35vw',
+            height: 'auto',
+          }
+        } alt="LightningFox" />
+        <h1 className="welcome-title">lightningFox</h1>
         <p className="welcome-sub">
           ברוכים הבאים לשועל ברזל החדש! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>

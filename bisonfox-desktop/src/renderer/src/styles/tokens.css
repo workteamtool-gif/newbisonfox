@@ -16,8 +16,8 @@
     --grad-headline: linear-gradient(135deg, #f97316, #fb923c);
     --grad-green: linear-gradient(135deg, #34d399, #10b981);
 
-    --text-primary: #fef7ed;
-    --text-secondary: #000000;
+    --text-primary: rgb(254, 247, 237);
+    --text-secondary: rgb(254, 247, 237, 0.85);
 
     --r-md: 1.17vh;
     --r-lg: 1.67vh;
