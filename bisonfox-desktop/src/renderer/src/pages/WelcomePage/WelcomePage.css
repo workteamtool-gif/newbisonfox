@@ -5,8 +5,7 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    position: relative;
-    overflow: hidden;
+    width: 60vh;
 }
 
 .welcome-content {
@@ -33,7 +32,7 @@
 }
 
 .welcome-sub {
-    font-size: 3.1rem;
+    font-size: 2.1rem;
     color: #f8fafc;
     line-height: 1.7;
     margin-bottom: 2.5rem;

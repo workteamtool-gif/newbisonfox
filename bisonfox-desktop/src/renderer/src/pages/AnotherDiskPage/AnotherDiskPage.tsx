@@ -49,9 +49,6 @@ export function AnotherDiskPage(): React.JSX.Element {
       <p className="page-subtitle" style={{ marginBottom: '2rem', direction: "rtl" }}>
         !לא לשכוח לנתק את הכונן החיצוני
       </p>
-      <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
-        סיכום של כל ההעברות:
-      </p>
 
       <div className="another-disk-stats">
         <div className="stat-card">

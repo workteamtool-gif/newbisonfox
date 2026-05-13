@@ -12,13 +12,13 @@ export function WelcomePage(): JSX.Element {
       <div className="welcome-content glass-card">
         <img src={iconImg} style={
           {
-            width: '35vw',
+            width: '30vw',
             height: 'auto',
           }
         } alt="LightningFox" />
         <h1 className="welcome-title">שועל ברק</h1>
         <p className="welcome-sub">
-          ברוכים הבאים לשועל ברק! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
+          ברוכים הבאים לעמדת שועל ברק! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>
 
         <button
