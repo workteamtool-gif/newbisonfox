@@ -15,7 +15,6 @@ export function SetUsernamePage(): JSX.Element {
 
   const existingPrefix = PREFIX_OPTIONS.find(p => userName.startsWith(p.value)) || PREFIX_OPTIONS[0]
 
-  const [prefix, setPrefix] = useState(existingPrefix)
   const [name, setName] = useState(userName.startsWith(existingPrefix.value) ? userName.slice(existingPrefix.value.length) : '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,7 +31,7 @@ export function SetUsernamePage(): JSX.Element {
     return () => setKeyboardVisible(false)
   }, [showKeyboard, setKeyboardVisible])
 
-  const fullName = prefix.value + name.trim()
+  const fullName = name.trim()
 
   function ValidateName(name: string): void {
     const trimmedName = name.trim()

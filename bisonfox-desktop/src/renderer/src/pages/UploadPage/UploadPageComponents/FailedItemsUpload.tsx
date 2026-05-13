@@ -117,7 +117,8 @@ export function FailedItemsUpload({
                                 border: '1px solid rgba(251, 191, 36, 0.3)',
                                 borderRadius: 'var(--r-md)',
                                 fontSize: '1.8rem',
-                                color: 'var(--text-secondary)'
+                                color: 'var(--text-secondary)',
+                                textAlign: 'right'
                             }}
                         >
                             ⚠️ נכשלו יותר מ-{MAX_TRACKED_FAILURES.toLocaleString()} קבצים. המערכת לא שמרה את כל הכשלונות. לחיצה על "נסה שוב את כל הקבצים" תעלה מחדש את כל הקבצים שנבחרו.

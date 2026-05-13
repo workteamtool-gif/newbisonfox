@@ -158,7 +158,7 @@ export function InsertDiskPage(): React.JSX.Element {
     <>
       <div className="glass-card">
 
-        <p className="page-title" style={{ marginBottom: '1rem' }}>חבר כונן חיצוני</p>
+        <p className="page-title" style={{ marginBottom: '1rem' }}>הכנה להעברה</p>
         <div className="form-group" style={{ gap: '1rem' }}>
 
           {drives.length === 0 && !loading ? (

@@ -304,51 +304,54 @@ export function SelectFilesPage(): JSX.Element {
             className="tree-pagination-bar"
             style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
           >
-            <button
-              className="btn btn-secondary pagination-btn"
-              onClick={handleLoadPrevRoot}
-              disabled={rootPage <= 1 || loading}
-            >
-              Previous
-            </button>
+            <div className="pagination-controls">
+              <button
+                className="pagination-btn"
+                onClick={handleLoadPrevRoot}
+                disabled={rootPage <= 1 || loading}
+              >
+                ◀
+              </button>
 
-            <form
-              className="pagination-jump-form"
-              onSubmit={(e) => {
-                e.preventDefault()
-                const page = parseInt(jumpToPageInput, 10)
-                if (!isNaN(page)) {
-                  handleJumpToPage(page)
-                  setJumpToPageInput('')
-                }
-              }}
-            >
-              <span className="pagination-text">Page</span>
-              <input
-                type="number"
-                min={1}
-                max={rootTotalPages}
-                placeholder={String(rootPage)}
-                value={jumpToPageInput}
-                onChange={(e) => setJumpToPageInput(e.target.value)}
-                className="pagination-jump-input"
-                disabled={loading}
-              />
-              <span className="pagination-text">{rootTotalPages}</span>
-            </form>
+              <form
+                className="pagination-jump-form"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const page = parseInt(jumpToPageInput, 10)
+                  if (!isNaN(page)) {
+                    handleJumpToPage(page)
+                    setJumpToPageInput('')
+                  }
+                }}
+              >
+                <input
+                  type="number"
+                  min={1}
+                  max={rootTotalPages}
+                  placeholder={String(rootPage)}
+                  value={jumpToPageInput}
+                  onChange={(e) => setJumpToPageInput(e.target.value)}
+                  className="pagination-jump-input"
+                  disabled={loading}
+                />
+                <span className="pagination-text">/ {rootTotalPages}</span>
+              </form>
 
-            <button
-              className="btn btn-secondary pagination-btn"
-              onClick={handleLoadNextRoot}
-              disabled={!rootHasMore || loading}
-            >
-              Next
-            </button>
+              <button
+                className="pagination-btn"
+                onClick={handleLoadNextRoot}
+                disabled={!rootHasMore || loading}
+              >
+                ▶
+              </button>
+            </div>
+
+            <div className="pagination-divider" />
 
             <form onSubmit={handleSearchRootSubmit} className="pagination-search-form" style={{ direction: 'ltr' }}>
               <input
                 type="text"
-                placeholder="Search file or folder..."
+                placeholder="🔍 Search file or folder..."
                 value={rootSearchQuery}
                 onChange={(e) => setRootSearchQuery(e.target.value)}
                 className="pagination-search-input"
@@ -359,7 +362,7 @@ export function SelectFilesPage(): JSX.Element {
                 disabled={!rootSearchQuery.trim() || loading || searching}
                 className={`pagination-search-btn ${rootSearchQuery.trim() ? 'active' : ''}`}
               >
-                🔍
+                →
               </button>
             </form>
           </div>

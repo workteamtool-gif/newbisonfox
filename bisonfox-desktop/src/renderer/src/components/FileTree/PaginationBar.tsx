@@ -45,24 +45,22 @@ export function PaginationBar({
           ◀
         </button>
 
-        {loading ? (
-          <span className="pagination-text">
-            <span className="spin" style={{ display: 'inline-block' }}>
-              ⟳
+        <form
+          className="pagination-jump-form"
+          onSubmit={(e) => {
+            e.preventDefault()
+            const target = parseInt(jumpInput, 10)
+            if (!isNaN(target) && onJumpToPage) {
+              onJumpToPage(target)
+              setJumpInput('')
+            }
+          }}
+        >
+          {loading ? (
+            <span className="pagination-jump-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem' }}>⟳</span>
             </span>
-          </span>
-        ) : (
-          <form
-            className="pagination-jump-form"
-            onSubmit={(e) => {
-              e.preventDefault()
-              const target = parseInt(jumpInput, 10)
-              if (!isNaN(target) && onJumpToPage) {
-                onJumpToPage(target)
-                setJumpInput('')
-              }
-            }}
-          >
+          ) : (
             <input
               type="number"
               min={1}
@@ -73,9 +71,9 @@ export function PaginationBar({
               className="pagination-jump-input"
               disabled={loading}
             />
-            <span className="pagination-text">/ {totalPages}</span>
-          </form>
-        )}
+          )}
+          <span className="pagination-text">/ {totalPages}</span>
+        </form>
 
         <button
           className="pagination-btn"

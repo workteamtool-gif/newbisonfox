@@ -16,7 +16,7 @@ export function WelcomePage(): JSX.Element {
             height: 'auto',
           }
         } alt="LightningFox" />
-        <h1 className="welcome-title">lightningFox</h1>
+        <h1 className="welcome-title">שועל ברק</h1>
         <p className="welcome-sub">
           ברוכים הבאים לשועל ברק! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>

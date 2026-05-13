@@ -20,13 +20,13 @@
 
 .stat-val {
     font-family: var(--font-display);
-    font-size: 1.45rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--accent);
 }
 
 .stat-lbl {
-    font-size: .72rem;
+    font-size: 1.2rem;
     color: var(--text-secondary);
     margin-top: .2rem;
 }
