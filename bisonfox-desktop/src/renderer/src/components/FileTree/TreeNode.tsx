@@ -210,7 +210,12 @@ export function TreeNode({
         style={{ paddingLeft: `${depth}vh` }}
         onClick={handleExpand}
       >
-        <div className={`tree-checkbox ${checked ? 'checked' : ''}`} onClick={(e) => { e.stopPropagation(); onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck) }} />
+        <div
+          className="tree-checkbox-hit-area"
+          onClick={(e) => { e.stopPropagation(); onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck) }}
+        >
+          <div className={`tree-checkbox ${checked ? 'checked' : ''}`} />
+        </div>
 
         {canExpand && (
           <span className="tree-toggle">

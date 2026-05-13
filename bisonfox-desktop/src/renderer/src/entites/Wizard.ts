@@ -14,9 +14,6 @@ export const InsertDiskPage = React.lazy(() =>
     default: m.InsertDiskPage
   }))
 )
-export const SubfolderPage = React.lazy(() =>
-  import('@renderer/pages/SubfolderPage/SubfolderPage').then((m) => ({ default: m.SubfolderPage }))
-)
 export const SelectFilesPage = React.lazy(() =>
   import('@renderer/pages/SelectFilesPage/SelectFilesPage').then((m) => ({
     default: m.SelectFilesPage
@@ -41,7 +38,6 @@ export type WizardStep =
   | typeof WelcomePage
   | typeof SetUsernamePage
   | typeof InsertDiskPage
-  | typeof SubfolderPage
   | typeof SelectFilesPage
   | typeof ReviewPage
   | typeof UploadPage

@@ -6,7 +6,7 @@ import { FileTree } from '@renderer/components/FileTree'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
-import { SubfolderPage, ReviewPage } from '@renderer/entites/Wizard'
+import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
@@ -255,7 +255,7 @@ export function SelectFilesPage(): JSX.Element {
 
   return (
     <div className="glass-card">
-      <p className="page-title">בחירת קבצים ותיקיות</p>
+      <p className="page-title" style={{ marginBottom: '1rem' }}>בחירת קבצים ותיקיות</p>
 
       <div className="info-box">
         <span>
@@ -368,7 +368,7 @@ export function SelectFilesPage(): JSX.Element {
 
       <NavigationOptions
         onBack={() => {
-          clientLogger.info('SelectFilesPage', 'User navigating back to SubfolderPage')
+          clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
           if (currentDisk) {
             setCurrentDisk({
               ...currentDisk,
@@ -376,7 +376,7 @@ export function SelectFilesPage(): JSX.Element {
               excludedFiles: Array.from(excluded)
             })
           }
-          setStep(SubfolderPage)
+          setStep(InsertDiskPage)
         }}
         onForward={handleContinue}
         forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}

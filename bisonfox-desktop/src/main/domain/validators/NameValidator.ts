@@ -3,14 +3,14 @@ import { ValidationResult } from '../entities/ValidationInfo'
 
 export class NameValidator implements INameValidator {
   private static readonly MAX_LENGTH = Number(process.env.VITE_USERNAME_LENGTH)
-  private static readonly VALID_PATTERN = /^[a-zA-Z0-9_]+$/
+  private static readonly VALID_PATTERN = /^[a-zA-Z0-9_.-]+$/
   private static readonly RESERVED_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
  
    validate(name: string): ValidationResult {
      const trimmed = (name ?? '').trim()
  
      if (!trimmed) {
-       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.' }
      }
      if (trimmed.length > NameValidator.MAX_LENGTH) {
        return {
@@ -22,7 +22,7 @@ export class NameValidator implements INameValidator {
        return { valid: false, message: 'שם המשתמש שבחרת הינו אסור לשימוש במערכת' }
      }
      if (!NameValidator.VALID_PATTERN.test(trimmed)) {
-       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.' }
      }
 
     return { valid: true }

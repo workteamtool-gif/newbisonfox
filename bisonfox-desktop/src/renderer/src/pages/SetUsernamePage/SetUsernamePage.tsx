@@ -24,7 +24,7 @@ export function SetUsernamePage(): JSX.Element {
   const showKeyboard = openKeyboard && !isCancelModalOpen
 
   const maxLength = Number(import.meta.env.VITE_USERNAME_LENGTH)
-  const validPattern = /^[a-zA-Z0-9_]+$/
+  const validPattern = /^[a-zA-Z0-9_.-]+$/
   const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export function SetUsernamePage(): JSX.Element {
       return
     }
     if (trimmedName && !validPattern.test(trimmedName)) {
-      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים וקו תחתון.')
+      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.')
       return
     }
     setError('')
@@ -54,7 +54,7 @@ export function SetUsernamePage(): JSX.Element {
     try {
       const result = await sessionApi.validateName(fullName)
       if (!result.valid) {
-        setError('שם המשתמש אינו תקין. הוא חייב לכלול עד 20 תווים (אותיות באנגלית, מספרים וקו תחתון בלבד)')
+        setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.')
         setLoading(false)
         return
       }
@@ -75,22 +75,6 @@ export function SetUsernamePage(): JSX.Element {
         <form onSubmit={handleSubmit}>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <div className="form-group">
-              {/* <label className="form-label">קידומת:</label>
-              <div className="prefix-chips" style={{ direction: 'ltr' }}>
-                {PREFIX_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    className={`prefix-chip ${prefix.value === opt.value ? 'active' : ''}`}
-                    onClick={() => setPrefix(opt)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div> */}
-            </div>
-
-            <div className="form-group">
               <label className="form-label" htmlFor="name-input">
                 שם:
               </label>
@@ -107,15 +91,10 @@ export function SetUsernamePage(): JSX.Element {
                 }}
                 autoFocus
               />
-              {error && <span className="form-msg error">⚠ {error}</span>}
+              <span className="form-msg error" style={{ minHeight: '1.4em', display: 'block', visibility: error ? 'visible' : 'hidden' }}>
+                ⚠ {error}
+              </span>
             </div>
-
-            {/* <div style={{ visibility: name.trim() ? 'visible' : 'hidden' }}>
-              <div className="form-label" style={{ margin: '1vh' }}> שם המשתמש הסופי: </div>
-              <div className="username-preview" style={{ direction: 'ltr' }}>
-                <strong>{fullName}&nbsp;</strong>
-              </div>
-            </div> */}
           </div>
 
           <NavigationOptions

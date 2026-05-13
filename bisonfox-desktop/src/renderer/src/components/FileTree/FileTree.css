@@ -35,6 +35,15 @@
 }
 
 /* --- Custom Checkbox --- */
+.tree-checkbox-hit-area {
+    padding: 0.8vh;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .tree-checkbox {
     width: 3vh;
     height: 3vh;
@@ -45,6 +54,7 @@
     align-items: center;
     justify-content: center;
     background: transparent;
+    pointer-events: none;
 }
 
 .tree-row:hover .tree-checkbox {
@@ -112,47 +122,80 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.83vh;
+    gap: 0.6rem;
+    padding: 0.5rem 0.6rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: var(--r-md);
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tree-pagination-bar:hover {
-    background: transparent;
-    border-color: transparent;
+    background: rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+/* --- Pagination Controls Group --- */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 999px;
+    padding: 0.2rem;
 }
 
 .pagination-btn {
-    padding: 0.17vh 0.67vh;
+    padding: 0.35rem 0.75rem;
     font-size: 0.75rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255);
+    font-weight: 500;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(20, 184, 166, 0.15);
+    color: var(--accent);
 }
 
 .pagination-btn:disabled {
-    opacity: 1;
-    color: rgba(255, 255, 255, 0.6);
+    opacity: 0.35;
+    cursor: not-allowed;
 }
 
 .pagination-text {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255);
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    user-select: none;
+}
+
+.pagination-divider {
+    width: 1px;
+    height: 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
 
 .pagination-jump-form {
     display: flex;
     align-items: center;
-    gap: 0.17vh;
+    gap: 0.3rem;
 }
 
 .pagination-jump-input {
-    width: 3.67vh;
-    padding: 0.17vh 0.33vh;
-    font-size: 0.8rem;
-    border-radius: 0.33vh;
+    width: 2.5rem;
+    padding: 0.2rem 0.35rem;
+    font-size: 0.75rem;
+    border-radius: 0.4rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.3);
     color: var(--text-primary);
     text-align: center;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
     -moz-appearance: textfield;
     appearance: textfield;
 }
@@ -164,65 +207,79 @@
 }
 
 .pagination-jump-input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.45);
 }
 
 .pagination-jump-input:focus {
     outline: none;
     border-color: var(--accent);
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15);
 }
 
+/* --- Search Form --- */
 .pagination-search-form {
     display: flex;
-    gap: 0.33vh;
+    align-items: center;
+    position: relative;
+    margin-left: auto;
 }
 
 .pagination-search-input {
-    padding: 0.17vh 0.67vh;
-    font-size: 0.75rem;
-    border-radius: 0.33vh;
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.3);
     color: var(--text-primary);
-    width: 15vh;
-    height: 3vh;
-    transition: border-color 0.2s, background 0.2s;
-    margin-left: 3vh;
-
+    width: 14rem;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, width 0.3s;
 }
 
 .pagination-search-input:focus {
     outline: none;
     border-color: var(--accent);
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.55);
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.12);
+    width: 16rem;
 }
 
 .pagination-search-input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.pagination-btn::placeholder {
-    color: rgba(255, 255, 255);
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.75rem;
 }
 
 .pagination-search-btn {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
     background: transparent;
     border: none;
     cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.2s, transform 0.1s;
+    opacity: 0.35;
+    transition: opacity 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 0.33vh;
+    padding: 0.2rem;
+    font-size: 0.85rem;
 }
 
-.pagination-search-btn:active {
-    transform: scale(0.9);
+.pagination-search-btn:hover:not(:disabled) {
+    opacity: 0.8;
 }
 
 .pagination-search-btn.active {
     opacity: 1;
+}
+
+.pagination-search-btn:active:not(:disabled) {
+    transform: translateY(-50%) scale(0.9);
+}
+
+.pagination-btn::placeholder {
+    color: rgba(255, 255, 255);
 }
 
 /* --- Auto-Scroll Highlight Animation --- */

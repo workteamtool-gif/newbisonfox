@@ -1,7 +1,6 @@
 import {
   InsertDiskPage,
   SelectFilesPage,
-  SubfolderPage,
   ReviewPage,
   UploadPage,
   AnotherDiskPage,
@@ -19,7 +18,6 @@ export interface Phase {
 export const PHASES: Phase[] = [
   { key: 'setName', label: 'להגדיר את השם', step: SetUsernamePage },
   { key: 'insertDisk', label: 'להכניס את הדיסק', step: InsertDiskPage },
-  { key: 'subfolder', label: 'לבחור תת-תיקייה', step: SubfolderPage },
   { key: 'selectFiles', label: 'לבחור קבצים', step: SelectFilesPage },
   { key: 'review', label: 'לוודא בחירת קבצים', step: ReviewPage },
   { key: 'upload', label: 'להעביר את הקבצים', step: UploadPage, loop: true },
@@ -34,7 +32,7 @@ export interface PhaseGroup {
 
 export const PHASE_GROUPS: PhaseGroup[] = [
   { key: 'identify', label: 'הזדהות', steps: [SetUsernamePage] },
-  { key: 'setup', label: 'הכנה להעברה', steps: [InsertDiskPage, SubfolderPage] },
+  { key: 'setup', label: 'הכנה להעברה', steps: [InsertDiskPage] },
   { key: 'select', label: 'בחירת קבצים', steps: [SelectFilesPage, ReviewPage] },
   { key: 'upload', label: 'העברה', steps: [UploadPage] },
   { key: 'finish', label: 'סיום', steps: [AnotherDiskPage] }
