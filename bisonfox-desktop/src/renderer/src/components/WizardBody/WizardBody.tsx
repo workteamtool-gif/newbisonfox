@@ -20,7 +20,13 @@ export function WizardBody({ children, showSteppersAndHeader }: WizardBodyProps)
                         const status = i < activeGroupIdx ? 'done' : i === activeGroupIdx ? 'active' : 'pending'
                         return (
                             <React.Fragment key={group.key}>
-                                {i > 0 && <div className={`step-connector ${i <= activeGroupIdx ? 'done' : ''}`} />}
+                                {i > 0 && (
+                                    <div className={`step-connector ${i <= activeGroupIdx ? 'done' : ''}`}>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M19 12H5M12 19l-7-7 7-7" />
+                                        </svg>
+                                    </div>
+                                )}
                                 <div
                                     className={`step-dot ${status}`}
                                     title={group.label}

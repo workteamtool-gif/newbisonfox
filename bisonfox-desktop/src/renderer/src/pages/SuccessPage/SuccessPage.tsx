@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './SuccessPage.css'
 import { JSX } from 'react'
@@ -74,19 +75,11 @@ export function SuccessPage(): JSX.Element {
             ⚠️ {failedCountTotal} קבצים לא הועלו
           </h4>
           <div className="failed-files-list-wrapper">
-            <ul className="failed-files-list">
-              {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
-                <li key={i} style={{ marginBottom: '0.4rem' }}>
-                  <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Reason: {f.reason}</div>
-                </li>
-              ))}
-            </ul>
-            {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
-              <div className="failed-files-overflow">
-                ...and {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} more (Only the first {MAX_FAILED_FILES_TO_SHOW} failures are shown).
-              </div>
-            )}
+            <FailedFilesList
+              failedFiles={failedFiles}
+              totalFailedCount={failedCountTotal}
+              maxToShow={MAX_FAILED_FILES_TO_SHOW}
+            />
           </div>
         </div>
       )}

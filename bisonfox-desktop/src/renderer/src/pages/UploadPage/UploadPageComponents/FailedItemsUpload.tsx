@@ -1,4 +1,5 @@
 import React from 'react'
+import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 
 export interface FailedItemsUploadProps {
     failedCount: number
@@ -10,7 +11,6 @@ export interface FailedItemsUploadProps {
 }
 
 const MAX_TRACKED_FAILURES = Number(import.meta.env.VITE_MAX_REPORTED_FAILURES) || 100_000
-console.log("lalal " + import.meta.env.VITE_MAX_REPORTED_FAILURES)
 export function FailedItemsUpload({
     failedCount,
     failedFilesList,
@@ -59,35 +59,11 @@ export function FailedItemsUpload({
                         width: '100%'
                     }}
                 >
-                    <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-                        {failedFilesList.slice(0, MAX_TRACKED_FAILURES).map((f, i) => (
-                            <li key={i} style={{ marginBottom: '0.5rem', wordBreak: 'break-all' }}>
-                                <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-                                    {f.path}
-                                </div>
-                                <div
-                                    style={{
-                                        color: 'var(--accent-red)',
-                                        opacity: 0.85
-                                    }}
-                                >
-                                    REASON: {f.reason}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    {failedCount > MAX_TRACKED_FAILURES && (
-                        <div
-                            style={{
-                                fontStyle: 'italic',
-                                color: 'var(--text-secondary)',
-                                marginTop: '0.3rem',
-                                direction: 'ltr'
-                            }}
-                        >
-                            Only {MAX_TRACKED_FAILURES} first failed files are shown. There are more {failedCount - MAX_TRACKED_FAILURES} failed files
-                        </div>
-                    )}
+                    <FailedFilesList
+                        failedFiles={failedFilesList}
+                        totalFailedCount={failedCount}
+                        maxToShow={MAX_TRACKED_FAILURES}
+                    />
                 </div>
 
                 <div

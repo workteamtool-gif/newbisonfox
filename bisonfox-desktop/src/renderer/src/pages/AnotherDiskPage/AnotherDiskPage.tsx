@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './AnotherDiskPage.css'
 import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
@@ -79,19 +80,11 @@ export function AnotherDiskPage(): React.JSX.Element {
             ⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים
           </h4>
           <div className="failed-files-list" style={{}}>
-            <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '1.75rem' }}>
-              {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
-                <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem', fontSize: '0.75rem' }}>
-                  <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
-                  <div style={{ opacity: 0.8 }}>REASON: {f.reason}</div>
-                </li>
-              ))}
-            </ul>
-            {failedCountTotal > MAX_FAILED_FILES_TO_SHOW && (
-              <div style={{ marginTop: '0.3rem', fontStyle: 'italic', direction: 'rtl' }}>
-                Only {MAX_FAILED_FILES_TO_SHOW} first failed files are shown. There are more {failedCountTotal - MAX_FAILED_FILES_TO_SHOW} failed files.
-              </div>
-            )}
+            <FailedFilesList
+              failedFiles={failedFiles}
+              totalFailedCount={failedCountTotal}
+              maxToShow={MAX_FAILED_FILES_TO_SHOW}
+            />
           </div>
         </div>
       )}
