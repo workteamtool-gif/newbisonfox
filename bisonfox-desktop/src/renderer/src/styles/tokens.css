@@ -27,7 +27,7 @@
     --t-fast: 140ms cubic-bezier(.4, 0, .2, 1);
     --t-base: 240ms cubic-bezier(.4, 0, .2, 1);
     --font: 'Inter', system-ui, sans-serif;
-    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-display: 'Rubik', 'Space Grotesk', system-ui, sans-serif;
     overflow: hidden;
     user-select: none;
     /* Prevents users from accidentally highlighting UI text like a webpage */

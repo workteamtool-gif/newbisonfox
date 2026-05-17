@@ -5,7 +5,7 @@ import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
-  const { setStep, diskSessions, userName, sessionId, reset } = useWizardStore()
+  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder } = useWizardStore()
   const [countdown, setCountdown] = useState(150)
 
   useEffect(() => {
@@ -24,6 +24,8 @@ export function AnotherDiskPage(): React.JSX.Element {
   function handleYes(): void {
     clientLogger.info('AnotherDiskPage', `The user: ${userName} in session: ${sessionId} wants to add another disk,
        finishing the session and moving to InsertDiskPage`)
+    setCurrentDisk(null)
+    setCurrentSubfolder('')
     setStep(InsertDiskPage)
   }
 
@@ -79,7 +81,7 @@ export function AnotherDiskPage(): React.JSX.Element {
           <div className="failed-files-list" style={{}}>
             <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '1.75rem' }}>
               {failedFiles.slice(0, MAX_FAILED_FILES_TO_SHOW).map((f, i) => (
-                <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem', fontSize: '1.75rem' }}>
+                <li key={i} style={{ wordBreak: 'break-all', marginBottom: '0.4rem', fontSize: '0.75rem' }}>
                   <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
                   <div style={{ opacity: 0.8 }}>REASON: {f.reason}</div>
                 </li>
@@ -124,7 +126,7 @@ export function AnotherDiskPage(): React.JSX.Element {
         </div>
       </div>
 
-      <p className="another-disk-countdown" style={{ marginTop: '1.5rem', color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+      <p className="another-disk-countdown" style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginTop: "auto" }}>
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
     </div>

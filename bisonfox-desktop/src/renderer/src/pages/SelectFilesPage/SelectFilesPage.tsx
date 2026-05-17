@@ -257,12 +257,14 @@ export function SelectFilesPage(): JSX.Element {
     <div className="glass-card">
       <p className="page-title" style={{ marginBottom: '1rem' }}>בחירת קבצים ותיקיות</p>
 
-      <div className="info-box">
+      <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>
+        <span>
+          💿 <strong>{currentDisk!.driveLetter}</strong>
+        </span>
         <span>
           נבחרו {selectedCount} פריטים
         </span>
       </div>
-
       {loading ? (
         <div
           style={{

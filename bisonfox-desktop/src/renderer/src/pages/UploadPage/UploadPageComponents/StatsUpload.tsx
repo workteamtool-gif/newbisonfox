@@ -36,10 +36,10 @@ export function StatsUpload({
     const [now, setNow] = useState(() => Date.now())
 
     useEffect(() => {
-        if (completedBytes > 0 && startedAtRef.current === null) {
+        if ((completedBytes > 0 || completedCount > 0) && startedAtRef.current === null) {
             startedAtRef.current = Date.now()
         }
-    }, [completedBytes])
+    }, [completedBytes, completedCount])
 
     // Tick every second so the ETA display stays live
     useEffect(() => {
@@ -49,12 +49,31 @@ export function StatsUpload({
 
     const etaLabel = (() => {
         if (overallPercentage >= 100) return '✓'
-        if (startedAtRef.current === null || completedBytes <= 0) return '—'
+        if (startedAtRef.current === null || (completedBytes <= 0 && completedCount <= 0)) return '—'
         const elapsedSec = (now - startedAtRef.current) / 1000
         if (elapsedSec < 2) return '—'          // wait a couple of seconds for a stable estimate
+        
         const bytesPerSec = completedBytes / elapsedSec
-        const remaining = totalBytes - completedBytes
-        return formatEta(remaining / bytesPerSec)
+        const remainingBytes = Math.max(0, totalBytes - completedBytes)
+        const etaBytes = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
+        
+        const totalFiles = totalDiscovered > 0 ? totalDiscovered : shown
+        const filesPerSec = completedCount / elapsedSec
+        const remainingFiles = Math.max(0, totalFiles - completedCount)
+        const etaFiles = filesPerSec > 0 ? remainingFiles / filesPerSec : 0
+        
+        let finalEta = 0
+        if (bytesPerSec > 0 && filesPerSec > 0) {
+            finalEta = (etaBytes + etaFiles) / 2
+        } else if (bytesPerSec > 0) {
+            finalEta = etaBytes
+        } else if (filesPerSec > 0) {
+            finalEta = etaFiles
+        } else {
+            return '—'
+        }
+
+        return formatEta(finalEta)
     })()
 
     const formatSize = (bytes: number) => {

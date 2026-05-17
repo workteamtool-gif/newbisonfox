@@ -23,6 +23,7 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
+    "@fontsource/rubik": "^5.2.8",
     "dotenv": "^16.4.5",
     "immer": "^11.1.4",
     "p-limit": "^7.3.0",

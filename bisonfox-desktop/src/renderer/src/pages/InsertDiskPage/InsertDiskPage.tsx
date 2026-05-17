@@ -216,8 +216,8 @@ export function InsertDiskPage(): React.JSX.Element {
               setSubfolder(e.target.value)
             }}
           />
-          <span className="form-msg error" style={{ minHeight: '1.4em', display: 'block', visibility: subfolderError ? 'visible' : 'hidden' }}>
-            ⚠ {subfolderError}
+          <span className="form-msg" style={{ minHeight: '1.4em', display: 'block', visibility: subfolderError || subfolder.length >= maxLength ? 'visible' : 'hidden', color: subfolderError ? 'var(--accent-red)' : 'var(--accent-orange)' }}>
+            ⚠ {subfolderError || (subfolder.length >= maxLength ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).` : '')}
           </span>
         </div>
 

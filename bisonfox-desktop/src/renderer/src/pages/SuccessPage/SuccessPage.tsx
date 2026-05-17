@@ -39,7 +39,7 @@ export function SuccessPage(): JSX.Element {
       <p className="page-subtitle">
         {destinationUserEndpoint && (
           <p className="page-subtitle">
-            המסלול לנתונים ייראה כך: <br />
+            ניתן לראות את הקבצים ברשת היחידה בעזרת הנתיב: <br />
             <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
               {destinationUserEndpoint}\{userName}
             </code>

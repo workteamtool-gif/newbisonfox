@@ -3,6 +3,8 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
 import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
 import iconImg from '@renderer/images/icon.png'
+import teamLogoImg from '@renderer/images/teamLogo.png'
+import departmentLogoImg from '@renderer/images/departmentLogo.png'
 
 interface WizardHeaderProps {
   onCancelClick: () => void
@@ -16,12 +18,20 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
 
   return (
     <header className="wizard-header">
-      <div className="wizard-header-content">
-        <div className="wizard-logo">
-          <img src={iconImg} alt="LightningFox" className="wizard-logo-icon" />
-          lightning Fox
+      <div className="wizard-header-content" style={{ direction: 'ltr' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+          <div className="wizard-logo">
+            <img src={iconImg} alt="LightningFox" className="wizard-logo-icon" />
+            LIGHTNING FOX
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <img src={departmentLogoImg} alt="Department Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />
+            <img src={teamLogoImg} alt="Team Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1vh' }}>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1vh', direction: 'ltr' }}>
           {userName && (
             <div
               className='user-name'
@@ -37,7 +47,8 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
               fontSize: '0.8rem',
               background: 'transparent',
               border: '2px solid rgba(255, 0, 0)',
-              color: '#ff0000'
+              color: '#ff0000',
+              direction: 'rtl'
             }}
             onClick={onCancelClick}
           >

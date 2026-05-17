@@ -26,5 +26,5 @@ export function useKeyboardDetection(): boolean {
     }
   }, [])
 
-  return !hasKeyboard // Return true if virtual keyboard should be shown
+  return false // Return true if virtual keyboard should be shown
 }

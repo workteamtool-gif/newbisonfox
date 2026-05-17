@@ -134,10 +134,7 @@ export function ReviewPage(): JSX.Element | null {
 
   return (
     <div className="glass-card">
-      <p className="page-title">בדיקה נוספת של הבחירה  </p>
-      <p className="page-subtitle">
-        אנא בדוק את הקבצים שבחרת
-      </p>
+      <p className="page-title">אישור הקבצים להעלאה</p>
 
       <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>
         <span>

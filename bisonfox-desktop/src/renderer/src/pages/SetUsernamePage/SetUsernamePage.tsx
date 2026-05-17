@@ -9,6 +9,7 @@ import { InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
+import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } = useWizardStore()
@@ -18,9 +19,10 @@ export function SetUsernamePage(): JSX.Element {
   const [name, setName] = useState(userName.startsWith(existingPrefix.value) ? userName.slice(existingPrefix.value.length) : '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
 
   const openKeyboard = useKeyboardDetection()
-  const showKeyboard = openKeyboard && !isCancelModalOpen
+  const showKeyboard = openKeyboard && !isCancelModalOpen && !isConfirmOpen
 
   const maxLength = Number(import.meta.env.VITE_USERNAME_LENGTH)
   const validPattern = /^[a-zA-Z0-9_.-]+$/
@@ -57,13 +59,18 @@ export function SetUsernamePage(): JSX.Element {
         setLoading(false)
         return
       }
-      setUserName(fullName)
-      clientLogger.info('SetUsernamePage', `User ${fullName} logged in.`)
-      setStep(InsertDiskPage)
+      setIsConfirmOpen(true)
     } catch {
       setError('Connection error. Make sure the backend is running.')
     }
     setLoading(false)
+  }
+
+  const handleConfirm = () => {
+    setIsConfirmOpen(false)
+    setUserName(fullName)
+    clientLogger.info('SetUsernamePage', `User ${fullName} logged in.`)
+    setStep(InsertDiskPage)
   }
 
   return (
@@ -90,8 +97,8 @@ export function SetUsernamePage(): JSX.Element {
                 }}
                 autoFocus
               />
-              <span className="form-msg error" style={{ minHeight: '1.4em', display: 'block', visibility: error ? 'visible' : 'hidden' }}>
-                ⚠ {error}
+              <span className="form-msg" style={{ minHeight: '1.4em', display: 'block', visibility: error || name.length >= maxLength ? 'visible' : 'hidden', color: error ? 'var(--accent-red)' : 'var(--accent-orange)' }}>
+                ⚠ {error || (name.length >= maxLength ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).` : '')}
               </span>
             </div>
           </div>
@@ -116,6 +123,15 @@ export function SetUsernamePage(): JSX.Element {
           }}
         />
       )}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="אישור שם משתמש"
+        message={`האם אתה בטוח ששם המשתמש "${fullName}" הוא נכון?`}
+        confirmText="כן, זה נכון"
+        cancelText="לא, חזור"
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleConfirm}
+      />
     </>
   )
 }
