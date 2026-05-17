@@ -34,7 +34,7 @@ export function SuccessPage(): JSX.Element {
   }, [reset])
 
   return (
-    <div className="glass-card success-card">
+    <div className="glass-card success-card" style={{ height: '85vh' }}>
 
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">
@@ -44,6 +44,8 @@ export function SuccessPage(): JSX.Element {
             <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
               {destinationUserEndpoint}\{userName}
             </code>
+            <br />
+            אם אינכם רואים את הנתיב - ניתן לפנות לצוות התמיכה הטכנית
           </p>
         )}
       </p>

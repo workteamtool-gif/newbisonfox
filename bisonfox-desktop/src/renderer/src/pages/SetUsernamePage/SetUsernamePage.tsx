@@ -42,7 +42,7 @@ export function SetUsernamePage(): JSX.Element {
       return
     }
     if (trimmedName && !validPattern.test(trimmedName)) {
-      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.')
+      setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, נקודה, קו תחתון ומקף.')
       return
     }
     setError('')
@@ -55,7 +55,7 @@ export function SetUsernamePage(): JSX.Element {
     try {
       const result = await sessionApi.validateName(fullName)
       if (!result.valid) {
-        setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.')
+        setError('שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, נקודה, קו תחתון ומקף.')
         setLoading(false)
         return
       }

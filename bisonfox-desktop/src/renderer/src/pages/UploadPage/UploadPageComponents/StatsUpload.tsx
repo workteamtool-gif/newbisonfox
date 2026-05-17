@@ -33,10 +33,20 @@ export function StatsUpload({
 }: StatsUploadProps): React.JSX.Element {
     // Track when bytes first started flowing so we can derive a stable speed
     const startedAtRef = useRef<number | null>(null)
+    const startCompletedCountRef = useRef<number>(0)
+    const prevPercentageRef = useRef(overallPercentage)
     const [now, setNow] = useState(() => Date.now())
 
     useEffect(() => {
-        if ((completedBytes > 0 || completedCount > 0) && startedAtRef.current === null) {
+        if (overallPercentage === 0 && prevPercentageRef.current > 0) {
+            startedAtRef.current = null
+            startCompletedCountRef.current = completedCount
+        }
+        prevPercentageRef.current = overallPercentage
+    }, [overallPercentage, completedCount])
+
+    useEffect(() => {
+        if ((completedBytes > 0 || completedCount > startCompletedCountRef.current) && startedAtRef.current === null) {
             startedAtRef.current = Date.now()
         }
     }, [completedBytes, completedCount])
@@ -49,7 +59,9 @@ export function StatsUpload({
 
     const etaLabel = (() => {
         if (overallPercentage >= 100) return '✓'
-        if (startedAtRef.current === null || (completedBytes <= 0 && completedCount <= 0)) return '—'
+        if (startedAtRef.current === null) return '—'
+        const sessionCompletedCount = Math.max(0, completedCount - startCompletedCountRef.current)
+        if (completedBytes <= 0 && sessionCompletedCount <= 0) return '—'
         const elapsedSec = (now - startedAtRef.current) / 1000
         if (elapsedSec < 2) return '—'          // wait a couple of seconds for a stable estimate
         
@@ -58,7 +70,7 @@ export function StatsUpload({
         const etaBytes = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
         
         const totalFiles = totalDiscovered > 0 ? totalDiscovered : shown
-        const filesPerSec = completedCount / elapsedSec
+        const filesPerSec = sessionCompletedCount / elapsedSec
         const remainingFiles = Math.max(0, totalFiles - completedCount)
         const etaFiles = filesPerSec > 0 ? remainingFiles / filesPerSec : 0
         

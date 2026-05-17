@@ -40,6 +40,7 @@ export function TreeNode({
   const [totalPages, setTotalPages] = useState(1)
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [countLoading, setCountLoading] = useState(false)
   const [highlighted, setHighlighted] = useState(false)
   const rowRef = useRef<HTMLDivElement>(null)
   const lastAutoExpandRef = useRef<Record<string, number> | null>(null)
@@ -147,6 +148,31 @@ export function TreeNode({
       }
     }
   }, [autoExpandMap, node.path, expanded, page, onLoadChildren])
+
+  useEffect(() => {
+    if (totalPages === -1 && expanded) {
+      let isCancelled = false
+      setCountLoading(true)
+      driveApi.getDirCount(node.path)
+        .then((count) => {
+          if (!isCancelled) {
+            const limit = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
+            setTotalPages(Math.max(1, Math.ceil(count / limit)))
+            setCountLoading(false)
+          }
+        })
+        .catch(() => {
+          if (!isCancelled) {
+            setTotalPages(1)
+            setCountLoading(false)
+          }
+        })
+
+      return () => {
+        isCancelled = true
+      }
+    }
+  }, [totalPages, expanded, node.path])
 
   useEffect(() => {
     if (scrollToPath && node.path === scrollToPath && rowRef.current) {
@@ -262,6 +288,7 @@ export function TreeNode({
             totalPages={totalPages}
             hasMore={hasMore}
             loading={loading}
+            countLoading={countLoading}
             depth={depth}
             onLoadPrev={handleLoadPrev}
             onLoadNext={handleLoadNext}

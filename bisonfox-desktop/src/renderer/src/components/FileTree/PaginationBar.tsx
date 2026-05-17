@@ -5,6 +5,7 @@ export interface PaginationBarProps {
   totalPages: number
   hasMore: boolean
   loading: boolean
+  countLoading?: boolean
   depth: number
   onLoadPrev: (e: React.MouseEvent) => void
   onLoadNext: (e: React.MouseEvent) => void
@@ -17,6 +18,7 @@ export function PaginationBar({
   totalPages,
   hasMore,
   loading,
+  countLoading,
   depth,
   onLoadPrev,
   onLoadNext,
@@ -64,15 +66,15 @@ export function PaginationBar({
             <input
               type="number"
               min={1}
-              max={totalPages}
+              max={totalPages > 0 ? totalPages : undefined}
               placeholder={String(page)}
               value={jumpInput}
               onChange={(e) => setJumpInput(e.target.value)}
               className="pagination-jump-input"
-              disabled={loading}
+              disabled={loading || countLoading}
             />
           )}
-          <span className="pagination-text">/ {totalPages}</span>
+          <span className="pagination-text">/ {countLoading ? <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem', marginLeft: '4px' }}>⟳</span> : totalPages}</span>
         </form>
 
         <button

@@ -26,7 +26,15 @@ export const driveApi = {
     limit: number = ITEMS_IN_ONE_PAGE
   ): Promise<PaginatedResult<FileNode[]>> => {
     const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, { dirPath, page, limit })
-    return result ?? { nodes: [], hasMore: false }
+    return result ?? { nodes: [], hasMore: false, totalPages: 1 }
+  },
+
+  getDirCount: async (dirPath: string): Promise<number> => {
+    try {
+      return await window.api.invoke('get-dir-count', { dirPath })
+    } catch {
+      return 0
+    }
   },
 
   findItemPage: async (dirPath: string, query: string): Promise<number | null> => {

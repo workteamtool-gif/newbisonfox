@@ -61,59 +61,25 @@ export class FileService implements IFileService {
     limit: number = ITEMS_IN_ONE_PAGE
   ): Promise<PaginatedResult<FileNode[]>> {
     try {
-      // ── Pass 1: Count dirs & files (O(1) memory) ──
-      let dirCount = 0,
-        fileCount = 0
-      const dir1 = await fs.promises.opendir(dirPath)
-      for await (const e of dir1) {
-        if (EXCLUDED.has(e.name)) continue
-        if (e.isDirectory()) dirCount++
-        else fileCount++
-      }
-
-      const totalItems = dirCount + fileCount
-      const totalPages = Math.max(1, Math.ceil(totalItems / limit))
       const startIndex = (page - 1) * limit
-      const endIndex = Math.min(page * limit, totalItems)
+      const endIndex = page * limit
 
-      if (startIndex >= totalItems) {
-        return { nodes: [], hasMore: false, totalPages }
-      }
+      const pageEntries: { name: string; isDirectory: boolean }[] = []
+      let currentIndex = 0
+      let hasMore = false
 
-      // Which slice of dirs / files do we need for this page?
-      // Virtual order: [all dirs] [all files]
-      const dirSliceStart = Math.min(startIndex, dirCount)
-      const dirSliceEnd = Math.min(endIndex, dirCount)
-      const fileSliceStart = Math.max(0, startIndex - dirCount)
-      const fileSliceEnd = Math.max(0, endIndex - dirCount)
-
-      // ── Pass 2: Collect only the page entries (O(page_size) memory) ──
-      const pageDirs: string[] = []
-      const pageFiles: string[] = []
-      let di = 0,
-        fi = 0
-
-      const dir2 = await fs.promises.opendir(dirPath)
-      for await (const e of dir2) {
+      const dir = await fs.promises.opendir(dirPath)
+      for await (const e of dir) {
         if (EXCLUDED.has(e.name)) continue
 
-        if (e.isDirectory()) {
-          if (di >= dirSliceStart && di < dirSliceEnd) pageDirs.push(e.name)
-          di++
-        } else {
-          if (fi >= fileSliceStart && fi < fileSliceEnd) pageFiles.push(e.name)
-          fi++
+        if (currentIndex >= startIndex && currentIndex < endIndex) {
+          pageEntries.push({ name: e.name, isDirectory: e.isDirectory() })
+        } else if (currentIndex >= endIndex) {
+          hasMore = true
+          break
         }
-
-        // Early exit once we've collected everything this page needs
-        if (di >= dirSliceEnd && fi >= fileSliceEnd) break
+        currentIndex++
       }
-
-      // Build result: dirs first, then files
-      const pageEntries: { name: string; isDirectory: boolean }[] = [
-        ...pageDirs.map((name) => ({ name, isDirectory: true })),
-        ...pageFiles.map((name) => ({ name, isDirectory: false }))
-      ]
 
       const enriched = await Promise.all(
         pageEntries.map(async (entry): Promise<FileNode> => {
@@ -138,12 +104,26 @@ export class FileService implements IFileService {
         })
       )
 
-      return { nodes: enriched, hasMore: endIndex < totalItems, totalPages }
+      // -1 indicates that totalPages is still loading
+      return { nodes: enriched, hasMore, totalPages: -1 }
     } catch (err: any) {
       logger.warn('FileService', `Access denied or failed to read dir: ${dirPath}`, {
         error: err.message
       })
       return { nodes: [], hasMore: false, totalPages: 1 }
+    }
+  }
+
+  async getDirCount(dirPath: string): Promise<number> {
+    try {
+      let count = 0
+      const dir = await fs.promises.opendir(dirPath)
+      for await (const e of dir) {
+        if (!EXCLUDED.has(e.name)) count++
+      }
+      return count
+    } catch {
+      return 0
     }
   }
 
@@ -154,29 +134,18 @@ export class FileService implements IFileService {
   ): Promise<number | null> {
     try {
       const lowerQuery = query.toLowerCase()
-      let dirCount = 0,
-        fileCount = 0
-      let foundDirIndex = -1,
-        foundFileIndex = -1
+      let index = 0
 
-      // Single pass: count everything and find the target (O(1) memory)
       const dir = await fs.promises.opendir(dirPath)
       for await (const e of dir) {
         if (EXCLUDED.has(e.name)) continue
 
-        if (e.isDirectory()) {
-          if (foundDirIndex === -1 && e.name.toLowerCase().includes(lowerQuery)) foundDirIndex = dirCount
-          dirCount++
-        } else {
-          if (foundFileIndex === -1 && e.name.toLowerCase().includes(lowerQuery))
-            foundFileIndex = fileCount
-          fileCount++
+        if (e.name.toLowerCase().includes(lowerQuery)) {
+          return Math.floor(index / limit) + 1
         }
+        index++
       }
 
-      // Dirs occupy virtual indices [0, dirCount), files occupy [dirCount, dirCount + fileCount)
-      if (foundDirIndex !== -1) return Math.floor(foundDirIndex / limit) + 1
-      if (foundFileIndex !== -1) return Math.floor((dirCount + foundFileIndex) / limit) + 1
       return null
     } catch {
       return null

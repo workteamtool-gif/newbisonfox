@@ -49,6 +49,10 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     return await fileService.listDir(dirPath, page, limit)
   })
 
+  ipcMain.handle('get-dir-count', async (_, { dirPath }) => {
+    return await fileService.getDirCount(dirPath)
+  })
+
   ipcMain.handle('find-item-page', async (_, { dirPath, query }) => {
     return await fileService.findItemPage(dirPath, query)
   })

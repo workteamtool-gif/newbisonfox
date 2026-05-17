@@ -10,7 +10,7 @@ export class NameValidator implements INameValidator {
      const trimmed = (name ?? '').trim()
  
      if (!trimmed) {
-       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, נקודה, קו תחתון ומקף.' }
      }
      if (trimmed.length > NameValidator.MAX_LENGTH) {
        return {
@@ -22,7 +22,7 @@ export class NameValidator implements INameValidator {
        return { valid: false, message: 'שם המשתמש שבחרת הינו אסור לשימוש במערכת' }
      }
      if (!NameValidator.VALID_PATTERN.test(trimmed)) {
-       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, קו תחתון ומקף.' }
+       return { valid: false, message: 'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, נקודה, קו תחתון ומקף.' }
      }
 
     return { valid: true }

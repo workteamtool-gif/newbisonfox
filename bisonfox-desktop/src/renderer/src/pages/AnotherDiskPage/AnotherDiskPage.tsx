@@ -49,8 +49,8 @@ export function AnotherDiskPage(): React.JSX.Element {
     <div className="glass-card" style={{ textAlign: 'center' }}>
       <p className="page-title">כונן נוסף?</p>
 
-      <p className="page-subtitle" style={{ marginBottom: '2rem', direction: "rtl" }}>
-        !לא לשכוח לנתק את הכונן החיצוני
+      <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
+        לא לשכוח לנתק את הכונן החיצוני!
       </p>
 
       <div className="another-disk-stats">
@@ -119,7 +119,7 @@ export function AnotherDiskPage(): React.JSX.Element {
         </div>
       </div>
 
-      <p className="another-disk-countdown" style={{ color: 'var(--text-primary)', fontSize: '0.9rem', marginTop: "auto" }}>
+      <p className="another-disk-countdown" style={{ color: 'var(--text-primary)', fontSize: '1.9rem', marginTop: "auto" }}>
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
     </div>

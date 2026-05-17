@@ -25,6 +25,9 @@ export interface IFileService {
   /** Paginated shallow directory listing. */
   listDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<FileNode[]>>
 
+  /** Gets the total count of items in a directory without retrieving them. */
+  getDirCount(dirPath: string): Promise<number>
+
   /** Finds which page an item appears on within a directory listing. */
   findItemPage(dirPath: string, query: string, limit?: number): Promise<number | null>
 

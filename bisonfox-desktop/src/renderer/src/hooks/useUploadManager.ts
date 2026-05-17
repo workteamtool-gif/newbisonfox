@@ -229,6 +229,8 @@ export function useUploadManager(): {
     failedRef.current = 0
     setCompletedCount(0)
     completedRef.current = 0
+    completedBytesRef.current = 0
+    setCompletedBytesState(0)
     setOverallPercentage(0)
     setAccumulatedCopied(0)
 
@@ -266,6 +268,8 @@ export function useUploadManager(): {
     setAccumulatedCopied(newAccumulated)
     setCompletedCount(newAccumulated)
     completedRef.current = 0
+    completedBytesRef.current = 0
+    setCompletedBytesState(0)
     setOverallPercentage(0)
     totalRef.current = filesToRetry.length
     totalBytesRef.current = 0

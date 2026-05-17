@@ -36,7 +36,8 @@ export function FailedFilesList({ failedFiles, totalFailedCount, maxToShow, clas
                         color: 'var(--text-secondary)',
                         marginTop: '0.3rem',
                         direction: 'rtl',
-                        fontSize: '0.9em'
+                        fontSize: '0.9em',
+                        textAlign: 'center'
                     }}
                 >
                     מוצגים רק {maxToShow} הקבצים הראשונים. ישנם עוד {totalFailedCount - maxToShow} קבצים שנכשלו.
