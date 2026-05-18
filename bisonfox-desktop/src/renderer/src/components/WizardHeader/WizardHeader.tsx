@@ -2,7 +2,7 @@ import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
 import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
-import iconImg from '@renderer/images/icon.png'
+import iconImg from '@renderer/images/appLogo.png'
 import teamLogoImg from '@renderer/images/teamLogo.png'
 import departmentLogoImg from '@renderer/images/departmentLogo.png'
 
@@ -24,7 +24,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
             <img src={iconImg} alt="LightningFox" className="wizard-logo-icon" />
             LIGHTNING FOX
           </div>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
             <img src={departmentLogoImg} alt="Department Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />
             <img src={teamLogoImg} alt="Team Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />

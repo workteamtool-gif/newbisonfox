@@ -2,7 +2,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WelcomePage.css'
 import { JSX } from 'react'
 import { SetUsernamePage } from '@renderer/entites/Wizard'
-import iconImg from '@renderer/images/icon.png'
+import iconImg from '@renderer/images/appLogo.png'
 
 export function WelcomePage(): JSX.Element {
   const setStep = useWizardStore((s) => s.setStep)

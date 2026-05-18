@@ -65,18 +65,20 @@
 }
 
 .step-connector {
-    width: 5vh;
-    height: 0.25vh;
-    background: #055c64;
-    position: relative;
-    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #055c64;
 }
 
-.step-connector.done::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--grad-primary);
+.step-connector svg {
+    width: 3.5vh;
+    height: 3.5vh;
+    transition: var(--t-base);
+}
+
+.step-connector.done {
+    color: #14b8a6;
 }
 
 .wizard-children-wrapper {

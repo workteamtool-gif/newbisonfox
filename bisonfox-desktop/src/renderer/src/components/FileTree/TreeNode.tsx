@@ -150,8 +150,9 @@ export function TreeNode({
   }, [autoExpandMap, node.path, expanded, page, onLoadChildren])
 
   useEffect(() => {
+    let isCancelled = false
+
     if (totalPages === -1 && expanded) {
-      let isCancelled = false
       setCountLoading(true)
       driveApi.getDirCount(node.path)
         .then((count) => {
@@ -167,10 +168,10 @@ export function TreeNode({
             setCountLoading(false)
           }
         })
+    }
 
-      return () => {
-        isCancelled = true
-      }
+    return () => {
+      isCancelled = true
     }
   }, [totalPages, expanded, node.path])
 
