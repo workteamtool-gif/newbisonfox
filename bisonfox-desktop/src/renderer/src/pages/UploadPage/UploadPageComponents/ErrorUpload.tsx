@@ -12,7 +12,6 @@ export function ErrorUpload({
   setStep,
   ReviewPage
 }: ErrorUploadProps): React.JSX.Element {
-
   return (
     <>
       <p className="page-title" style={{ color: 'var(--accent-red)' }}>

@@ -37,7 +37,7 @@ export function VirtualKeyboard({ currentValue, onChange }: VirtualKeyboardProps
           {rows.map((row, i) => (
             <div key={i} className="vk-row">
               {row.map((key) => {
-                const isSpecial = key.length > 1;
+                const isSpecial = key.length > 1
                 return (
                   <button
                     key={key}

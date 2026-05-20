@@ -45,7 +45,7 @@ export const useWizardStore = create<WizardData & WizardActions>()(
       }),
 
     setCurrentDisk: (currentDisk) => set({ currentDisk }),
-    
+
     setUploadDone: (uploadDone) => set({ uploadDone }),
 
     setCompletedFiles: (completedFiles) => set({ completedFiles }),

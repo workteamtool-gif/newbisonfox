@@ -27,18 +27,15 @@ export function ConfirmModal({
           <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
             {title}
           </h2>
-          <p style={{ marginBottom: '2rem', lineHeight: 1.5, fontSize: '1.5rem' }}>
-            {message}
-          </p>
-          <div className="confirm-modal-buttons" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+          <p style={{ marginBottom: '2rem', lineHeight: 1.5, fontSize: '1.5rem' }}>{message}</p>
+          <div
+            className="confirm-modal-buttons"
+            style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}
+          >
             <button className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
               {cancelText}
             </button>
-            <button
-              className="btn btn-primary"
-              onClick={onConfirm}
-              style={{ flex: 1 }}
-            >
+            <button className="btn btn-primary" onClick={onConfirm} style={{ flex: 1 }}>
               {confirmText}
             </button>
           </div>

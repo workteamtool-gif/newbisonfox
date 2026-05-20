@@ -60,11 +60,9 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
         onClose={() => setCancelModalOpen(false)}
         onConfirm={handleConfirmCancel}
       />
-      {showSteppersAndHeader && (<WizardHeader onCancelClick={() => setCancelModalOpen(true)} />)}
+      {showSteppersAndHeader && <WizardHeader onCancelClick={() => setCancelModalOpen(true)} />}
 
-      <WizardBody showSteppersAndHeader={showSteppersAndHeader}>
-        {children}
-      </WizardBody>
+      <WizardBody showSteppersAndHeader={showSteppersAndHeader}>{children}</WizardBody>
     </div>
   )
 }

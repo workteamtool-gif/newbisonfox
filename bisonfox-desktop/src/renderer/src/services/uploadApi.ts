@@ -10,7 +10,10 @@ export const uploadApi = {
     signal?: AbortSignal,
     onCount?: (c: number, s: number) => void
   ): Promise<{ count: number; size: number }> => {
-    clientLogger.info('API', `Starting background file count session (IPC) for session ${sessionId}...`)
+    clientLogger.info(
+      'API',
+      `Starting background file count session (IPC) for session ${sessionId}...`
+    )
     const scanId = Math.random().toString(36).substring(2, 10)
 
     return new Promise((resolve, reject) => {
@@ -66,7 +69,12 @@ export const uploadApi = {
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.CANCEL, { sessionId })
   },
 
-  startUpload: async (sessionId: string, files: string[], subfolder: string, expectedTotalBytes?: number) => {
+  startUpload: async (
+    sessionId: string,
+    files: string[],
+    subfolder: string,
+    expectedTotalBytes?: number
+  ) => {
     clientLogger.info('API', `Sending Start Upload command for session ${sessionId}...`)
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.START, {
       sessionId,

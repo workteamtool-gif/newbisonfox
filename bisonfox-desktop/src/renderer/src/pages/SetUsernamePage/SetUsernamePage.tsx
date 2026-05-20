@@ -11,7 +11,8 @@ import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 
 export function SetUsernamePage(): JSX.Element {
-  const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } = useWizardStore()
+  const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } =
+    useWizardStore()
 
   const [name, setName] = useState(userName || '')
   const [error, setError] = useState('')
@@ -76,7 +77,9 @@ export function SetUsernamePage(): JSX.Element {
         <p className="page-title">מה שם המשתמש שלך?</p>
 
         <form onSubmit={handleSubmit}>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          >
             <div className="form-group">
               <label className="form-label" htmlFor="name-input">
                 שם:
@@ -94,8 +97,20 @@ export function SetUsernamePage(): JSX.Element {
                 }}
                 autoFocus
               />
-              <span className="form-msg" style={{ minHeight: '1.4em', display: 'block', visibility: error || name.length >= maxLength ? 'visible' : 'hidden', color: error ? 'var(--accent-red)' : 'var(--accent-orange)' }}>
-                ⚠ {error || (name.length >= maxLength ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).` : '')}
+              <span
+                className="form-msg"
+                style={{
+                  minHeight: '1.4em',
+                  display: 'block',
+                  visibility: error || name.length >= maxLength ? 'visible' : 'hidden',
+                  color: error ? 'var(--accent-red)' : 'var(--accent-orange)'
+                }}
+              >
+                ⚠{' '}
+                {error ||
+                  (name.length >= maxLength
+                    ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).`
+                    : '')}
               </span>
             </div>
           </div>
@@ -105,7 +120,15 @@ export function SetUsernamePage(): JSX.Element {
               clientLogger.info('SetUsernamePage', 'User clicked back button, resetting data')
               reset()
             }}
-            forwardLabel={loading ? <><span className="spin">⟳</span> בודק...</> : <>המשך ←</>}
+            forwardLabel={
+              loading ? (
+                <>
+                  <span className="spin">⟳</span> בודק...
+                </>
+              ) : (
+                <>המשך ←</>
+              )
+            }
             forwardDisabled={loading || !name.trim()}
           />
         </form>

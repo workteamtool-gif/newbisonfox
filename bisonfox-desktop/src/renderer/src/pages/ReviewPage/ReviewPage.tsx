@@ -12,7 +12,8 @@ import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function ReviewPage(): JSX.Element | null {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } = useWizardStore()
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } =
+    useWizardStore()
 
   useDriveMonitor()
 
@@ -112,20 +113,24 @@ export function ReviewPage(): JSX.Element | null {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedItemPaths} files`)
+      clientLogger.info(
+        'ReviewPage',
+        `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedItemPaths} files`
+      )
 
       setStep(UploadPage)
     } catch (err: any) {
-      setSyncError(
-        err.message || 'אבד החיבור לשרת'
-      )
+      setSyncError(err.message || 'אבד החיבור לשרת')
     } finally {
       setSaving(false)
     }
   }
 
   if (!currentDisk) {
-    clientLogger.warn('ReviewPage', `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to InsertDiskPage`)
+    clientLogger.warn(
+      'ReviewPage',
+      `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to InsertDiskPage`
+    )
     setStep(InsertDiskPage)
     return null
   }
@@ -136,13 +141,19 @@ export function ReviewPage(): JSX.Element | null {
     <div className="glass-card">
       <p className="page-title">אישור הקבצים להעלאה</p>
 
-      <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>
+      <div
+        className="info-box"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '1rem',
+          direction: 'ltr'
+        }}
+      >
         <span>
           💿 <strong>{currentDisk.driveLetter}</strong>
         </span>
-        <span>
-          נבחרו {fileCount} פריטים
-        </span>
+        <span>נבחרו {fileCount} פריטים</span>
       </div>
 
       {nodes.length === 0 ? (
@@ -165,16 +176,17 @@ export function ReviewPage(): JSX.Element | null {
       )}
 
       {syncError && (
-        <div
-          className="info-box sync-error"
-        >
+        <div className="info-box sync-error">
           ⚠️ <strong>שגיאת סנכרון:</strong> {syncError}
         </div>
       )}
 
       <NavigationOptions
         onBack={() => {
-          clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
+          clientLogger.info(
+            'ReviewPage',
+            `The user: ${userName} in session: ${sessionId} is returning to file selection`
+          )
           if (currentDisk) {
             setCurrentDisk({
               ...currentDisk,
@@ -186,7 +198,15 @@ export function ReviewPage(): JSX.Element | null {
         }}
         backDisabled={saving}
         onForward={handleStartUpload}
-        forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>התחל העלאה ←</>}
+        forwardLabel={
+          saving ? (
+            <>
+              <span className="spin">⟳</span> שומר...
+            </>
+          ) : (
+            <>התחל העלאה ←</>
+          )
+        }
         forwardDisabled={selected.size === 0 || saving}
       />
     </div>

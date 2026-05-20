@@ -39,11 +39,7 @@ export function PaginationBar({
       style={{ paddingLeft: `${depth}vh`, direction: 'ltr' }}
     >
       <div className="pagination-controls">
-        <button
-          className="pagination-btn"
-          onClick={onLoadPrev}
-          disabled={page <= 1 || loading}
-        >
+        <button className="pagination-btn" onClick={onLoadPrev} disabled={page <= 1 || loading}>
           ◀
         </button>
 
@@ -59,8 +55,13 @@ export function PaginationBar({
           }}
         >
           {loading ? (
-            <span className="pagination-jump-input" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem' }}>⟳</span>
+            <span
+              className="pagination-jump-input"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem' }}>
+                ⟳
+              </span>
             </span>
           ) : (
             <input
@@ -74,14 +75,22 @@ export function PaginationBar({
               disabled={loading || countLoading}
             />
           )}
-          <span className="pagination-text">/ {countLoading ? <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem', marginLeft: '4px' }}>⟳</span> : totalPages}</span>
+          <span className="pagination-text">
+            /{' '}
+            {countLoading ? (
+              <span
+                className="spin"
+                style={{ display: 'inline-block', fontSize: '0.75rem', marginLeft: '4px' }}
+              >
+                ⟳
+              </span>
+            ) : (
+              totalPages
+            )}
+          </span>
         </form>
 
-        <button
-          className="pagination-btn"
-          onClick={onLoadNext}
-          disabled={!hasMore || loading}
-        >
+        <button className="pagination-btn" onClick={onLoadNext} disabled={!hasMore || loading}>
           ▶
         </button>
       </div>

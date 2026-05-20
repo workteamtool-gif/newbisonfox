@@ -6,7 +6,8 @@ import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
-  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder } = useWizardStore()
+  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder } =
+    useWizardStore()
   const [countdown, setCountdown] = useState(150)
 
   useEffect(() => {
@@ -23,16 +24,22 @@ export function AnotherDiskPage(): React.JSX.Element {
   }, [reset])
 
   function handleYes(): void {
-    clientLogger.info('AnotherDiskPage', `The user: ${userName} in session: ${sessionId} wants to add another disk,
-       finishing the session and moving to InsertDiskPage`)
+    clientLogger.info(
+      'AnotherDiskPage',
+      `The user: ${userName} in session: ${sessionId} wants to add another disk,
+       finishing the session and moving to InsertDiskPage`
+    )
     setCurrentDisk(null)
     setCurrentSubfolder('')
     setStep(InsertDiskPage)
   }
 
   function handleNo(): void {
-    clientLogger.info('AnotherDiskPage', `The user: ${userName} in session: ${sessionId} wants to finish the session,
-       finishing the session and moving to SuccessPage`)
+    clientLogger.info(
+      'AnotherDiskPage',
+      `The user: ${userName} in session: ${sessionId} wants to finish the session,
+       finishing the session and moving to SuccessPage`
+    )
     setStep(SuccessPage)
   }
 
@@ -76,9 +83,7 @@ export function AnotherDiskPage(): React.JSX.Element {
 
       {failedCountTotal > 0 && (
         <div className="info-box failed-files-box">
-          <h4 className="failed-files-title">
-            ⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים
-          </h4>
+          <h4 className="failed-files-title">⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים</h4>
           <div className="failed-files-list" style={{}}>
             <FailedFilesList
               failedFiles={failedFiles}
@@ -119,7 +124,10 @@ export function AnotherDiskPage(): React.JSX.Element {
         </div>
       </div>
 
-      <p className="another-disk-countdown" style={{ color: 'var(--text-primary)', fontSize: '1.9rem', marginTop: "auto" }}>
+      <p
+        className="another-disk-countdown"
+        style={{ color: 'var(--text-primary)', fontSize: '1.9rem', marginTop: 'auto' }}
+      >
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
     </div>

@@ -35,7 +35,6 @@ export function SuccessPage(): JSX.Element {
 
   return (
     <div className="glass-card success-card" style={{ height: '85vh' }}>
-
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">
         {destinationUserEndpoint && (
@@ -73,9 +72,7 @@ export function SuccessPage(): JSX.Element {
 
       {failedCountTotal > 0 && (
         <div className="info-box failed-files-box">
-          <h4 className="failed-files-header">
-            ⚠️ {failedCountTotal} קבצים לא הועלו
-          </h4>
+          <h4 className="failed-files-header">⚠️ {failedCountTotal} קבצים לא הועלו</h4>
           <div className="failed-files-list-wrapper">
             <FailedFilesList
               failedFiles={failedFiles}
@@ -86,7 +83,14 @@ export function SuccessPage(): JSX.Element {
         </div>
       )}
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
         <p className="success-countdown" style={{ marginBottom: '1rem' }}>
           חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
         </p>

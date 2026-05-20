@@ -8,7 +8,7 @@ import { sessionApi } from '@renderer/services/sessionApi'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
-import "./InsertDiskPage.css"
+import './InsertDiskPage.css'
 
 export function InsertDiskPage(): React.JSX.Element {
   const {
@@ -158,50 +158,54 @@ export function InsertDiskPage(): React.JSX.Element {
   return (
     <>
       <div className="glass-card">
-
-        <p className="page-title" style={{ marginBottom: '1rem' }}>הכנה להעברה</p>
+        <p className="page-title" style={{ marginBottom: '1rem' }}>
+          הכנה להעברה
+        </p>
         <div className="form-group" style={{ gap: '1rem' }}>
-
           {drives.length === 0 && !loading ? (
             <div className="info-box" style={{ fontSize: '2rem' }}>
               ממתין לחיבור כונן...
             </div>
-          ) : (<>
-            <label
-              className="form-label"
-              style={{ display: 'flex', justifyContent: 'space-between' }}
-            >
-              <span>בחר כונן:</span>
-              {loading && <span className="badge pulse">סורק...</span>}
-            </label>          <div className="drive-list">
-              {drives.map((drive) => (
-                <div
-                  key={drive.letter}
-                  className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
-                  onClick={() => drive.selectable && setSelectedLetter(drive.letter)}
-                  style={!drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
-                  title={drive.disabledReason || ''}
-                >
-                  <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
-                  <div className="drive-info">
-                    <div className="drive-name">
-                      ({drive.letter})
+          ) : (
+            <>
+              <label
+                className="form-label"
+                style={{ display: 'flex', justifyContent: 'space-between' }}
+              >
+                <span>בחר כונן:</span>
+                {loading && <span className="badge pulse">סורק...</span>}
+              </label>{' '}
+              <div className="drive-list">
+                {drives.map((drive) => (
+                  <div
+                    key={drive.letter}
+                    className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
+                    onClick={() => drive.selectable && setSelectedLetter(drive.letter)}
+                    style={!drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
+                    title={drive.disabledReason || ''}
+                  >
+                    <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
+                    <div className="drive-info">
+                      <div className="drive-name">({drive.letter})</div>
+                      <div className="drive-meta">
+                        {drive.selectable
+                          ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
+                          : drive.disabledReason || <>לא זמין</>}
+                      </div>
                     </div>
-                    <div className="drive-meta">
-                      {drive.selectable
-                        ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
-                        : drive.disabledReason || <>לא זמין</>}
-                    </div>
+                    {drive.selectable && <div className="drive-check">✓</div>}
                   </div>
-                  {drive.selectable && <div className="drive-check">✓</div>}
-                </div>
-              ))}
-            </div></>
+                ))}
+              </div>
+            </>
           )}
         </div>
 
         {/* Subfolder section — merged from SubfolderPage */}
-        <div className="form-group" style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div
+          className="form-group"
+          style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+        >
           <label className="form-label" htmlFor="subfolder-input">
             בחר שם להעברה שלך (אופציונלי)
           </label>
@@ -217,25 +221,51 @@ export function InsertDiskPage(): React.JSX.Element {
               setSubfolder(e.target.value)
             }}
           />
-          <span className="form-msg" style={{ minHeight: '1.4em', display: 'block', visibility: subfolderError || subfolder.length >= maxLength ? 'visible' : 'hidden', color: subfolderError ? 'var(--accent-red)' : 'var(--accent-orange)' }}>
-            ⚠ {subfolderError || (subfolder.length >= maxLength ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).` : '')}
+          <span
+            className="form-msg"
+            style={{
+              minHeight: '1.4em',
+              display: 'block',
+              visibility: subfolderError || subfolder.length >= maxLength ? 'visible' : 'hidden',
+              color: subfolderError ? 'var(--accent-red)' : 'var(--accent-orange)'
+            }}
+          >
+            ⚠{' '}
+            {subfolderError ||
+              (subfolder.length >= maxLength
+                ? `הגעת למגבלת התווים המקסימלית (${maxLength} תווים).`
+                : '')}
           </span>
         </div>
 
         <NavigationOptions
           onBack={() => {
             if (diskSessions.length > 0) {
-              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`)
+              clientLogger.info(
+                'InsertDiskPage',
+                `The user: ${userName} in session: ${sessionId} clicked Finish Session from drive selection.`
+              )
               setStep(SuccessPage)
             } else {
-              clientLogger.info('InsertDiskPage', `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`)
+              clientLogger.info(
+                'InsertDiskPage',
+                `The user: ${userName} in session: ${sessionId} going back to SetUsernamePage`
+              )
               setStep(SetUsernamePage)
             }
           }}
           backLabel={diskSessions.length > 0 ? 'סיום העברה' : '→ חזור'}
           onForward={handleContinue}
           forwardDisabled={!selectedLetter || submitting || subfolderError !== ''}
-          forwardLabel={submitting ? <><span className="spin">⟳</span> בודק...</> : <>המשך ←</>}
+          forwardLabel={
+            submitting ? (
+              <>
+                <span className="spin">⟳</span> בודק...
+              </>
+            ) : (
+              <>המשך ←</>
+            )
+          }
         />
       </div>
       {showKeyboard && (

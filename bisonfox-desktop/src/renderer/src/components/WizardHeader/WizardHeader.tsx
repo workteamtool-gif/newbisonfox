@@ -26,16 +26,22 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <img src={departmentLogoImg} alt="Department Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />
-            <img src={teamLogoImg} alt="Team Logo" style={{ height: '3.5rem', objectFit: 'contain' }} />
+            <img
+              src={departmentLogoImg}
+              alt="Department Logo"
+              style={{ height: '3.5rem', objectFit: 'contain' }}
+            />
+            <img
+              src={teamLogoImg}
+              alt="Team Logo"
+              style={{ height: '3.5rem', objectFit: 'contain' }}
+            />
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1vh', direction: 'ltr' }}>
           {userName && (
-            <div
-              className='user-name'
-            >
+            <div className="user-name">
               <span className="pill-dot" style={{ background: 'var(--accent-green)' }}></span>
               {userName}
             </div>

@@ -5,7 +5,8 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    width: 60vh;
+    width: 100%;
+    max-width: 900px;
 }
 
 .welcome-content {
@@ -37,4 +38,9 @@
     line-height: 1.7;
     margin-bottom: 2.5rem;
     filter: drop-shadow(0 0.17vh 0.33vh rgba(0, 0, 0, 0.5));
+}
+
+.welcome-img {
+    width: 30vw;
+    height: auto;
 }

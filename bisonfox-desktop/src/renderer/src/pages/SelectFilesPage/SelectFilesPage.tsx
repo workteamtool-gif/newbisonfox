@@ -11,7 +11,8 @@ import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
 export function SelectFilesPage(): JSX.Element {
-  const { setStep, currentDisk, setCurrentDisk, currentSubfolder, userName, sessionId } = useWizardStore()
+  const { setStep, currentDisk, setCurrentDisk, currentSubfolder, userName, sessionId } =
+    useWizardStore()
 
   useDriveMonitor()
 
@@ -23,8 +24,12 @@ export function SelectFilesPage(): JSX.Element {
   const [jumpToPageInput, setJumpToPageInput] = useState('')
   const [scrollToPath, setScrollToPath] = useState<string | undefined>(undefined)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
-  const [selected, setSelected] = useState<Set<string>>(new Set(currentDisk?.selectedItemPaths || []))
-  const [excluded, setExcluded] = useState<Set<string>>(new Set(currentDisk?.excludedItemPaths || []))
+  const [selected, setSelected] = useState<Set<string>>(
+    new Set(currentDisk?.selectedItemPaths || [])
+  )
+  const [excluded, setExcluded] = useState<Set<string>>(
+    new Set(currentDisk?.excludedItemPaths || [])
+  )
   const [loading, setLoading] = useState(true)
   const [searching, setSearching] = useState(false)
   const searchGenRef = useRef(0)
@@ -94,10 +99,7 @@ export function SelectFilesPage(): JSX.Element {
         return
       setLoading(true)
       try {
-        const res = await driveApi.getDriveTree(
-          currentDisk.driveLetter!,
-          targetPage
-        )
+        const res = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
         setTree(res.nodes)
         setRootPage(targetPage)
         setRootHasMore(res.hasMore)
@@ -183,9 +185,7 @@ export function SelectFilesPage(): JSX.Element {
         setRootHasMore(res.hasMore)
         setRootTotalPages(res.totalPages ?? Math.max(1, targetPage))
 
-        const match = res.nodes.find((n) =>
-          n.name.toLowerCase().includes(query.toLowerCase())
-        )
+        const match = res.nodes.find((n) => n.name.toLowerCase().includes(query.toLowerCase()))
         if (match) {
           setScrollToPath(match.path)
           useWizardStore.getState().setToast(`נמצא "${match.name}"`, 'success')
@@ -197,16 +197,11 @@ export function SelectFilesPage(): JSX.Element {
         if (gen !== searchGenRef.current) return // cancelled
 
         if (deepMatch) {
-          useWizardStore
-            .getState()
-            .setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
+          useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           const expandedPages = deepMatch.pages
           const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
 
-          const res = await driveApi.getDriveTree(
-            currentDisk.driveLetter!,
-            rootTargetPage
-          )
+          const res = await driveApi.getDriveTree(currentDisk.driveLetter!, rootTargetPage)
           if (gen !== searchGenRef.current) return // cancelled
 
           setTree(res.nodes)
@@ -218,7 +213,9 @@ export function SelectFilesPage(): JSX.Element {
           setRootSearchQuery('')
           setScrollToPath(deepMatch.path)
         } else {
-          useWizardStore.getState().setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
+          useWizardStore
+            .getState()
+            .setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
         }
       }
     } catch {
@@ -255,15 +252,23 @@ export function SelectFilesPage(): JSX.Element {
 
   return (
     <div className="glass-card">
-      <p className="page-title" style={{ marginBottom: '1rem' }}>בחירת קבצים ותיקיות</p>
+      <p className="page-title" style={{ marginBottom: '1rem' }}>
+        בחירת קבצים ותיקיות
+      </p>
 
-      <div className="info-box" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', direction: 'ltr' }}>
+      <div
+        className="info-box"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '1rem',
+          direction: 'ltr'
+        }}
+      >
         <span>
           💿 <strong>{currentDisk!.driveLetter}</strong>
         </span>
-        <span>
-          נבחרו {selectedCount} פריטים
-        </span>
+        <span>נבחרו {selectedCount} פריטים</span>
       </div>
       {loading ? (
         <div
@@ -274,7 +279,9 @@ export function SelectFilesPage(): JSX.Element {
             fontSize: '.9rem'
           }}
         >
-          <p><span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}</p>
+          <p>
+            <span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}
+          </p>
           {searching && (
             <button
               className="btn btn-secondary"
@@ -350,7 +357,11 @@ export function SelectFilesPage(): JSX.Element {
 
             <div className="pagination-divider" />
 
-            <form onSubmit={handleSearchRootSubmit} className="pagination-search-form" style={{ direction: 'ltr' }}>
+            <form
+              onSubmit={handleSearchRootSubmit}
+              className="pagination-search-form"
+              style={{ direction: 'ltr' }}
+            >
               <input
                 type="text"
                 placeholder="🔍 Search file or folder..."
@@ -384,7 +395,15 @@ export function SelectFilesPage(): JSX.Element {
           setStep(InsertDiskPage)
         }}
         onForward={handleContinue}
-        forwardLabel={saving ? <><span className="spin">⟳</span> שומר...</> : <>המשך ←</>}
+        forwardLabel={
+          saving ? (
+            <>
+              <span className="spin">⟳</span> שומר...
+            </>
+          ) : (
+            <>המשך ←</>
+          )
+        }
         forwardDisabled={selected.size === 0 || saving}
       />
     </div>

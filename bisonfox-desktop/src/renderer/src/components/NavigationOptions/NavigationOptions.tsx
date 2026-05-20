@@ -44,11 +44,7 @@ export function NavigationOptions({
           {forwardLabel}
         </button>
       ) : (
-        <button
-          type="submit"
-          className="btn btn-primary btn-lg"
-          disabled={forwardDisabled}
-        >
+        <button type="submit" className="btn btn-primary btn-lg" disabled={forwardDisabled}>
           {forwardLabel}
         </button>
       )}

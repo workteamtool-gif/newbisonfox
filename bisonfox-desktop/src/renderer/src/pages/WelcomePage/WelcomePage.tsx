@@ -10,23 +10,14 @@ export function WelcomePage(): JSX.Element {
   return (
     <div className="welcome-page">
       <div className="welcome-content glass-card">
-        <img src={iconImg} style={
-          {
-            width: '30vw',
-            height: 'auto',
-          }
-        } alt="LightningFox" />
+        <img src={iconImg} className="welcome-img" />
         <h1 className="welcome-title">שועל ברק</h1>
         <p className="welcome-sub">
           ברוכים הבאים לעמדת שועל ברק! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>
 
-        <button
-          id="start-btn"
-          className="btn btn-primary btn-xl"
-          onClick={() => setStep(SetUsernamePage)}
-        >
-          ⚡ לחץ כדי להתחיל
+        <button className="btn btn-primary btn-xl" onClick={() => setStep(SetUsernamePage)}>
+          ⚡ לחץ כדי להתחיל ⚡
         </button>
       </div>
     </div>

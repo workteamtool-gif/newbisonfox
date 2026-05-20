@@ -154,7 +154,8 @@ export function TreeNode({
 
     if (totalPages === -1 && expanded) {
       setCountLoading(true)
-      driveApi.getDirCount(node.path)
+      driveApi
+        .getDirCount(node.path)
         .then((count) => {
           if (!isCancelled) {
             const limit = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
@@ -214,12 +215,12 @@ export function TreeNode({
       } else {
         const deepMatch = await driveApi.deepFindItem(node.path, trimmedQuery)
         if (deepMatch) {
-          useWizardStore
-            .getState()
-            .setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
+          useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           if (onAutoExpand) onAutoExpand(deepMatch.pages, deepMatch.path)
         } else {
-          useWizardStore.getState().setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
+          useWizardStore
+            .getState()
+            .setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
         }
       }
     } catch {
@@ -239,7 +240,10 @@ export function TreeNode({
       >
         <div
           className="tree-checkbox-hit-area"
-          onClick={(e) => { e.stopPropagation(); onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck) }}
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck)
+          }}
         >
           <div className={`tree-checkbox ${checked ? 'checked' : ''}`} />
         </div>
@@ -300,7 +304,7 @@ export function TreeNode({
       )}
 
       {node.isDirectory && expanded && loadedChildren && loadedChildren.length === 0 && (
-        <div className="tree-empty" style={{ paddingLeft: `${(depth * 3)}vh` }}>
+        <div className="tree-empty" style={{ paddingLeft: `${depth * 3}vh` }}>
           Empty folder
         </div>
       )}
