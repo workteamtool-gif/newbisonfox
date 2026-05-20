@@ -266,6 +266,7 @@ export function SetupPage(): JSX.Element {
                     setName(e.target.value)
                   }}
                   autoFocus
+                  disabled={diskSessions.length > 0}
                 />
                 <span
                   className="form-msg"
