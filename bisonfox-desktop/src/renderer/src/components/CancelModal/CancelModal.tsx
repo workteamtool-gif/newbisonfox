@@ -17,11 +17,8 @@ export function CancelModal({
         <div className="glass-card" style={{ direction: 'rtl' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⚠️</div>
           <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-            ביטול העברה?
+            האם אתה רוצה לצאת?
           </h2>
-          <p style={{ marginBottom: '2rem', lineHeight: 1.5 }}>
-            האם אתה בטוח שברצונך לבטל את ההעברה הזו? כל ההתקדמות שלך תימחק.
-          </p>
           <div
             className="cancel-modal-buttons"
             style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}
@@ -34,7 +31,7 @@ export function CancelModal({
               onClick={onConfirm}
               style={{ flex: 1, background: '#ff4d4d', borderColor: '#ff4d4d', color: '#fff' }}
             >
-              כן, לבטל
+              כן, לצאת
             </button>
           </div>
         </div>

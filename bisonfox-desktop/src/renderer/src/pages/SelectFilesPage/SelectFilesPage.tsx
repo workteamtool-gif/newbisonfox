@@ -262,7 +262,8 @@ export function SelectFilesPage(): JSX.Element {
           display: 'flex',
           justifyContent: 'space-between',
           marginBottom: '1rem',
-          direction: 'ltr'
+          direction: 'ltr',
+          fontSize: '1rem'
         }}
       >
         <span>

@@ -44,7 +44,7 @@ export function SuccessPage(): JSX.Element {
               {destinationUserEndpoint}\{userName}
             </code>
             <br />
-            אם אינכם רואים את הנתיב - ניתן לפנות לצוות התמיכה הטכנית
+            אם אינכם רואים את הנתיב - ניתן לפנות לצוותי התמיכה הטכנית
           </p>
         )}
       </p>

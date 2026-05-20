@@ -40,12 +40,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1vh', direction: 'ltr' }}>
-          {userName && (
-            <div className="user-name">
-              <span className="pill-dot" style={{ background: 'var(--accent-green)' }}></span>
-              {userName}
-            </div>
-          )}
+          {userName && <div className="user-name">{userName}</div>}
           <button
             className="btn btn-secondary"
             style={{
@@ -58,7 +53,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
             }}
             onClick={onCancelClick}
           >
-            ביטול העברה
+            יציאה
           </button>
         </div>
       </div>
