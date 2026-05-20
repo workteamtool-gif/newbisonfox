@@ -7,7 +7,7 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { FileTree } from '@renderer/components/FileTree/FileTree'
 import './ReviewPage.css'
 import { JSX } from 'react'
-import { UploadPage, InsertDiskPage, SelectFilesPage } from '@renderer/entites/Wizard'
+import { UploadPage, SetupPage, SelectFilesPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
@@ -129,9 +129,9 @@ export function ReviewPage(): JSX.Element | null {
   if (!currentDisk) {
     clientLogger.warn(
       'ReviewPage',
-      `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to InsertDiskPage`
+      `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to SetupPage`
     )
-    setStep(InsertDiskPage)
+    setStep(SetupPage)
     return null
   }
 

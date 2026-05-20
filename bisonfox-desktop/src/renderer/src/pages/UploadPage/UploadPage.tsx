@@ -3,7 +3,7 @@ import { useUploadManager } from '@renderer/hooks/useUploadManager'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
-import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
+import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
 import { ErrorUpload } from './UploadPageComponents/ErrorUpload'
 import { CountingUpload } from './UploadPageComponents/CountingUpload'
 import { UploadComponent } from './UploadPageComponents/UploadComponent'
@@ -33,7 +33,7 @@ export function UploadPage(): JSX.Element | null {
   useDriveMonitor()
 
   useEffect(() => {
-    if (!currentDisk) setStep(InsertDiskPage)
+    if (!currentDisk) setStep(SetupPage)
   }, [currentDisk, setStep])
 
   if (!currentDisk) return null

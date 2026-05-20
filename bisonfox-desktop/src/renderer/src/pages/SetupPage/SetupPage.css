@@ -13,3 +13,16 @@
     font-family: monospace;
     letter-spacing: .3px;
 }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .32rem .8rem;
+    border-radius: var(--r-full);
+    font-size: .75rem;
+    font-weight: 600;
+    background: rgba(20, 184, 166, .12);
+    color: var(--accent);
+    border: 1px solid rgba(20, 184, 166, .25);
+}

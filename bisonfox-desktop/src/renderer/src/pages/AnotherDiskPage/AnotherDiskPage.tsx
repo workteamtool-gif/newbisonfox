@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './AnotherDiskPage.css'
-import { InsertDiskPage, SuccessPage } from '@renderer/entites/Wizard'
+import { SetupPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
@@ -27,11 +27,11 @@ export function AnotherDiskPage(): React.JSX.Element {
     clientLogger.info(
       'AnotherDiskPage',
       `The user: ${userName} in session: ${sessionId} wants to add another disk,
-       finishing the session and moving to InsertDiskPage`
+       finishing the session and moving to SetupPage`
     )
     setCurrentDisk(null)
     setCurrentSubfolder('')
-    setStep(InsertDiskPage)
+    setStep(SetupPage)
   }
 
   function handleNo(): void {

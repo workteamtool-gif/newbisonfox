@@ -6,7 +6,7 @@ import { FileTree } from '@renderer/components/FileTree'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { isSubPath } from '@renderer/utils/paths'
 import { JSX } from 'react'
-import { InsertDiskPage, ReviewPage } from '@renderer/entites/Wizard'
+import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 
@@ -385,7 +385,7 @@ export function SelectFilesPage(): JSX.Element {
 
       <NavigationOptions
         onBack={() => {
-          clientLogger.info('SelectFilesPage', 'User navigating back to InsertDiskPage')
+          clientLogger.info('SelectFilesPage', 'User navigating back to SetupPage')
           if (currentDisk) {
             setCurrentDisk({
               ...currentDisk,
@@ -393,7 +393,7 @@ export function SelectFilesPage(): JSX.Element {
               excludedItemPaths: Array.from(excluded)
             })
           }
-          setStep(InsertDiskPage)
+          setStep(SetupPage)
         }}
         onForward={handleContinue}
         forwardLabel={

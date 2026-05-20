@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { driveApi } from '@renderer/services/driveApi'
-import { InsertDiskPage } from '@renderer/entites/Wizard'
+import { SetupPage } from '@renderer/entites/Wizard'
 
 export function useDriveMonitor(): void {
   const currentDisk = useWizardStore((s) => s.currentDisk)
@@ -23,7 +23,7 @@ export function useDriveMonitor(): void {
 
         if (!isConnected) {
           setToast(`Connection lost! Drive ${currentDisk.driveLetter} was disconnected.`, 'error')
-          setStep(InsertDiskPage)
+          setStep(SetupPage)
           return
         }
       } catch {

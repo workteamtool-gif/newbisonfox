@@ -1,7 +1,7 @@
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WelcomePage.css'
 import { JSX } from 'react'
-import { SetUsernamePage } from '@renderer/entites/Wizard'
+import { SetupPage } from '@renderer/entites/Wizard'
 import iconImg from '@renderer/images/appLogo.png'
 
 export function WelcomePage(): JSX.Element {
@@ -16,7 +16,7 @@ export function WelcomePage(): JSX.Element {
           ברוכים הבאים לעמדת שועל ברק! כאן ניתן להעביר קבצים מכוננים חיצוניים לתוך רשת היחידה
         </p>
 
-        <button className="btn btn-primary btn-xl" onClick={() => setStep(SetUsernamePage)}>
+        <button className="btn btn-primary btn-xl" onClick={() => setStep(SetupPage)}>
           ⚡ לחץ כדי להתחיל ⚡
         </button>
       </div>

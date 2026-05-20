@@ -4,14 +4,9 @@ import React from 'react'
 export const WelcomePage = React.lazy(() =>
   import('@renderer/pages/WelcomePage/WelcomePage').then((m) => ({ default: m.WelcomePage }))
 )
-export const SetUsernamePage = React.lazy(() =>
-  import('@renderer/pages/SetUsernamePage/SetUsernamePage').then((m) => ({
-    default: m.SetUsernamePage
-  }))
-)
-export const InsertDiskPage = React.lazy(() =>
-  import('@renderer/pages/InsertDiskPage/InsertDiskPage').then((m) => ({
-    default: m.InsertDiskPage
+export const SetupPage = React.lazy(() =>
+  import('@renderer/pages/SetupPage/SetupPage').then((m) => ({
+    default: m.SetupPage
   }))
 )
 export const SelectFilesPage = React.lazy(() =>
@@ -36,8 +31,7 @@ export const SuccessPage = React.lazy(() =>
 
 export type WizardStep =
   | typeof WelcomePage
-  | typeof SetUsernamePage
-  | typeof InsertDiskPage
+  | typeof SetupPage
   | typeof SelectFilesPage
   | typeof ReviewPage
   | typeof UploadPage
