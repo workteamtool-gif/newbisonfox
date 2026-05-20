@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/Logger'
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
@@ -59,7 +59,7 @@ export class FileService implements IFileService {
     dirPath: string,
     page: number = 1,
     limit: number = ITEMS_IN_ONE_PAGE
-  ): Promise<PaginatedResult<FileNode[]>> {
+  ): Promise<PaginatedResult<ItemNode[]>> {
     try {
       const startIndex = (page - 1) * limit
       const endIndex = page * limit
@@ -82,9 +82,9 @@ export class FileService implements IFileService {
       }
 
       const enriched = await Promise.all(
-        pageEntries.map(async (entry): Promise<FileNode> => {
+        pageEntries.map(async (entry): Promise<ItemNode> => {
           const fullPath = path.join(dirPath, entry.name)
-          const node: FileNode = {
+          const node: ItemNode = {
             name: entry.name,
             path: fullPath,
             isDirectory: entry.isDirectory

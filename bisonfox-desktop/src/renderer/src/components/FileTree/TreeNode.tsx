@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { driveApi } from '@renderer/services/driveApi'
 import { useWizardStore } from '@renderer/store/useWizardStore'
@@ -8,13 +8,13 @@ import { PaginationBar } from './PaginationBar'
 import { formatSize } from './utils'
 
 export interface TreeNodeProps {
-  node: FileNode
+  node: ItemNode
   selected: Set<string>
   excluded: Set<string>
   inheritedCheck: boolean
   depth: number
   onToggleSelect: (path: string, isDir: boolean, isExcluded: boolean, isInherited: boolean) => void
-  onLoadChildren: (path: string, page: number) => Promise<PaginatedResult<FileNode[]>>
+  onLoadChildren: (path: string, page: number) => Promise<PaginatedResult<ItemNode[]>>
   autoExpandMap?: Record<string, number>
   onAutoExpand?: (map: Record<string, number>, targetPath?: string) => void
   scrollToPath?: string
@@ -35,7 +35,7 @@ export function TreeNode({
   onScrolled
 }: TreeNodeProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false)
-  const [loadedChildren, setLoadedChildren] = useState<FileNode[] | null>(null)
+  const [loadedChildren, setLoadedChildren] = useState<ItemNode[] | null>(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [hasMore, setHasMore] = useState(false)

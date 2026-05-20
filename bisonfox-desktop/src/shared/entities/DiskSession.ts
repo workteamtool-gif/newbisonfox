@@ -1,9 +1,9 @@
 export interface DiskSession {
   driveLetter: string
   subfolder?: string
-  selectedFiles: string[]
-  excludedFiles?: string[]
+  selectedItemPaths: string[]
+  excludedItemPaths?: string[]
   copiedCount?: number
   failedCount?: number
-  failedFiles?: { path: string; reason: string }[]
+  failedItems?: { path: string; reason: string }[]
 }

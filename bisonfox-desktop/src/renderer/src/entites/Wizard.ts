@@ -51,7 +51,6 @@ export interface WizardData {
   diskSessions: DiskSession[]
   currentDisk: DiskSession | null
   currentSubfolder: string
-  uploadProgress: Record<string, number>
   uploadDone: boolean
   completedFiles: number
   toast: {
@@ -70,8 +69,6 @@ export interface WizardActions {
   addDiskSession: (s: DiskSession) => void
   updateLastDiskSession: (updates: Partial<DiskSession>) => void
   setCurrentDisk: (s: DiskSession | null) => void
-  removeFile: (diskIndex: number, filePath: string) => void
-  setUploadProgress: (progress: Record<string, number>) => void
   setUploadDone: (done: boolean) => void
   setCompletedFiles: (count: number) => void
   setToast: (msg: string | null, type?: WizardData['toast']['type']) => void

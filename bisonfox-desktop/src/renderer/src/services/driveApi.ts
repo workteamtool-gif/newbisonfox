@@ -1,6 +1,6 @@
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { DriveInfo } from '@shared/entities/DriveInfo'
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 
 const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
@@ -15,7 +15,7 @@ export const driveApi = {
     drive: string,
     page: number = 1,
     limit: number = ITEMS_IN_ONE_PAGE
-  ): Promise<PaginatedResult<FileNode[]>> => {
+  ): Promise<PaginatedResult<ItemNode[]>> => {
     const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, { drive, page, limit })
     return result ?? { nodes: [], hasMore: false }
   },
@@ -24,7 +24,7 @@ export const driveApi = {
     dirPath: string,
     page: number = 1,
     limit: number = ITEMS_IN_ONE_PAGE
-  ): Promise<PaginatedResult<FileNode[]>> => {
+  ): Promise<PaginatedResult<ItemNode[]>> => {
     const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, { dirPath, page, limit })
     return result ?? { nodes: [], hasMore: false, totalPages: 1 }
   },

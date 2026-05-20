@@ -50,22 +50,14 @@ export const uploadApi = {
   addDiskFiles: async (
     sessionId: string,
     driveLetter: string,
-    selectedFiles: string[],
-    excludedFiles: string[]
+    selectedItems: string[],
+    excludedItems: string[]
   ) => {
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.ADD_DISK_FILES, {
       sessionId,
       driveLetter,
-      selectedFiles,
-      excludedFiles
-    })
-  },
-
-  removeFile: async (sessionId: string, filePath: string, diskIndex: number) => {
-    return await window.api.invoke(IPC_CHANNELS.UPLOAD.REMOVE_FILE, {
-      sessionId,
-      filePath,
-      diskIndex
+      selectedItems,
+      excludedItems
     })
   },
 

@@ -38,7 +38,7 @@ export function UploadPage(): JSX.Element | null {
 
   if (!currentDisk) return null
 
-  const shown = totalDiscovered || preCalcTotal || currentDisk.selectedFiles.length
+  const shown = totalDiscovered || preCalcTotal || currentDisk.selectedItemPaths.length
   const doneTotal = completedCount + failedCount
 
   const phaseLabel =
@@ -54,45 +54,45 @@ export function UploadPage(): JSX.Element | null {
   const MAX_FAILED_FILES_TO_SHOW = 20
 
   return (
-      <div className="glass-card">
-        {/* === SCENARIO 1: ERROR === */}
-        {uploadError && (
-          <ErrorUpload uploadError={uploadError} setStep={setStep} ReviewPage={ReviewPage} />
+    <div className="glass-card">
+      {/* === SCENARIO 1: ERROR === */}
+      {uploadError && (
+        <ErrorUpload uploadError={uploadError} setStep={setStep} ReviewPage={ReviewPage} />
+      )
+      }
+
+      {/* === SCENARIO 2: COUNTING === */}
+      {
+        !uploadError && phase === 'ready' && (
+          <CountingUpload
+            countingComplete={countingComplete}
+            startUpload={startUpload}
+            preCalcTotal={preCalcTotal} />
         )
-        }
+      }
 
-        {/* === SCENARIO 2: COUNTING === */}
-        {
-          !uploadError && phase === 'ready' && (
-            <CountingUpload
-              countingComplete={countingComplete}
-              startUpload={startUpload}
-              preCalcTotal={preCalcTotal} />
-          )
-        }
-
-        {/* === SCENARIO 3: UPLOADING / DONE === */}
-        {
-          !uploadError && phase !== 'ready' && (
-            <UploadComponent
-              showFailedReview={showFailedReview}
-              uploadDone={uploadDone}
-              phaseLabel={phaseLabel}
-              totalDiscovered={totalDiscovered}
-              shown={shown}
-              completedCount={completedCount}
-              failedCount={failedCount}
-              overallPercentage={overallPercentage}
-              failedFilesList={failedFilesList}
-              MAX_FAILED_FILES_TO_SHOW={MAX_FAILED_FILES_TO_SHOW}
-              skipFailed={skipFailed}
-              retryFailed={retryFailed}
-              retryAll={retryAll}
-              loadingVideo={loadingVideo}
-              completedBytes={completedBytes}
-              totalBytes={totalBytes}
-            />)
-        }
-      </div >
+      {/* === SCENARIO 3: UPLOADING / DONE === */}
+      {
+        !uploadError && phase !== 'ready' && (
+          <UploadComponent
+            showFailedReview={showFailedReview}
+            uploadDone={uploadDone}
+            phaseLabel={phaseLabel}
+            totalDiscovered={totalDiscovered}
+            shown={shown}
+            completedCount={completedCount}
+            failedCount={failedCount}
+            overallPercentage={overallPercentage}
+            failedFilesList={failedFilesList}
+            MAX_FAILED_FILES_TO_SHOW={MAX_FAILED_FILES_TO_SHOW}
+            skipFailed={skipFailed}
+            retryFailed={retryFailed}
+            retryAll={retryAll}
+            loadingVideo={loadingVideo}
+            completedBytes={completedBytes}
+            totalBytes={totalBytes}
+          />)
+      }
+    </div >
   )
 }

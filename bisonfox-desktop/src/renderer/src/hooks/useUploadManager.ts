@@ -77,8 +77,8 @@ export function useUploadManager(): {
       uploadApi
         .countFiles(
           sessionId,
-          currentDisk.selectedFiles,
-          currentDisk.excludedFiles ?? [],
+          currentDisk.selectedItemPaths,
+          currentDisk.excludedItemPaths ?? [],
           controller.signal,
           (count, size) => {
             if (!cancelled) {
@@ -195,7 +195,7 @@ export function useUploadManager(): {
       .updateLastDiskSession({
         copiedCount: totalSuccess,
         failedCount: failedRef.current,
-        failedFiles: failed
+        failedItems: failed
       })
     setUploadDone(true)
 
@@ -241,7 +241,7 @@ export function useUploadManager(): {
     setTotalBytesState(preCalcTotalBytes || 0)
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
+    uploadApi.startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
       clientLogger.error(
         'UploadManager',
         `For user: ${userName} in session: ${sessionId} failed to upload.`,
@@ -300,7 +300,7 @@ export function useUploadManager(): {
 
     clientLogger.info(
       'UploadManager',
-      `For user: ${userName} in session: ${sessionId} retrying ALL ${currentDisk.selectedFiles.length} original files (failures exceeded tracking limit).`
+      `For user: ${userName} in session: ${sessionId} retrying ALL ${currentDisk.selectedItemPaths.length} original files (failures exceeded tracking limit).`
     )
 
     // Reset state completely
@@ -314,15 +314,15 @@ export function useUploadManager(): {
     setCompletedBytesState(0)
     setOverallPercentage(0)
     setAccumulatedCopied(0)
-    setTotalDiscovered(preCalcTotal || currentDisk.selectedFiles.length)
-    totalRef.current = preCalcTotal || currentDisk.selectedFiles.length
+    setTotalDiscovered(preCalcTotal || currentDisk.selectedItemPaths.length)
+    totalRef.current = preCalcTotal || currentDisk.selectedItemPaths.length
     totalBytesRef.current = preCalcTotalBytes || 0
     setTotalBytesState(preCalcTotalBytes || 0)
     setRetryKey((k) => k + 1)
     setPhase('copying')
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, currentDisk.selectedFiles, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
+    uploadApi.startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0).catch((err: any) => {
       clientLogger.error(
         'UploadManager',
         `For user: ${userName} in session: ${sessionId} retry-all failed.`,

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
 import { FileTree } from '@renderer/components/FileTree'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
@@ -15,7 +15,7 @@ export function SelectFilesPage(): JSX.Element {
 
   useDriveMonitor()
 
-  const [tree, setTree] = useState<FileNode[]>([])
+  const [tree, setTree] = useState<ItemNode[]>([])
   const [rootPage, setRootPage] = useState(1)
   const [rootTotalPages, setRootTotalPages] = useState(1)
   const [rootHasMore, setRootHasMore] = useState(false)
@@ -23,8 +23,8 @@ export function SelectFilesPage(): JSX.Element {
   const [jumpToPageInput, setJumpToPageInput] = useState('')
   const [scrollToPath, setScrollToPath] = useState<string | undefined>(undefined)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
-  const [selected, setSelected] = useState<Set<string>>(new Set(currentDisk?.selectedFiles || []))
-  const [excluded, setExcluded] = useState<Set<string>>(new Set(currentDisk?.excludedFiles || []))
+  const [selected, setSelected] = useState<Set<string>>(new Set(currentDisk?.selectedItemPaths || []))
+  const [excluded, setExcluded] = useState<Set<string>>(new Set(currentDisk?.excludedItemPaths || []))
   const [loading, setLoading] = useState(true)
   const [searching, setSearching] = useState(false)
   const searchGenRef = useRef(0)
@@ -238,8 +238,8 @@ export function SelectFilesPage(): JSX.Element {
     setCurrentDisk({
       ...currentDisk,
       subfolder: currentSubfolder,
-      selectedFiles: Array.from(selected),
-      excludedFiles: Array.from(excluded)
+      selectedItemPaths: Array.from(selected),
+      excludedItemPaths: Array.from(excluded)
     })
     const selectedArrayStr = `[${Array.from(selected).join(', ')}]`
     const excludedArrayStr = `[${Array.from(excluded).join(', ')}]`
@@ -377,8 +377,8 @@ export function SelectFilesPage(): JSX.Element {
           if (currentDisk) {
             setCurrentDisk({
               ...currentDisk,
-              selectedFiles: Array.from(selected),
-              excludedFiles: Array.from(excluded)
+              selectedItemPaths: Array.from(selected),
+              excludedItemPaths: Array.from(excluded)
             })
           }
           setStep(InsertDiskPage)

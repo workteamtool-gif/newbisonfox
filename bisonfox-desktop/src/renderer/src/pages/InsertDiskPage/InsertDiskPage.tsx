@@ -8,6 +8,7 @@ import { sessionApi } from '@renderer/services/sessionApi'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
+import "./InsertDiskPage.css"
 
 export function InsertDiskPage(): React.JSX.Element {
   const {
@@ -128,8 +129,8 @@ export function InsertDiskPage(): React.JSX.Element {
       setCurrentDisk({
         driveLetter: drive.letter,
         subfolder: '',
-        selectedFiles: [],
-        excludedFiles: []
+        selectedItemPaths: [],
+        excludedItemPaths: []
       })
 
       setCurrentSubfolder(trimmed)
@@ -171,7 +172,7 @@ export function InsertDiskPage(): React.JSX.Element {
               style={{ display: 'flex', justifyContent: 'space-between' }}
             >
               <span>בחר כונן:</span>
-              {loading && <span className="badge badge-info pulse">סורק...</span>}
+              {loading && <span className="badge pulse">סורק...</span>}
             </label>          <div className="drive-list">
               {drives.map((drive) => (
                 <div

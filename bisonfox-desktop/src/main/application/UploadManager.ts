@@ -104,8 +104,8 @@ export class UploadManager {
       return
     }
 
-    const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedFiles)
-    const allExcluded = session.diskSessions.flatMap((d) => d.excludedFiles ?? [])
+    const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
+    const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
 
     if (!filesToUpload || filesToUpload.length === 0) {
       this.sessionSingletonInstance.update(session.id, { status: 'error' })

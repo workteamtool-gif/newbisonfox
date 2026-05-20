@@ -86,7 +86,3 @@ export class sessionSingleton {
     this.activeSession = null
   }
 }
-
-// BEST PRACTICE: Export the singleton instance directly.
-// This way, other files just do: `import { sessionSingletonsessionSingleton } from './UploadSession';`
-export const sessionSingletonsessionSingleton = sessionSingleton.getInstance()

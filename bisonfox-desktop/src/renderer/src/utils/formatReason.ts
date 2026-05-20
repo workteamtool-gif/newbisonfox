@@ -3,7 +3,8 @@ export function translateErrorReason(reason: string): string {
 
     const lowerReason = reason.toLowerCase();
 
-    if (lowerReason.includes('eperm') || lowerReason.includes('eacces') || lowerReason.includes('access denied') || lowerReason.includes('permission')) {
+    if (lowerReason.includes('eperm') || lowerReason.includes('eacces') || lowerReason.includes('access denied') 
+        || lowerReason.includes('permission')) {
         return 'אין הרשאות גישה לקובץ זה. ייתכן שהקובץ חסום או שאין לך הרשאות קריאה.';
     }
     if (lowerReason.includes('ebusy') || lowerReason.includes('locked') || lowerReason.includes('in use')) {
@@ -26,6 +27,21 @@ export function translateErrorReason(reason: string): string {
     }
     if (lowerReason.includes('network') || lowerReason.includes('disconnected')) {
         return 'שגיאת רשת או התנתקות כונן. אנא ודא שהכונן מחובר היטב.';
+    }
+    if (lowerReason.includes('eisdir') || lowerReason.includes('is a directory')) {
+        return 'ניסיון להעתיק תיקייה כקובץ. ייתכן שנדרשת הגדרה להעתקה רקורסיבית (Recursive).';
+    }
+    if (lowerReason.includes('erofs') || lowerReason.includes('read-only')) {
+        return 'מערכת הקבצים ביעד מוגדרת לקריאה בלבד. לא ניתן לכתוב לכונן זה.';
+    }
+    if (lowerReason.includes('efbig') || lowerReason.includes('file too large')) {
+        return 'הקובץ גדול מדי עבור מערכת הקבצים של כונן היעד (לדוגמה, מגבלת קובץ בודד בפורמט FAT32).';
+    }
+    if (lowerReason.includes('emfile') || lowerReason.includes('enfile') || lowerReason.includes('too many open files')) {
+        return 'עומס על מערכת ההפעלה (יותר מדי קבצים פתוחים בו-זמנית). אנא נסה שוב בעוד רגע.';
+    }
+    if (lowerReason.includes('etimedout') || lowerReason.includes('econnreset') || lowerReason.includes('timeout')) {
+        return 'חיבור הרשת אל היעד פקע או נותק באופן פתאומי באמצע ההעברה.';
     }
     
     // Fallback

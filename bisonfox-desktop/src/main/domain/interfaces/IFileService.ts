@@ -1,4 +1,4 @@
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 
 /** Options for configuring the high-speed copy engine */
@@ -23,7 +23,7 @@ export interface CopyOptions {
 
 export interface IFileService {
   /** Paginated shallow directory listing. */
-  listDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<FileNode[]>>
+  listDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<ItemNode[]>>
 
   /** Gets the total count of items in a directory without retrieving them. */
   getDirCount(dirPath: string): Promise<number>

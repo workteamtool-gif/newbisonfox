@@ -3,7 +3,6 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { sessionApi } from '@renderer/services/sessionApi'
 import { clientLogger } from '@renderer/utils/logger'
 import './SetUsernamePage.css'
-import { PREFIX_OPTIONS } from '@renderer/Constants/prefixOptions'
 import { JSX } from 'react'
 import { InsertDiskPage } from '@renderer/entites/Wizard'
 import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKeyboard'
@@ -14,9 +13,7 @@ import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 export function SetUsernamePage(): JSX.Element {
   const { setStep, setUserName, reset, isCancelModalOpen, setKeyboardVisible, userName } = useWizardStore()
 
-  const existingPrefix = PREFIX_OPTIONS.find(p => userName.startsWith(p.value)) || PREFIX_OPTIONS[0]
-
-  const [name, setName] = useState(userName.startsWith(existingPrefix.value) ? userName.slice(existingPrefix.value.length) : '')
+  const [name, setName] = useState(userName || '')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)

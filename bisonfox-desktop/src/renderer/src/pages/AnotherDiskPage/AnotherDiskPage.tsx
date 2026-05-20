@@ -37,11 +37,11 @@ export function AnotherDiskPage(): React.JSX.Element {
   }
 
   const totalFiles = diskSessions.reduce(
-    (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
+    (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
     0
   )
   const failedCountTotal = diskSessions.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
-  const failedFiles = diskSessions.flatMap((d) => d.failedFiles || [])
+  const failedFiles = diskSessions.flatMap((d) => d.failedItems || [])
 
   const MAX_FAILED_FILES_TO_SHOW = 5
 

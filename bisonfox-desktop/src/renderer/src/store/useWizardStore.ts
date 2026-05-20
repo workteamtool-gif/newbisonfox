@@ -10,7 +10,6 @@ const INITIAL_DATA: WizardData = {
   diskSessions: [],
   currentDisk: null,
   currentSubfolder: '',
-  uploadProgress: {},
   uploadDone: false,
   completedFiles: 0,
   toast: { message: null, type: 'info' },
@@ -46,17 +45,7 @@ export const useWizardStore = create<WizardData & WizardActions>()(
       }),
 
     setCurrentDisk: (currentDisk) => set({ currentDisk }),
-
-    removeFile: (diskIndex, filePath) =>
-      set((state) => {
-        const session = state.diskSessions[diskIndex]
-        if (session) {
-          session.selectedFiles = session.selectedFiles.filter((f) => f !== filePath)
-        }
-      }),
-
-    setUploadProgress: (uploadProgress) => set({ uploadProgress }),
-
+    
     setUploadDone: (uploadDone) => set({ uploadDone }),
 
     setCompletedFiles: (completedFiles) => set({ completedFiles }),

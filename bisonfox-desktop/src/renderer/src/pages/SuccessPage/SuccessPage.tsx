@@ -11,11 +11,11 @@ export function SuccessPage(): JSX.Element {
   const [countdown, setCountdown] = useState(150)
 
   const totalFiles = snapshot.reduce(
-    (acc, d) => acc + (d.copiedCount ?? d.selectedFiles.length),
+    (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
     0
   )
   const failedCountTotal = snapshot.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
-  const failedFiles = snapshot.flatMap((d) => d.failedFiles || [])
+  const failedFiles = snapshot.flatMap((d) => d.failedItems || [])
   const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
 
   const MAX_FAILED_FILES_TO_SHOW = 10

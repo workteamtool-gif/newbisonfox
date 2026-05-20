@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
 import { uploadApi } from '@renderer/services/uploadApi'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
@@ -16,7 +16,7 @@ export function ReviewPage(): JSX.Element | null {
 
   useDriveMonitor()
 
-  const [nodes, setNodes] = useState<FileNode[]>([])
+  const [nodes, setNodes] = useState<ItemNode[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [excluded, setExcluded] = useState<Set<string>>(new Set())
   const [saving, setSaving] = useState(false)
@@ -27,10 +27,10 @@ export function ReviewPage(): JSX.Element | null {
   useEffect(() => {
     if (!currentDisk) return
 
-    setSelected(new Set(currentDisk.selectedFiles))
-    setExcluded(new Set(currentDisk.excludedFiles ?? []))
+    setSelected(new Set(currentDisk.selectedItemPaths))
+    setExcluded(new Set(currentDisk.excludedItemPaths ?? []))
 
-    const initialNodes = currentDisk.selectedFiles.map((fp) => {
+    const initialNodes = currentDisk.selectedItemPaths.map((fp) => {
       const name = fp.split(/[/\\]/).pop() ?? fp
       const isFileLike = name.includes('.')
       return {
@@ -98,21 +98,21 @@ export function ReviewPage(): JSX.Element | null {
 
     const finalDisk = {
       ...currentDisk,
-      selectedFiles: Array.from(selected),
-      excludedFiles: Array.from(excluded)
+      selectedItemPaths: Array.from(selected),
+      excludedItemPaths: Array.from(excluded)
     }
 
     try {
       await uploadApi.addDiskFiles(
         sessionId,
         currentDisk.driveLetter,
-        finalDisk.selectedFiles,
-        finalDisk.excludedFiles
+        finalDisk.selectedItemPaths,
+        finalDisk.excludedItemPaths
       )
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedFiles} files`)
+      clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedItemPaths} files`)
 
       setStep(UploadPage)
     } catch (err: any) {
@@ -172,16 +172,14 @@ export function ReviewPage(): JSX.Element | null {
         </div>
       )}
 
-      <div className="divider" />
-
       <NavigationOptions
         onBack={() => {
           clientLogger.info('ReviewPage', `The user: ${userName} in session: ${sessionId} is returning to file selection`)
           if (currentDisk) {
             setCurrentDisk({
               ...currentDisk,
-              selectedFiles: Array.from(selected),
-              excludedFiles: Array.from(excluded)
+              selectedItemPaths: Array.from(selected),
+              excludedItemPaths: Array.from(excluded)
             })
           }
           setStep(SelectFilesPage)

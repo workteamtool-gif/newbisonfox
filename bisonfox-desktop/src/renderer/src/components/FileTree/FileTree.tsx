@@ -1,15 +1,15 @@
-import { FileNode } from '@shared/entities/FileNode'
+import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { TreeNode } from './TreeNode'
 import './FileTree.css'
 import { JSX } from 'react'
 
 export interface FileTreeProps {
-  nodes: FileNode[]
+  nodes: ItemNode[]
   selected: Set<string>
   excluded: Set<string>
   onToggleSelect: (path: string, isDir: boolean, isExcluded: boolean, isInherited: boolean) => void
-  onLoadChildren: (path: string, page: number) => Promise<PaginatedResult<FileNode[]>>
+  onLoadChildren: (path: string, page: number) => Promise<PaginatedResult<ItemNode[]>>
   autoExpandMap?: Record<string, number>
   onAutoExpand?: (map: Record<string, number>, targetPath?: string) => void
   scrollToPath?: string
