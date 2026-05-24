@@ -22,7 +22,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
         <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
           <div className="wizard-logo">
             <img src={iconImg} alt="LightningFox" className="wizard-logo-icon" />
-            LIGHTNING FOX
+            שועל ברק
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>

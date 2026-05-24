@@ -4,8 +4,8 @@
     border-top: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: var(--r-xl);
     box-shadow: 0 2.08vh 4.17vh -1vh rgba(0, 0, 0, 0.6);
-    padding: 2.5rem;
-    height: 75vh;
+    padding: var(--space-page-padding);
+    height: clamp(550px, 75vh, 75vh);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -16,7 +16,7 @@
 }
 
 .wizard-layout--with-keyboard .glass-card {
-    padding: 1.5rem 2.5rem;
+    padding: clamp(1rem, 2vh, 1.5rem) var(--space-page-padding);
 }
 
 .glass-card::before {
@@ -31,15 +31,15 @@
 
 .page-title {
     font-family: var(--font-display);
-    font-size: 3.2rem;
+    font-size: var(--font-size-title);
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: .4rem;
 }
 
 .page-subtitle {
-    font-size: 2.1rem;
+    font-size: var(--font-size-subtitle);
     color: var(--text-primary);
     line-height: 1.65;
-    margin-bottom: 1.75rem;
+    margin-bottom: clamp(1rem, 2vh, 1.75rem);
 }

@@ -12,7 +12,7 @@
 }
 
 .form-label {
-    font-size: 1.6rem;
+    font-size: var(--font-size-label);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .07em;
@@ -20,7 +20,7 @@
 
 .form-input {
     font-family: var(--font);
-    font-size: 1.6rem;
+    font-size: var(--font-size-label);
     color: var(--text-primary);
     background: rgba(255, 255, 255, .045);
     border: 1px solid rgba(255, 255, 255, .09);
@@ -47,7 +47,7 @@
 }
 
 .form-msg {
-    font-size: 1.82rem;
+    font-size: var(--font-size-msg);
     margin-top: .25rem;
     display: flex;
     align-items: center;
