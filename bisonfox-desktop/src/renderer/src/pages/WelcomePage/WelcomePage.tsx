@@ -17,7 +17,7 @@ export function WelcomePage(): JSX.Element {
         </p>
 
         <button className="btn btn-primary btn-xl" onClick={() => setStep(SetupPage)}>
-          ⚡ לחץ כדי להתחיל ⚡
+          לחץ כדי להתחיל ⚡
         </button>
       </div>
     </div>

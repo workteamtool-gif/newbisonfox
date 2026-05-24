@@ -38,17 +38,9 @@
     background-clip: text;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
 }
 
 .wizard-logo-icon {
-    height: 5rem;
-    width: 5rem;
-    object-fit: cover;
-    -webkit-text-fill-color: initial;
-    border-radius: 50%;
-    padding: 0.4rem;
-    background: linear-gradient(135deg, rgba(249, 115, 22, 0.3), rgba(20, 184, 166, 0.3));
-    border: 1.5px solid rgba(249, 115, 22, 0.35);
-    box-shadow: 0 0 12px rgba(249, 115, 22, 0.25), 0 0 24px rgba(20, 184, 166, 0.1);
+    height: 11vh;
+    width: 11vw;
 }

@@ -295,21 +295,6 @@ export function SelectFilesPage(): JSX.Element {
         </div>
       ) : (
         <>
-          <FileTree
-            nodes={tree}
-            selected={selected}
-            excluded={excluded}
-            onToggleSelect={handleToggleSelect}
-            onLoadChildren={handleLoadChildren}
-            autoExpandMap={autoExpandMap}
-            onAutoExpand={(map, targetPath) => {
-              setAutoExpandMap(map)
-              if (targetPath) setScrollToPath(targetPath)
-            }}
-            scrollToPath={scrollToPath}
-            onScrolled={() => setScrollToPath(undefined)}
-          />
-
           <div
             className="tree-pagination-bar"
             style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
@@ -344,7 +329,7 @@ export function SelectFilesPage(): JSX.Element {
                   className="pagination-jump-input"
                   disabled={loading}
                 />
-                <span className="pagination-text">/ {rootTotalPages}</span>
+                <span className="pagination-text">/ {Math.max(rootTotalPages, 1)}</span>
               </form>
 
               <button
@@ -380,6 +365,20 @@ export function SelectFilesPage(): JSX.Element {
               </button>
             </form>
           </div>
+          <FileTree
+            nodes={tree}
+            selected={selected}
+            excluded={excluded}
+            onToggleSelect={handleToggleSelect}
+            onLoadChildren={handleLoadChildren}
+            autoExpandMap={autoExpandMap}
+            onAutoExpand={(map, targetPath) => {
+              setAutoExpandMap(map)
+              if (targetPath) setScrollToPath(targetPath)
+            }}
+            scrollToPath={scrollToPath}
+            onScrolled={() => setScrollToPath(undefined)}
+          />
         </>
       )}
 
