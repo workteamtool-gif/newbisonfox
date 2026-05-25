@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 export function useKeyboardDetection(): boolean {
   // Assume a keyboard is connected initially so we don't flash the virtual keyboard unnecessarily
-  const [hasKeyboard, setHasKeyboard] = useState(true)
+  const [, setHasKeyboard] = useState(true)
 
   useEffect(() => {
     let isMounted = true

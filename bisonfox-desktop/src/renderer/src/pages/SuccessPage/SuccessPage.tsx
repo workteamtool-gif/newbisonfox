@@ -57,7 +57,7 @@ export function SuccessPage(): JSX.Element {
           <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
             {diskSessions.length}
           </div>
-          <div className="stat-lbl">סה"כ העברות שעובדו</div>
+          <div className="stat-lbl">סה"כ העברות שבוצעו</div>
         </div>
         <div className="stat-card">
           <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>

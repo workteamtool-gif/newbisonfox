@@ -11,6 +11,7 @@ import { VirtualKeyboard } from '@renderer/components/VirtualKeyboard/VirtualKey
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
+import { createTimeFolderName } from '@renderer/utils/folderCreator'
 
 import './SetupPage.css'
 
@@ -197,7 +198,12 @@ export function SetupPage(): JSX.Element {
           excludedItemPaths: []
         })
       }
-      setCurrentSubfolder(trimmedSubfolder)
+
+      if (trimmedSubfolder === '' || trimmedSubfolder === undefined) {
+        setCurrentSubfolder(createTimeFolderName())
+      } else {
+        setCurrentSubfolder(trimmedSubfolder)
+      }
 
       clientLogger.info(
         'SetupPage',
@@ -261,12 +267,12 @@ export function SetupPage(): JSX.Element {
                   value={name}
                   style={{ direction: 'ltr' }}
                   onFocus={() => setActiveInput('name')}
+                  placeholder="t_lightning_fox"
                   onChange={(e) => {
                     validateName(e.target.value)
                     setName(e.target.value)
                   }}
                   autoFocus
-                  disabled={diskSessions.length > 0}
                 />
                 <span
                   className="form-msg"
