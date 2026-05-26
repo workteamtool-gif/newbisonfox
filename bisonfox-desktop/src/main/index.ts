@@ -10,6 +10,7 @@ import { logger } from './infrastructure/Logger'
 import { setupApplication } from './setup'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { UploadManager } from './application/UploadManager'
+import { startKeepAliveLogger } from './keepAliveLogger'
 
 // --- GLOBAL STATE ---
 let appServices: { uploadManager: UploadManager } | null = null
@@ -37,26 +38,25 @@ async function gracefulShutdown(): Promise<void> {
 
 // --- LIFECYCLE: UI CREATION ---
 function createWindow(): void {
-  
-  let mainWindow;
+  let mainWindow
   // Create the browser window.
-  if(is.dev) {
+  if (is.dev) {
     mainWindow = new BrowserWindow({
-    show: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+      show: false,
+      webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false
+      }
+    })
   } else {
     mainWindow = new BrowserWindow({
-    show: false,
-    fullscreen: true,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+      show: false,
+      fullscreen: true,
+      webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false
+      }
+    })
   }
 
   mainWindow.on('ready-to-show', () => {
@@ -96,11 +96,14 @@ app.whenReady().then(() => {
 
   ipcMain.handle(IPC_CHANNELS.SYSTEM.DETECT_KEYBOARD, () => {
     return new Promise<{ hasKeyboard: boolean }>((resolve) => {
-      const cmd = 'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
+      const cmd =
+        'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
       exec(cmd, { timeout: 5000 }, (err, stdout) => {
         if (err) {
           // On error, assume keyboard is present to avoid showing VK unexpectedly
-          logger.warn('KeyboardDetect', 'WMI query failed, assuming keyboard present', { error: err.message })
+          logger.warn('KeyboardDetect', 'WMI query failed, assuming keyboard present', {
+            error: err.message
+          })
           resolve({ hasKeyboard: true })
           return
         }
@@ -114,6 +117,9 @@ app.whenReady().then(() => {
 
   // 2. Initialize the backend engine and register domain IPC handlers
   appServices = setupApplication()
+
+  // 2.a Keep-alive heartbeat log: first write immediately, then every 5 minutes
+  startKeepAliveLogger()
 
   // 3. Finally, show the UI
   createWindow()
