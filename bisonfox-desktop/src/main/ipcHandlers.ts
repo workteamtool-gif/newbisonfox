@@ -7,6 +7,7 @@ import { sessionSingleton } from './application/UploadSession'
 import { scanManager } from './application/ScanManager'
 import { NameValidator } from './domain/validators/NameValidator'
 import { SubfolderValidator } from './domain/validators/SubfolderValidator'
+import { logMail } from './infrastructure/loggers/MailLogger'
 
 export interface AppDependencies {
   diskService: IDiskService
@@ -127,6 +128,11 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle('cancel-upload', (_, { sessionId }) => {
     uploadManager.cancelUpload(sessionId)
+    return { success: true }
+  })
+
+  ipcMain.handle('log-mail', (_, { userName }) => {
+    logMail(userName)
     return { success: true }
   })
 }

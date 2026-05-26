@@ -20,18 +20,23 @@ export function SuccessPage(): JSX.Element {
 
   const MAX_FAILED_FILES_TO_SHOW = 10
 
+  const handleReturnHome = () => {
+    window.api.invoke('log-mail', { userName })
+    reset()
+  }
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
           clearInterval(interval)
-          reset()
+          handleReturnHome()
         }
         return currentCountdown - 1
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [reset])
+  }, [reset, userName])
 
   return (
     <div className="glass-card success-card" style={{ height: '85vh' }}>
@@ -95,7 +100,7 @@ export function SuccessPage(): JSX.Element {
           חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
         </p>
 
-        <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={reset}>
+        <button id="back-home-btn" className="btn btn-primary btn-lg" onClick={handleReturnHome}>
           ↩ לחזור הביתה כעת
         </button>
       </div>
