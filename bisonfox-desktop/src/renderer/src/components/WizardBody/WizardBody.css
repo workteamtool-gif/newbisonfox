@@ -20,10 +20,10 @@
 .step-indicator {
     display: flex;
     align-items: center;
-    gap: 3rem;
-    margin-bottom: 3rem;
-    padding-top: 2vh;
-    padding-bottom: 2vh;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-bottom: clamp(1rem, 3vh, 3rem);
+    padding-top: clamp(1vh, 2vh, 2vh);
+    padding-bottom: clamp(1vh, 2vh, 2vh);
 
 }
 

@@ -73,43 +73,45 @@ export function AnotherDiskPage(): React.JSX.Element {
     <div className="glass-card" style={{ textAlign: 'center' }}>
       <p className="page-title">כונן נוסף?</p>
 
-      <p className="page-subtitle" style={{ marginBottom: '2rem' }}>
+      <p className="page-subtitle">
         לא לשכוח לנתק את הכונן החיצוני!
       </p>
 
-      <div className="another-disk-stats">
-        <div className="stat-card">
-          <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-            📤
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="another-disk-stats" style={{ width: '100%' }}>
+          <div className="stat-card">
+            <div className="stat-icon">
+              📤
+            </div>
+            <div className="stat-val" style={{ color: 'var(--accent)' }}>
+              {diskSessions.length}
+            </div>
+            <div className="stat-lbl">העברות שבוצעו</div>
           </div>
-          <div className="stat-val" style={{ color: 'var(--accent)', fontSize: '1.8rem' }}>
-            {diskSessions.length}
+          <div className="stat-card">
+            <div className="stat-icon">
+              📄
+            </div>
+            <div className="stat-val" style={{ color: 'var(--accent-green)' }}>
+              {totalFiles.toLocaleString()}
+            </div>
+            <div className="stat-lbl">סה"כ קבצים שהועלו</div>
           </div>
-          <div className="stat-lbl">העברות שבוצעו</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-icon" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-            📄
-          </div>
-          <div className="stat-val" style={{ color: 'var(--accent-green)', fontSize: '1.8rem' }}>
-            {totalFiles.toLocaleString()}
-          </div>
-          <div className="stat-lbl">סה"כ קבצים שהועלו</div>
-        </div>
-      </div>
 
-      {failedCountTotal > 0 && (
-        <div className="info-box failed-files-box">
-          <h4 className="failed-files-title">⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים</h4>
-          <div className="failed-files-list" style={{}}>
-            <FailedFilesList
-              failedFiles={failedFiles}
-              totalFailedCount={failedCountTotal}
-              maxToShow={MAX_FAILED_FILES_TO_SHOW}
-            />
+        {failedCountTotal > 0 && (
+          <div className="info-box failed-files-box">
+            <h4 className="failed-files-title">⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים</h4>
+            <div className="failed-files-list" style={{}}>
+              <FailedFilesList
+                failedFiles={failedFiles}
+                totalFailedCount={failedCountTotal}
+                maxToShow={MAX_FAILED_FILES_TO_SHOW}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <h3 className="another-disk-question">האם תרצה להוסיף כונן נוסף?</h3>
 
@@ -141,10 +143,7 @@ export function AnotherDiskPage(): React.JSX.Element {
         </div>
       </div>
 
-      <p
-        className="another-disk-countdown"
-        style={{ color: 'var(--text-primary)', fontSize: '1.9rem', marginTop: 'auto' }}
-      >
+      <p className="another-disk-countdown">
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
     </div>
