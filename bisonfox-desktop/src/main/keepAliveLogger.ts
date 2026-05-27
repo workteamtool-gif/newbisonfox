@@ -1,6 +1,7 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
 import { exec } from 'child_process'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
@@ -80,16 +81,15 @@ async function getSystemSerialNumber(): Promise<string> {
   return 'unknown'
 }
 
-function getKeepAliveFilePath(dir: string): string {
-  const dateStamp = new Date().toISOString().slice(0, 10)
-  return path.join(dir, `keep-alive-${dateStamp}.log`)
+function getKeepAliveFilePath(dir: string, timestamp: string): string {
+  const safeTimestamp = timestamp.replace(/:/g, '-').replace(/\./g, '-')
+  return path.join(dir, `keep-alive-${safeTimestamp}-${uuidv4()}.json`)
 }
 
-function writeKeepAliveEntry(dir: string, entry: Record<string, unknown>): void {
+function writeKeepAliveEntry(dir: string, entry: Record<string, unknown>, timestamp: string): void {
   try {
-    const filePath = getKeepAliveFilePath(dir)
-    const line = `${new Date().toISOString()} | ${JSON.stringify(entry)}\n`
-    fs.appendFileSync(filePath, line, 'utf-8')
+    const filePath = getKeepAliveFilePath(dir, timestamp)
+    fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
   } catch (err) {
     logger.warn('KeepAlive', 'Failed to write keep-alive log', { error: (err as Error).message })
   }
@@ -106,14 +106,15 @@ export async function logKeepAliveHeartbeat(): Promise<void> {
     Promise.resolve(getLocalIpAddresses())
   ])
 
+  const timestamp = new Date().toISOString()
   const entry = {
-    timestamp: new Date().toISOString(),
+    timestamp,
     serialNumber,
     ipAddresses,
     macAddresses: getMacAddresses()
   }
 
-  writeKeepAliveEntry(dir, entry)
+  writeKeepAliveEntry(dir, entry, timestamp)
   logger.info('KeepAlive', 'Heartbeat written', entry)
 }
 

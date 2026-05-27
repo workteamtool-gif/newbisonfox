@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
 function resolveMailLogDir(): string | null {
@@ -17,9 +18,9 @@ function ensureMailLogDir(dir: string): void {
   }
 }
 
-function getMailLogFilePath(dir: string): string {
-  const dateStamp = new Date().toISOString().slice(0, 10)
-  return path.join(dir, `mail-log-${dateStamp}.log`)
+function getMailLogFilePath(dir: string, timestamp: string): string {
+  const safeTimestamp = timestamp.replace(/:/g, '-').replace(/\./g, '-')
+  return path.join(dir, `mail-log-${safeTimestamp}-${uuidv4()}.json`)
 }
 
 export function logMail(
@@ -45,9 +46,8 @@ export function logMail(
   }
 
   try {
-    const filePath = getMailLogFilePath(dir)
-    const line = `${timestamp} | ${JSON.stringify(entry)}\n`
-    fs.appendFileSync(filePath, line, 'utf-8')
+    const filePath = getMailLogFilePath(dir, timestamp)
+    fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
     logger.info('MailLogger', 'Mail log written', entry)
   } catch (err) {
     logger.warn('MailLogger', 'Failed to write mail log', { error: (err as Error).message })
