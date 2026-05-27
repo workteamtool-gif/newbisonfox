@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from '@main/infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'

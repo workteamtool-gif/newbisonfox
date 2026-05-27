@@ -3,7 +3,7 @@ import { DiskService } from './infrastructure/services/DiskService'
 import { ElectronEventNotifier } from './infrastructure/services/ElectronEventNotifier'
 import { UploadManager } from './application/UploadManager'
 import { registerIpcHandlers } from './ipcHandlers'
-import { logger } from './infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 export function setupApplication(): { uploadManager: UploadManager } {
   logger.info('System', 'Bootstrapping application services...')

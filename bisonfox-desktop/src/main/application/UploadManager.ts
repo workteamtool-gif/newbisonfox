@@ -2,7 +2,7 @@ import path from 'path'
 import { sessionSingleton } from './UploadSession'
 import { IFileService } from '@main/domain/interfaces/IFileService'
 import { IEventNotifier } from '@main/domain/interfaces/IEventNotifier'
-import { logger } from '@main/infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { logger } from '../infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 import { DiskSession } from '@shared/entities/DiskSession'
 
 export interface UploadSession {

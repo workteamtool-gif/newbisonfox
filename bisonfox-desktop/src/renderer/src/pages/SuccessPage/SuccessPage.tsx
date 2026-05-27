@@ -21,7 +21,6 @@ export function SuccessPage(): JSX.Element {
   const MAX_FAILED_FILES_TO_SHOW = 10
 
   const handleReturnHome = () => {
-    window.api.invoke('log-mail', { userName })
     reset()
   }
 

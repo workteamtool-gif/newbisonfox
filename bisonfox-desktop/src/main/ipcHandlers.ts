@@ -131,8 +131,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     return { success: true }
   })
 
-  ipcMain.handle('log-mail', (_, { userName }) => {
-    logMail(userName)
+  ipcMain.handle('log-mail', (_, { userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount }) => {
+    logMail(userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount)
     return { success: true }
   })
 }

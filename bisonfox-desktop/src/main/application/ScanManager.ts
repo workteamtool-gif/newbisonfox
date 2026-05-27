@@ -1,5 +1,5 @@
 // src/application/ScanManager.ts
-import { logger } from '../infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 interface ScanSession {
   selectedPaths: string[]

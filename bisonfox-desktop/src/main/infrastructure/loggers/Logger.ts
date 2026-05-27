@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import * as os from 'os'
 
 // ─── Log Levels ──────────────────────────────────────────────────────────────
 export enum LogLevel {
@@ -19,6 +20,19 @@ const LEVEL_LABELS: Record<LogLevel, string> = {
 // ─── Configuration ───────────────────────────────────────────────────────────
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB per file
 const MAX_FILES_PER_LEVEL = 5 // Keep up to 5 rotated files
+
+function getFirstMacAddress(): string {
+  const interfaces = os.networkInterfaces()
+  for (const entries of Object.values(interfaces)) {
+    if (!entries) continue
+    for (const entry of entries) {
+      if (entry.mac && entry.mac !== '00:00:00:00:00:00' && !entry.internal) {
+        return entry.mac.replace(/:/g, '-')
+      }
+    }
+  }
+  return 'unknown_mac'
+}
 
 // ─── Logger ──────────────────────────────────────────────────────────────────
 class Logger {
@@ -45,7 +59,8 @@ class Logger {
       )
       this.logDir = null
     } else {
-      this.logDir = path.resolve(envLogDir)
+      const macFolder = getFirstMacAddress()
+      this.logDir = path.resolve(envLogDir, macFolder)
       this.ensureLogDir()
     }
   }

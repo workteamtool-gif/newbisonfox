@@ -1,9 +1,9 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import * as fs from 'fs'
-import { IDiskService } from '../../domain/interfaces/IDiskService'
+import { IDiskService } from '@main/domain/interfaces/IDiskService'
 import { DriveInfo } from '@shared/entities/DriveInfo'
-import { logger } from '../Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 const execAsync = promisify(exec)
 
@@ -42,7 +42,6 @@ export class DiskService implements IDiskService {
         } else {
             const upperDeviceId = rawDeviceId.toUpperCase()
             if (!blacklistDrives.includes(upperDeviceId)) {              
-            const driveType = parseInt(rawDrive.DriveType) || 0
             const size = parseInt(rawDrive.Size) || 0
             
             let selectable = true
@@ -50,19 +49,11 @@ export class DiskService implements IDiskService {
 
             // Ensure trailing slash for Node.js fs compatibility
             const letter = upperDeviceId.endsWith('\\') ? upperDeviceId : upperDeviceId + '\\'
-
-            // 2- Removable: Removable media drives, such as floppy drives or USB flash drives.
-            // 3 - Fixed: Fixed media drives, such as internal hard drives (HDD or SSD).
-            if (driveType !== 2 && driveType !== 3) {
+            try {
+              await fs.promises.access(letter, fs.constants.R_OK)
+            } catch (err) {
               selectable = false
-              disabledReason = 'Unsupported drive type'
-            } else {
-              try {
-                await fs.promises.access(letter, fs.constants.R_OK)
-              } catch (err) {
-                selectable = false
-                disabledReason = 'Unreadable or access denied'
-              }
+              disabledReason = 'Unreadable or access denied'
             }
             drives.push({
               letter,

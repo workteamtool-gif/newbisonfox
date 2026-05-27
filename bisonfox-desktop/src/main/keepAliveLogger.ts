@@ -2,7 +2,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import { exec } from 'child_process'
-import { logger } from './infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 const KEEP_ALIVE_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 

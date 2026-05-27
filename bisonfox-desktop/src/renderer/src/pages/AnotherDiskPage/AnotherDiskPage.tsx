@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './AnotherDiskPage.css'
@@ -6,11 +6,28 @@ import { SetupPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function AnotherDiskPage(): React.JSX.Element {
-  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder } =
+  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder, currentSubfolder } =
     useWizardStore()
   const [countdown, setCountdown] = useState(150)
+  const mailLogged = React.useRef(false)
 
   useEffect(() => {
+    if (!mailLogged.current) {
+      mailLogged.current = true
+      const lastSession = diskSessions[diskSessions.length - 1]
+      const filesSucceeded = lastSession?.copiedCount ?? 0
+      const failedFilesAmount = lastSession?.failedCount ?? 0
+      const totalFiles = filesSucceeded + failedFilesAmount
+
+      window.api.invoke('log-mail', {
+        userName,
+        subfolder: currentSubfolder,
+        filesSucceeded,
+        totalFiles,
+        failedFilesAmount
+      })
+    }
+
     const interval = setInterval(() => {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
@@ -21,7 +38,7 @@ export function AnotherDiskPage(): React.JSX.Element {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [reset])
+  }, [reset, userName, diskSessions, currentSubfolder])
 
   function handleYes(): void {
     clientLogger.info(

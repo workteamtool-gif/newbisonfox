@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { logger } from './Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 
 function resolveMailLogDir(): string | null {
   const envPath = process.env.MAIL_LOG_DIR
@@ -22,7 +22,13 @@ function getMailLogFilePath(dir: string): string {
   return path.join(dir, `mail-log-${dateStamp}.log`)
 }
 
-export function logMail(userName: string): void {
+export function logMail(
+  userName: string,
+  subfolder: string,
+  filesSucceeded: number,
+  totalFiles: number,
+  failedFilesAmount: number
+): void {
   const dir = resolveMailLogDir()
   if (!dir) return
 
@@ -31,7 +37,11 @@ export function logMail(userName: string): void {
   const timestamp = new Date().toISOString()
   const entry = {
     timestamp,
-    userName
+    userName,
+    subfolder,
+    filesSucceeded,
+    totalFiles,
+    failedFilesAmount
   }
 
   try {

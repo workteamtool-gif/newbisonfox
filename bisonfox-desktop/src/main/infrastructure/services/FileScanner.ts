@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from '@main/infrastructure/Logger'
+import { logger } from '@main/infrastructure/loggers/Logger'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 import { PathResult } from '@main/domain/entities/PathResult'
 
