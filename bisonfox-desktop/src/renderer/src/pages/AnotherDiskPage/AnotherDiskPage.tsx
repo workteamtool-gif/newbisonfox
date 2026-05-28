@@ -44,7 +44,7 @@ export function AnotherDiskPage(): React.JSX.Element {
     clientLogger.info(
       'AnotherDiskPage',
       `The user: ${userName} in session: ${sessionId} wants to add another disk,
-       finishing the session and moving to SetupPage`
+       finishing the disk session and moving to SetupPage`
     )
     setCurrentDisk(null)
     setCurrentSubfolder('')

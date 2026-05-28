@@ -138,11 +138,11 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
   })
 
   ipcMain.handle('system:restart', () => {
-    exec('shutdown /r /t 0', (error) => {
-      if (error) {
-        console.error(`Failed to restart: ${error}`)
-      }
-    })
+    // exec('shutdown /r /t 0', (error) => {
+    //   if (error) {
+    //     console.error(`Failed to restart: ${error}`)
+    //   }
+    // })
     return { success: true }
   })
 }
