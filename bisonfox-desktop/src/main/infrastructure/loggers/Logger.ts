@@ -19,7 +19,7 @@ const LEVEL_LABELS: Record<LogLevel, string> = {
 
 // ─── Configuration ───────────────────────────────────────────────────────────
 const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10 MB per file
-const MAX_FILES_PER_LEVEL = 5 // Keep up to 5 rotated files
+const ROTATION_INTERVAL_MS = 60 * 1000 // 1 minute
 
 function getFirstMacAddress(): string {
   const interfaces = os.networkInterfaces()
@@ -37,11 +37,15 @@ function getFirstMacAddress(): string {
 // ─── Logger ──────────────────────────────────────────────────────────────────
 class Logger {
   private minLevel: LogLevel
-  private currentDate = ''
-  private streams = new Map<string, fs.WriteStream>()
 
-  // Instance variable to hold the validated path
-  private logDir: string | null = null
+  // Instance variables to hold the validated paths
+  private finalLogDir: string | null = null
+  private tempLogDir: string | null = null
+
+  private activeStream: fs.WriteStream | null = null
+  private activeFilePath: string | null = null
+
+  private rotationTimer: NodeJS.Timeout | null = null
 
   constructor(minLevel: LogLevel = LogLevel.DEBUG) {
     this.minLevel = minLevel
@@ -50,18 +54,25 @@ class Logger {
     // GUARD CLAUSE: Check for missing Environment Variable
     // ─────────────────────────────────────────────────────────────────
     const envLogDir = process.env.LOG_DIR
+    const envTempLogDir = process.env.TEMP_LOG_DIR
 
-    if (!envLogDir || envLogDir.trim() === '') {
+    if (!envLogDir || envLogDir.trim() === '' || !envTempLogDir || envTempLogDir.trim() === '') {
       // Fail-fast for file logging, but don't crash the app.
-      process.stderr.write('\n[SYSTEM WARNING] LOG_DIR environment variable is missing or empty!\n')
+      process.stderr.write(
+        '\n[SYSTEM WARNING] LOG_DIR or TEMP_LOG_DIR environment variable is missing or empty!\n'
+      )
       process.stderr.write(
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
-      this.logDir = null
+      this.finalLogDir = null
+      this.tempLogDir = null
     } else {
       const macFolder = getFirstMacAddress()
-      this.logDir = path.resolve(envLogDir, macFolder)
-      this.ensureLogDir()
+      this.finalLogDir = path.resolve(envLogDir, macFolder)
+      this.tempLogDir = path.resolve(envTempLogDir, macFolder)
+
+      this.ensureDirs()
+      this.startRotationTimer()
     }
   }
 
@@ -85,87 +96,76 @@ class Logger {
 
   // ── Internal ──
 
-  private ensureLogDir(): void {
-    if (!this.logDir) return // Guard against null
-    if (!fs.existsSync(this.logDir)) {
-      fs.mkdirSync(this.logDir, { recursive: true })
+  private ensureDirs(): void {
+    if (this.finalLogDir && !fs.existsSync(this.finalLogDir)) {
+      fs.mkdirSync(this.finalLogDir, { recursive: true })
+    }
+    if (this.tempLogDir && !fs.existsSync(this.tempLogDir)) {
+      fs.mkdirSync(this.tempLogDir, { recursive: true })
     }
   }
 
-  private getDateStamp(): string {
-    const d = new Date()
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  private startRotationTimer(): void {
+    if (this.rotationTimer) clearInterval(this.rotationTimer)
+    this.rotationTimer = setInterval(() => {
+      this.rotateAndMoveFile()
+    }, ROTATION_INTERVAL_MS)
   }
 
-  private getStream(dateStamp: string): fs.WriteStream | null {
-    if (!this.logDir) return null // Guard against null
+  private rotateAndMoveFile(): void {
+    if (!this.activeStream || !this.activeFilePath || !this.finalLogDir) return
 
-    const key = dateStamp
+    const streamToClose = this.activeStream
+    const filePathToMove = this.activeFilePath
 
-    // Rotate day boundary: close old streams
-    if (this.currentDate && this.currentDate !== dateStamp) {
-      for (const [, s] of this.streams) {
-        try {
-          s.end()
-        } catch {
-          /* ignore */
+    // Reset active stream so next write creates a new file
+    this.activeStream = null
+    this.activeFilePath = null
+
+    streamToClose.end(() => {
+      try {
+        if (fs.existsSync(filePathToMove)) {
+          const fileName = path.basename(filePathToMove)
+          const finalPath = path.join(this.finalLogDir!, fileName)
+          // Safely move the file
+          fs.copyFileSync(filePathToMove, finalPath)
+          fs.unlinkSync(filePathToMove)
         }
+      } catch (err) {
+        process.stderr.write(
+          `[SYSTEM ERROR] Failed to move log file from temp to final dir: ${err}\n`
+        )
       }
-      this.streams.clear()
-    }
-    this.currentDate = dateStamp
-
-    if (this.streams.has(key)) {
-      return this.streams.get(key)!
-    }
-
-    const filePath = path.join(this.logDir, `${dateStamp}.log`)
-    this.rotateIfNeeded(filePath, dateStamp)
-
-    const stream = fs.createWriteStream(filePath, { flags: 'a', encoding: 'utf-8' })
-    this.streams.set(key, stream)
-    return stream
+    })
   }
 
-  private rotateIfNeeded(filePath: string, dateStamp: string): void {
-    if (!this.logDir) return // Guard against null
+  private getStream(): fs.WriteStream | null {
+    if (!this.tempLogDir || !this.finalLogDir) return null
 
-    try {
-      if (!fs.existsSync(filePath)) return
-      const stat = fs.statSync(filePath)
-      if (stat.size < MAX_FILE_SIZE) return
-
-      // Rotate: shift existing rotated files
-      for (let i = MAX_FILES_PER_LEVEL - 1; i >= 1; i--) {
-        const older = path.join(this.logDir, `${dateStamp}.${i}.log`)
-        const newer = path.join(this.logDir, `${dateStamp}.${i + 1}.log`)
-        if (fs.existsSync(older)) {
-          if (i + 1 >= MAX_FILES_PER_LEVEL) {
-            fs.unlinkSync(older) // drop oldest
-          } else {
-            fs.renameSync(older, newer)
-          }
+    // Check size limit on the active file
+    if (this.activeFilePath && fs.existsSync(this.activeFilePath)) {
+      try {
+        const stat = fs.statSync(this.activeFilePath)
+        if (stat.size >= MAX_FILE_SIZE) {
+          // If the file is too big, move it immediately and open a new one
+          this.rotateAndMoveFile()
         }
+      } catch (e) {
+        // Ignore stats error
       }
-
-      // Move current → .1
-      const rotated = path.join(this.logDir, `${dateStamp}.1.log`)
-      fs.renameSync(filePath, rotated)
-
-      // Close and remove old stream
-      const key = dateStamp
-      const existing = this.streams.get(key)
-      if (existing) {
-        try {
-          existing.end()
-        } catch {
-          /* ignore */
-        }
-        this.streams.delete(key)
-      }
-    } catch {
-      // If rotation fails, continue writing to the same file
     }
+
+    if (this.activeStream) {
+      return this.activeStream
+    }
+
+    // Create new stream
+    const timestamp = Date.now()
+    const fileName = `app_log_${timestamp}.log`
+    this.activeFilePath = path.join(this.tempLogDir, fileName)
+
+    this.activeStream = fs.createWriteStream(this.activeFilePath, { flags: 'a', encoding: 'utf-8' })
+    return this.activeStream
   }
 
   private write(
@@ -182,25 +182,46 @@ class Logger {
     const line = `[${timestamp}] [${label}] [${context}] ${message}${metaStr}\n`
 
     // 1. Try to write to file if configured
-    if (this.logDir) {
-      const dateStamp = this.getDateStamp()
-      const stream = this.getStream(dateStamp)
+    if (this.tempLogDir) {
+      const stream = this.getStream()
       if (stream) stream.write(line)
     }
 
     // 2. Always output to console if file logging is dead, OR if it's an Error/Warn
-    if (!this.logDir || level === LogLevel.ERROR || level === LogLevel.WARN) {
+    if (!this.tempLogDir || level === LogLevel.ERROR || level === LogLevel.WARN) {
       process.stderr.write(line)
     }
   }
 
   /** Flush all streams (call on shutdown) */
   async flush(): Promise<void> {
-    const promises: Promise<void>[] = []
-    for (const [, s] of this.streams) {
-      promises.push(new Promise((resolve) => s.end(resolve)))
+    if (this.rotationTimer) {
+      clearInterval(this.rotationTimer)
     }
-    await Promise.all(promises)
+
+    if (this.activeStream && this.activeFilePath && this.finalLogDir) {
+      const streamToClose = this.activeStream
+      const filePathToMove = this.activeFilePath
+
+      this.activeStream = null
+      this.activeFilePath = null
+
+      return new Promise((resolve) => {
+        streamToClose.end(() => {
+          try {
+            if (fs.existsSync(filePathToMove)) {
+              const fileName = path.basename(filePathToMove)
+              const finalPath = path.join(this.finalLogDir!, fileName)
+              fs.copyFileSync(filePathToMove, finalPath)
+              fs.unlinkSync(filePathToMove)
+            }
+          } catch (e) {
+            // ignore flush errors
+          }
+          resolve()
+        })
+      })
+    }
   }
 }
 

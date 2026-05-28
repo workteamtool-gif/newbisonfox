@@ -21,7 +21,7 @@ export function SuccessPage(): JSX.Element {
   const MAX_FAILED_FILES_TO_SHOW = 10
 
   const handleReturnHome = () => {
-    reset()
+    window.api.invoke('system:restart')
   }
 
   useEffect(() => {

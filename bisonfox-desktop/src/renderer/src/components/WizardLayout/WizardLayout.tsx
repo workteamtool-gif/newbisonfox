@@ -13,7 +13,6 @@ interface Props {
 
 export function WizardLayout({ children }: Props): React.JSX.Element {
   const step = useWizardStore((s) => s.step)
-  const reset = useWizardStore((s) => s.reset)
   const sessionId = useWizardStore((s) => s.sessionId)
   const userName = useWizardStore((s) => s.userName)
   const isCancelModalOpen = useWizardStore((s) => s.isCancelModalOpen)
@@ -46,7 +45,9 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
         /* ignore */
       }
     }
-    reset()
+
+    // Trigger OS restart
+    window.api.invoke('system:restart')
   }
 
   const showSteppersAndHeader = step !== WelcomePage && step !== SuccessPage

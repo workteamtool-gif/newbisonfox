@@ -1,4 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron'
+import { exec } from 'child_process'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { IDiskService } from './domain/interfaces/IDiskService'
 import { IFileService } from './domain/interfaces/IFileService'
@@ -133,6 +134,15 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle('log-mail', (_, { userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount }) => {
     logMail(userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount)
+    return { success: true }
+  })
+
+  ipcMain.handle('system:restart', () => {
+    exec('shutdown /r /t 0', (error) => {
+      if (error) {
+        console.error(`Failed to restart: ${error}`)
+      }
+    })
     return { success: true }
   })
 }

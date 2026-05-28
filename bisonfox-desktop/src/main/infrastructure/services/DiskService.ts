@@ -31,7 +31,7 @@ export class DiskService implements IDiskService {
       const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]
 
       const drives: DriveInfo[] = []
-      const blacklistDrivesEnv = process.env.BLACKLIST_DRIVES || 'C:,X:'
+      const blacklistDrivesEnv = process.env.BLACKLIST_DRIVES || 'X:'
       const blacklistDrives = blacklistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
       for (const rawDrive of rawDrives) {
