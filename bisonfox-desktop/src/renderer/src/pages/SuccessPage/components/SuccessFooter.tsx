@@ -7,15 +7,8 @@ interface SuccessFooterProps {
 
 export function SuccessFooter({ countdown, onReturnHome }: SuccessFooterProps): JSX.Element {
   return (
-    <div
-      style={{
-        marginTop: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}
-    >
-      <p className="success-countdown" style={{ marginBottom: '1rem' }}>
+    <div className="success-footer-container">
+      <p className="success-countdown">
         חוזרים למסך הבית בעוד <strong>{countdown}</strong> שניות…
       </p>
 

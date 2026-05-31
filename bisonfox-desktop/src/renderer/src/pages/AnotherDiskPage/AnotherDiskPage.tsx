@@ -19,20 +19,20 @@ export function AnotherDiskPage(): React.JSX.Element {
   } = useAnotherDiskPage()
 
   return (
-    <div className="glass-card" style={{ textAlign: 'center' }}>
+    <div className="glass-card another-disk-card">
       <p className="page-title">כונן נוסף?</p>
 
       <p className="page-subtitle">
         לא לשכוח לנתק את הכונן החיצוני!
       </p>
 
-      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0, padding: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div className="another-disk-content">
         <AnotherDiskStats diskSessionsLength={diskSessions.length} totalFiles={totalFiles} />
 
         {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">
             <h4 className="failed-files-title">⚠️ לא ניתן היה להעתיק {failedCountTotal} קבצים</h4>
-            <div className="failed-files-list" style={{}}>
+            <div className="failed-files-list">
               <FailedFilesList
                 failedFiles={failedFiles}
                 totalFailedCount={failedCountTotal}

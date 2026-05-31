@@ -16,3 +16,149 @@
     display: block;
     filter: brightness(0.8) contrast(1.1);
 }
+
+/* UploadComponent.tsx */
+.upload-container {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.upload-notice-failed {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.upload-progress-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+}
+
+.upload-progress-track {
+    height: 0.83vh;
+}
+
+/* StatsUpload.tsx */
+.upload-stat-val-ltr {
+    direction: ltr;
+}
+
+.upload-stat-val-rtl {
+    direction: rtl;
+}
+
+/* FailedItemsUpload.tsx */
+.failed-review-box {
+    border-color: var(--accent-red);
+    background: rgba(239, 68, 68, 0.05);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+    position: relative;
+}
+
+.failed-review-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-red);
+    font-size: 2rem;
+}
+
+.failed-review-list-container {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    font-size: 1.5rem;
+    width: 100%;
+}
+
+.failed-review-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    width: 100%;
+    justify-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    font-size: 1.7rem;
+}
+
+.btn-skip-failed {
+    background: hsl(142, 71%, 45%, .8);
+}
+
+.failed-review-warning {
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(251, 191, 36, 0.08);
+    border: 1px solid rgba(251, 191, 36, 0.3);
+    border-radius: var(--r-md);
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+/* CountingUpload.tsx */
+.counting-container {
+    text-align: center;
+}
+
+.counting-box {
+    margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.counting-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.counting-text {
+    color: var(--text-primary);
+}
+
+/* ErrorUpload.tsx */
+.error-page-title {
+    color: var(--accent-red);
+}
+
+.error-info-box {
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+/* VideoUpload.tsx */
+.video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(10,16,20,0.9) 0%, transparent 60%);
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem 1.4rem;
+    direction: ltr;
+}
+
+.video-phase-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f8fafc;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.video-spin {
+    display: inline-block;
+    margin-right: 10px;
+    color: var(--accent-cyan);
+}

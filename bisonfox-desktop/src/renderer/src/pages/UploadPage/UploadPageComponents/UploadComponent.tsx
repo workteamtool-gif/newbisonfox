@@ -40,7 +40,7 @@ export function UploadComponent({
   totalBytes
 }: UploadComponentProps): React.JSX.Element {
   return (
-    <div style={{ height: '60vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="upload-container">
       <p className="page-title">
         {showFailedReview ? (
           <>⚠️ חלק מהקבצים נכשלו</>
@@ -80,15 +80,7 @@ export function UploadComponent({
 
       {/* Failure notice during active copy */}
       {!showFailedReview && failedCount > 0 && (
-        <div
-          className="info-box"
-          style={{
-            borderColor: 'var(--accent-red)',
-            color: 'var(--accent-red)',
-            marginBottom: '1rem',
-            fontSize: '1.2rem'
-          }}
-        >
+        <div className="info-box upload-notice-failed">
           ⚠️ <strong>{failedCount.toLocaleString()} קבצים נכשלו</strong> — דולגו כדי להמשיך בהעתקה.
         </div>
       )}
@@ -97,15 +89,12 @@ export function UploadComponent({
       {!showFailedReview && (
         <div>
           <div className="progress-header">
-            <span
-              className="progress-name"
-              style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '1.2rem' }}
-            >
+            <span className="progress-name upload-progress-name">
               {phaseLabel}
             </span>
             <span className="progress-pct">{overallPercentage}%</span>
           </div>
-          <div className="progress-track" style={{ height: '0.83vh' }}>
+          <div className="progress-track upload-progress-track">
             <div className="progress-fill" style={{ width: `${overallPercentage}%` }} />
           </div>
         </div>

@@ -24,11 +24,10 @@ export function UserNameInput({
       </label>
       <input
         id="name-input"
-        className={`form-input ${nameError ? 'error' : ''}`}
+        className={`form-input setup-input-ltr ${nameError ? 'error' : ''}`}
         type="text"
         maxLength={maxNameLength}
         value={name}
-        style={{ direction: 'ltr' }}
         onFocus={() => setActiveInput('name')}
         placeholder="t_lightning_fox"
         onChange={(e) => {
@@ -38,10 +37,8 @@ export function UserNameInput({
         autoFocus
       />
       <span
-        className="form-msg"
+        className="form-msg setup-form-msg"
         style={{
-          minHeight: '1.4em',
-          display: 'block',
           visibility: nameError || name.length >= maxNameLength ? 'visible' : 'hidden',
           color: nameError ? 'var(--accent-red)' : 'var(--accent-orange)'
         }}
@@ -80,11 +77,10 @@ export function SubfolderInput({
       </label>
       <input
         id="subfolder-input"
-        className={`form-input ${subfolderError ? 'error' : ''}`}
+        className={`form-input setup-input-ltr ${subfolderError ? 'error' : ''}`}
         type="text"
         maxLength={maxSubfolderLength}
         value={subfolder}
-        style={{ direction: 'ltr' }}
         onFocus={() => setActiveInput('subfolder')}
         onChange={(e) => {
           validateSubfolder(e.target.value)
@@ -92,10 +88,8 @@ export function SubfolderInput({
         }}
       />
       <span
-        className="form-msg"
+        className="form-msg setup-form-msg"
         style={{
-          minHeight: '1.4em',
-          display: 'block',
           visibility:
             subfolderError || subfolder.length >= maxSubfolderLength
               ? 'visible'

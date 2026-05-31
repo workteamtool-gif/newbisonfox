@@ -22,42 +22,11 @@ export function FailedItemsUpload({
 
   return (
     <>
-      <div
-        className="info-box"
-        style={{
-          borderColor: 'var(--accent-red)',
-          background: 'rgba(239, 68, 68, 0.05)',
-          display: 'flex',
-          flexDirection: 'column',
-          flex: 1,
-          minHeight: 0,
-          gap: '0.75rem',
-          marginBottom: '1.5rem',
-          textAlign: 'left',
-          position: 'relative'
-        }}
-      >
-        <h4
-          style={{
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: 'var(--accent-red)',
-            fontSize: '2rem'
-          }}
-        >
+      <div className="info-box failed-review-box">
+        <h4 className="failed-review-title">
           ⚠️ לא ניתן היה להעתיק {failedCount.toLocaleString()} קבצים
         </h4>
-        <div
-          style={{
-            flex: 1,
-            minHeight: 0,
-            overflowY: 'auto',
-            fontSize: '1.5rem',
-            width: '100%'
-          }}
-        >
+        <div className="failed-review-list-container">
           <FailedFilesList
             failedFiles={failedFilesList}
             totalFailedCount={failedCount}
@@ -65,21 +34,9 @@ export function FailedItemsUpload({
           />
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.75rem',
-            marginTop: '0.75rem',
-            width: '100%',
-            justifyItems: 'flex-end',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-            fontSize: '1.7rem'
-          }}
-        >
+        <div className="failed-review-actions">
           <button
-            className="btn"
-            style={{ background: 'hsl(142, 71%, 45%, .8)' }}
+            className="btn btn-skip-failed"
             onClick={skipFailed}
           >
             דלג על פריטים שנכשלו
@@ -89,18 +46,7 @@ export function FailedItemsUpload({
               <button className="btn btn-primary" onClick={retryAll}>
                 🔄 נסה שוב את כל הקבצים
               </button>
-              <div
-                style={{
-                  marginTop: '0.5rem',
-                  padding: '0.6rem 0.8rem',
-                  background: 'rgba(251, 191, 36, 0.08)',
-                  border: '1px solid rgba(251, 191, 36, 0.3)',
-                  borderRadius: 'var(--r-md)',
-                  fontSize: '1.8rem',
-                  color: 'var(--text-secondary)',
-                  textAlign: 'right'
-                }}
-              >
+              <div className="failed-review-warning">
                 ⚠️ נכשלו יותר מ-{MAX_TRACKED_FAILURES.toLocaleString()} קבצים. המערכת לא שמרה את כל
                 הכשלונות. לחיצה על "נסה שוב את כל הקבצים" תעלה מחדש את כל הקבצים שנבחרו.
               </div>

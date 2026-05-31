@@ -92,3 +92,34 @@
 .success-countdown strong {
     color: var(--accent);
 }
+
+.success-card.glass-card {
+    height: 85vh;
+}
+
+.destination-path {
+    font-size: 1.6rem;
+    color: var(--accent);
+}
+
+.success-stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.success-stat-val.accent {
+    color: var(--accent);
+    font-size: 1.8rem;
+}
+
+.success-stat-val.accent-green {
+    color: var(--accent-green);
+    font-size: 1.8rem;
+}
+
+.success-footer-container {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

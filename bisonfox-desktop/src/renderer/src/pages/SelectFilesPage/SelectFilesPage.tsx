@@ -3,6 +3,7 @@ import { FileTree } from '@renderer/components/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { useSelectFilesPage } from './hooks/useSelectFilesPage'
 import { TreePaginationBar } from './components/TreePaginationBar'
+import './SelectFilesPage.css'
 
 export function SelectFilesPage(): JSX.Element {
   const {
@@ -35,41 +36,24 @@ export function SelectFilesPage(): JSX.Element {
 
   return (
     <div className="glass-card">
-      <p className="page-title" style={{ marginBottom: '1rem' }}>
+      <p className="page-title select-files-title">
         בחירת קבצים ותיקיות
       </p>
 
-      <div
-        className="info-box"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '1rem',
-          direction: 'ltr',
-          fontSize: '1rem'
-        }}
-      >
+      <div className="info-box disk-info-box">
         <span>
           💿 <strong>{currentDisk?.driveLetter}</strong>
         </span>
         <span>נבחרו {selectedCount} פריטים</span>
       </div>
       {loading ? (
-        <div
-          style={{
-            textAlign: 'center',
-            color: 'var(--text-primary)',
-            padding: '2rem',
-            fontSize: '.9rem'
-          }}
-        >
+        <div className="loading-container">
           <p>
             <span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}
           </p>
           {searching && (
             <button
-              className="btn btn-secondary"
-              style={{ marginTop: '0.75rem' }}
+              className="btn btn-secondary cancel-search-btn"
               onClick={handleCancelSearch}
             >
               ✕ ביטול חיפוש

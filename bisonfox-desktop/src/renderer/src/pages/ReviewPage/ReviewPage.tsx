@@ -32,16 +32,7 @@ export function ReviewPage(): JSX.Element | null {
     <div className="glass-card">
       <p className="page-title">אישור הקבצים להעלאה</p>
 
-      <div
-        className="info-box"
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '1rem',
-          direction: 'ltr',
-          fontSize: '1rem'
-        }}
-      >
+      <div className="info-box review-disk-info">
         <span>
           💿 <strong>{currentDisk.driveLetter}</strong>
         </span>

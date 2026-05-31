@@ -122,7 +122,7 @@ export function StatsUpload({
           <div className="stat-lbl">נכשלו</div>
         </div>
         <div className="stat-card">
-          <div className="stat-val" style={{ direction: 'ltr' }}>
+          <div className="stat-val upload-stat-val-ltr">
             {formatSize(completedBytes)} / {formatSize(totalBytes)}
           </div>
           <div className="stat-lbl">גודל הועתק</div>
@@ -134,7 +134,7 @@ export function StatsUpload({
               <div className="stat-lbl">סה"כ</div>
             </div>
             <div className="stat-card">
-              <div className="stat-val" style={{ direction: 'rtl' }}>
+              <div className="stat-val upload-stat-val-rtl">
                 {etaLabel}
               </div>
               <div className="stat-lbl">זמן משוער לסיום</div>

@@ -1,0 +1,33 @@
+.select-files-title {
+    margin-bottom: 1rem;
+}
+
+.disk-info-box {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    direction: ltr;
+    font-size: 1rem;
+}
+
+.loading-container {
+    text-align: center;
+    color: var(--text-primary);
+    padding: 2rem;
+    font-size: 0.9rem;
+}
+
+.cancel-search-btn {
+    margin-top: 0.75rem;
+}
+
+/* TreePaginationBar */
+.tree-pagination-container {
+    margin: 1rem 0;
+    justify-content: center;
+    direction: ltr;
+}
+
+.pagination-search-form.ltr-form {
+    direction: ltr;
+}

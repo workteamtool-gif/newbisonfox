@@ -1,6 +1,6 @@
 import { JSX } from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
-import { useSuccessPage } from './useSuccessPage'
+import { useSuccessPage } from './hooks/useSuccessPage'
 import { SuccessStats } from './components/SuccessStats'
 import { SuccessFooter } from './components/SuccessFooter'
 import './SuccessPage.css'
@@ -20,13 +20,13 @@ export function SuccessPage(): JSX.Element {
   } = useSuccessPage()
 
   return (
-    <div className="glass-card success-card" style={{ height: '85vh' }}>
+    <div className="glass-card success-card">
       <p className="page-title">הכל הועלה בהצלחה!</p>
       <p className="page-subtitle">
         {destinationUserEndpoint && (
           <p className="page-subtitle">
             ניתן לראות את הקבצים ברשת היחידה בעזרת הנתיב: <br />
-            <code style={{ fontSize: '1.6rem', color: 'var(--accent)' }}>
+            <code className="destination-path">
               {destinationUserEndpoint}\{userName}
             </code>
             <br />

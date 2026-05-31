@@ -7,12 +7,12 @@ interface AnotherDiskStatsProps {
 
 export function AnotherDiskStats({ diskSessionsLength, totalFiles }: AnotherDiskStatsProps): JSX.Element {
   return (
-    <div className="another-disk-stats" style={{ width: '100%' }}>
+    <div className="another-disk-stats full-width">
       <div className="stat-card">
         <div className="stat-icon">
           📤
         </div>
-        <div className="stat-val" style={{ color: 'var(--accent)' }}>
+        <div className="stat-val another-disk-stat-val accent">
           {diskSessionsLength}
         </div>
         <div className="stat-lbl">העברות שבוצעו</div>
@@ -21,7 +21,7 @@ export function AnotherDiskStats({ diskSessionsLength, totalFiles }: AnotherDisk
         <div className="stat-icon">
           📄
         </div>
-        <div className="stat-val" style={{ color: 'var(--accent-green)' }}>
+        <div className="stat-val another-disk-stat-val accent-green">
           {totalFiles.toLocaleString()}
         </div>
         <div className="stat-lbl">סה"כ קבצים שהועלו</div>

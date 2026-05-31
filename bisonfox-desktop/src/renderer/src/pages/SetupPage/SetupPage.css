@@ -26,3 +26,80 @@
     color: var(--accent);
     border: 1px solid rgba(20, 184, 166, .25);
 }
+
+/* Extracted from SetupPage.tsx */
+.setup-page-title {
+    margin-bottom: 2rem;
+}
+
+.setup-form-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.setup-grid {
+    display: flex;
+    gap: 3rem;
+    flex: 1;
+    align-items: flex-start;
+}
+
+.setup-col-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+}
+
+.setup-divider {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    height: 80%;
+    align-self: center;
+}
+
+.setup-col-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: 100%;
+    justify-content: center;
+}
+
+.setup-footer {
+    margin-top: auto;
+}
+
+/* Extracted from SetupInputs.tsx */
+.setup-input-ltr {
+    direction: ltr;
+}
+
+.setup-form-msg {
+    min-height: 1.4em;
+    display: block;
+}
+
+/* Extracted from DriveList.tsx */
+.drive-list-waiting {
+    font-size: 1.5rem;
+}
+
+.drive-list-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.drive-list-container {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.drive-option.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

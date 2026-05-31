@@ -12,27 +12,21 @@ export function DriveList({ drives, loadingDrives, selectedLetter, onSelectLette
   return (
     <div className="form-group">
       {drives.length === 0 && !loadingDrives ? (
-        <div className="info-box" style={{ fontSize: '1.5rem' }}>
+        <div className="info-box drive-list-waiting">
           ממתין לחיבור כונן...
         </div>
       ) : (
         <>
-          <label
-            className="form-label"
-            style={{ display: 'flex', justifyContent: 'space-between' }}
-          >
+          <label className="form-label drive-list-header">
             <span>בחר כונן:</span>
             {loadingDrives && <span className="badge pulse">סורק...</span>}
           </label>
-          <div className="drive-list" style={{ maxHeight: '180px', overflowY: 'auto' }}>
+          <div className="drive-list drive-list-container">
             {drives.map((drive) => (
               <div
                 key={drive.letter}
                 className={`drive-option ${selectedLetter === drive.letter ? 'selected' : ''} ${!drive.selectable ? 'disabled' : ''}`}
                 onClick={() => drive.selectable && onSelectLetter(drive.letter)}
-                style={
-                  !drive.selectable ? { opacity: 0.45, cursor: 'not-allowed' } : undefined
-                }
                 title={drive.disabledReason || ''}
               >
                 <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>

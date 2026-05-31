@@ -54,26 +54,18 @@ export function SetupPage(): JSX.Element {
   return (
     <>
       <div className="glass-card">
-        <p className="page-title" style={{ marginBottom: '2rem' }}>
+        <p className="page-title setup-page-title">
           הגדרת העברה
         </p>
 
         <form
           onSubmit={handleSubmit}
-          style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}
+          className="setup-form-container"
         >
           {/* 2-Column Grid/Flex layout */}
-          <div style={{ display: 'flex', gap: '3rem', flex: 1, alignItems: 'flex-start' }}>
+          <div className="setup-grid">
             {/* RIGHT SIDE (in RTL): User Name */}
-            <div
-              style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                justifyContent: 'center'
-              }}
-            >
+            <div className="setup-col-right">
               <UserNameInput
                 name={name}
                 setName={setName}
@@ -85,26 +77,10 @@ export function SetupPage(): JSX.Element {
             </div>
 
             {/* DIVIDER */}
-            <div
-              style={{
-                width: '1px',
-                background: 'rgba(255, 255, 255, 0.15)',
-                height: '80%',
-                alignSelf: 'center'
-              }}
-            />
+            <div className="setup-divider" />
 
             {/* LEFT SIDE: Drive & Subfolder */}
-            <div
-              style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1.5rem',
-                height: '100%',
-                justifyContent: 'center'
-              }}
-            >
+            <div className="setup-col-left">
               <DriveList
                 drives={drives}
                 loadingDrives={loadingDrives}
@@ -124,7 +100,7 @@ export function SetupPage(): JSX.Element {
           </div>
 
           {/* FOOTER */}
-          <div style={{ marginTop: 'auto' }}>
+          <div className="setup-footer">
             <NavigationOptions
               onBack={handleBack}
               backLabel={diskSessionsLength > 0 ? 'סיום העברה' : '→ חזור'}

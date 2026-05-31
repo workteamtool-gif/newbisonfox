@@ -35,10 +35,7 @@ export function TreePaginationBar({
   }
 
   return (
-    <div
-      className="tree-pagination-bar"
-      style={{ margin: '1rem 0', justifyContent: 'center', direction: 'ltr' }}
-    >
+    <div className="tree-pagination-bar tree-pagination-container">
       <div className="pagination-controls">
         <button
           className="pagination-btn"
@@ -85,8 +82,7 @@ export function TreePaginationBar({
 
       <form
         onSubmit={handleSearchSubmit}
-        className="pagination-search-form"
-        style={{ direction: 'ltr' }}
+        className="pagination-search-form ltr-form"
       >
         <input
           type="text"
