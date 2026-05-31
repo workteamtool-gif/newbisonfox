@@ -26,7 +26,6 @@ export class UploadManager {
     this.notifier.notifyProgress(sessionId, { type: 'error', message: 'Upload cancelled by user.' })
   }
 
-  // --- NEW: GRACEFUL SHUTDOWN HANDLER ---
   public cancelAllUploads(): void {
     if (this.activeUploads.size === 0) return
 
@@ -36,24 +35,19 @@ export class UploadManager {
     )
 
     for (const [sessionId, controller] of this.activeUploads.entries()) {
-      // 1. Instantly kill the C++ thread pool workers
       controller.abort()
 
-      // 2. Mark as cancelled in the internal database
       this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
 
-      // 3. Notify the React frontend
       this.notifier.notifyProgress(sessionId, {
         type: 'error',
         message: 'Upload aborted: Application is shutting down.'
       })
     }
 
-    // 4. Clear memory
     this.activeUploads.clear()
     logger.info('UploadManager', 'All uploads successfully aborted.')
   }
-  // --------------------------------------
 
   public async startUpload(sessionId: string, body: any): Promise<void> {
     // Abort any previous active upload for this session (e.g. during retry)

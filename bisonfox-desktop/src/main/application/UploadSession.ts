@@ -1,32 +1,18 @@
 import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { DiskSession } from '@shared/entities/DiskSession'
+import type { UploadSession } from '../domain/entities/UploadSession'
 
-export interface UploadSession {
-  id: string
-  userName: string
-  diskSessions: DiskSession[]
-  destination: string
-  progress: Record<string, number>
-  status: 'pending' | 'uploading' | 'complete' | 'cancelled' | 'error'
-  completedCount: number
-  failedCount: number
-  failedFiles: { path: string; reason: string }[]
-  totalCount: number
-  createdAt: Date
-  lastUpdate: Date
-}
 
 export class sessionSingleton {
   private static instance: sessionSingleton
 
-  // THE FIX: Hold exactly ONE session in memory. No Map needed.
   private activeSession: UploadSession | null = null
 
   static getInstance(): sessionSingleton {
     if (!sessionSingleton.instance) {
       sessionSingleton.instance = new sessionSingleton()
     }
+    
     return sessionSingleton.instance
   }
 
@@ -61,11 +47,10 @@ export class sessionSingleton {
   }
 
   get(id: string): UploadSession | undefined {
-    // Only return the session if the frontend's ID matches our single active ID.
-    // This prevents "ghost" browser tabs from interacting with old sessions.
     if (this.activeSession && this.activeSession.id === id) {
       return this.activeSession
     }
+
     return undefined
   }
 
@@ -81,8 +66,4 @@ export class sessionSingleton {
     }
   }
 
-  // Bonus utility: Good for testing or forced resets
-  clear(): void {
-    this.activeSession = null
-  }
 }

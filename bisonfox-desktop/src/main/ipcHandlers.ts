@@ -1,11 +1,10 @@
 import { ipcMain, BrowserWindow } from 'electron'
-import { exec } from 'child_process'
+//import { exec } from 'child_process'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { IDiskService } from './domain/interfaces/IDiskService'
 import { IFileService } from './domain/interfaces/IFileService'
 import { UploadManager } from './application/UploadManager'
 import { sessionSingleton } from './application/UploadSession'
-import { scanManager } from './application/ScanManager'
 import { NameValidator } from './domain/validators/NameValidator'
 import { SubfolderValidator } from './domain/validators/SubfolderValidator'
 import { logMail } from './infrastructure/loggers/MailLogger'
@@ -90,9 +89,6 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
       controller.abort()
       countFileControllers.delete(scanId)
     }
-
-    const session = scanManager.consumeSession(scanId)
-    if (session) clearTimeout(session.timeout)
 
     return { success: true }
   })
