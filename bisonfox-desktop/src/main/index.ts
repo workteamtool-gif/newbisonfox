@@ -10,7 +10,7 @@ import { logger } from '@main/infrastructure/loggers/Logger'
 import { setupApplication } from './setup'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { UploadManager } from './application/UploadManager'
-import { startKeepAliveLogger } from './keepAliveLogger'
+import { startKeepAliveLogger } from '@main/infrastructure/loggers/keepAliveLogger'
 
 // --- GLOBAL STATE ---
 let appServices: { uploadManager: UploadManager } | null = null

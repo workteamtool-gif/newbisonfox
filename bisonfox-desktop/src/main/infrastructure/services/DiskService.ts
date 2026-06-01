@@ -18,31 +18,31 @@ export class DiskService implements IDiskService {
 
   private async listWindowsDrives(): Promise<DriveInfo[]> {
     try {
-      // 1. Use PowerShell (Future-proof for Windows 11)
-      // 2. Output as JSON (Fixes the comma-parsing bug natively)
-      const psCommand = `Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, DriveType, VolumeName, Size | ConvertTo-Json -Compress`
-
-      const { stdout } = await execAsync(`powershell -NoProfile -Command "${psCommand}"`)
+      // Use fsutil fsinfo drives to get list of available drives
+      const { stdout } = await execAsync('fsutil fsinfo drives')
 
       if (!stdout.trim()) return []
       
-      // If there is only one drive, PowerShell returns an object. If multiple, an array.
-      const parsed = JSON.parse(stdout)
-      const rawDrives: any[] = Array.isArray(parsed) ? parsed : [parsed]
+      // Parse output: "Drives: C:\ D:\ E:\" -> extract drive letters
+      const drivesMatch = stdout.match(/Drives:\s*(.*)/i)
+      if (!drivesMatch) return []
+      
+      const driveLetters = drivesMatch[1]
+        .split(/\s+/)
+        .map(d => d.trim().replace(/\\$/, '')) // Remove trailing backslash
+        .filter(d => /^[A-Z]:$/i.test(d))
 
       const drives: DriveInfo[] = []
       const blacklistDrivesEnv = process.env.BLACKLIST_DRIVES || 'X:'
       const blacklistDrives = blacklistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
-      for (const rawDrive of rawDrives) {
-        const rawDeviceId = rawDrive.DeviceID // e.g., "D:"
+      for (const deviceId of driveLetters) {
+        const upperDeviceId = deviceId.toUpperCase()
 
-        if (!rawDeviceId) {
-          logger.info('DiskService', 'Skipping drive: No DeviceID found', { drive: rawDrive })
+        if (!upperDeviceId) {
+          logger.info('DiskService', 'Skipping drive: No DeviceID found', { drive: deviceId })
         } else {
-            const upperDeviceId = rawDeviceId.toUpperCase()
             if (!blacklistDrives.includes(upperDeviceId)) {              
-            const size = parseInt(rawDrive.Size) || 0
             
             let selectable = true
             let disabledReason: string | undefined
@@ -57,7 +57,7 @@ export class DiskService implements IDiskService {
             }
             drives.push({
               letter,
-              totalSize: size,
+              totalSize: 0, // fsutil fsinfo drives doesn't provide size
               selectable,
               disabledReason
             })
