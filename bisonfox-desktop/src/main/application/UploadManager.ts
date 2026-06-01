@@ -1,12 +1,14 @@
-import path from 'path'
 import { sessionSingleton } from './UploadSession'
 import { IFileService } from '@main/domain/interfaces/IFileService'
 import { IEventNotifier } from '@main/domain/interfaces/IEventNotifier'
 import { logger } from '@main/infrastructure/loggers/Logger'
+import { UploadValidator } from './UploadValidator'
+import { UploadProgressHandler } from './UploadProgressHandler'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()
   private sessionSingletonInstance = sessionSingleton.getInstance()
+  private validator = new UploadValidator()
 
   constructor(
     private fileService: IFileService,
@@ -61,54 +63,18 @@ export class UploadManager {
     const session = this.sessionSingletonInstance.get(sessionId)
     if (!session) return
 
-    const { files, subfolder, expectedTotal, expectedTotalBytes } = body
-
-    const rawBaseDir = process.env.UPLOAD_BASE_DIR
-    if (!rawBaseDir || rawBaseDir.trim() === '') {
-      const errorMsg =
-        'System Configuration Error: The destination directory is not configured. We cannot copy files at this time.'
-
-      logger.error(
-        'UploadManager',
-        'Upload aborted: UPLOAD_BASE_DIR is missing or empty in the .env file.'
-      )
-
-      this.sessionSingletonInstance.update(session.id, { status: 'error' })
-      this.notifier.notifyProgress(session.id, { type: 'error', message: errorMsg })
-
-      return
-    }
-
-    const baseDir = path.resolve(rawBaseDir || '')
-    const targetDest = path.resolve(baseDir, session.userName, subfolder || '')
-
-    // SECURITY: Case-insensitive Path Traversal Check for Network Drives
-    if (!targetDest.toLowerCase().startsWith(baseDir.toLowerCase())) {
+    const validationResult = this.validator.validate(session, body)
+    
+    if (!validationResult.valid) {
       this.sessionSingletonInstance.update(session.id, { status: 'error' })
       this.notifier.notifyProgress(session.id, {
         type: 'error',
-        message: 'Security Error: Invalid target destination.'
-      })
-
-      logger.error('UploadManager', 'SECURITY: Path traversal attempt blocked!', {
-        sessionId: session.id,
-        user: session.userName,
-        attemptedPath: targetDest
+        message: validationResult.message
       })
       return
     }
 
-    const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
-    const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
-
-    if (!filesToUpload || filesToUpload.length === 0) {
-      this.sessionSingletonInstance.update(session.id, { status: 'error' })
-      this.notifier.notifyProgress(session.id, {
-        type: 'error',
-        message: 'No files selected for upload.'
-      })
-      return
-    }
+    const { targetDest, filesToUpload, allExcluded, basePath } = validationResult.data
 
     const controller = new AbortController()
     this.activeUploads.set(session.id, controller)
@@ -119,83 +85,27 @@ export class UploadManager {
       progress: {}
     })
 
-    let basePath: string | undefined
-    const firstFile = filesToUpload[0]
-    if (firstFile && firstFile.includes(':')) {
-      const driveMatch = firstFile.match(/^[a-zA-Z]:\\/)
-      if (driveMatch) basePath = driveMatch[0]
-    }
-
-    let lastSessionWrite = 0
-    const SESSION_WRITE_INTERVAL = 500
+    const progressHandler = new UploadProgressHandler(
+      session.id,
+      this.notifier,
+      this.sessionSingletonInstance
+    )
 
     try {
       await this.fileService.copyFiles(filesToUpload, targetDest, {
         basePath,
         excludedFiles: allExcluded,
-        expectedTotal,
-        expectedTotalBytes,
+        expectedTotal: body.expectedTotal,
+        expectedTotalBytes: body.expectedTotalBytes,
         signal: controller.signal, // Connects the scanner and workers to this controller
-        onScan: (count) => {
-          this.notifier.notifyProgress(session.id, { type: 'discovery', count })
-        },
-        onProgress: (file, percent, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes) => {
-          if (file === '__done__') {
-            this.sessionSingletonInstance.update(session.id, {
-              completedCount: completedFiles,
-              failedCount: failedCount,
-              failedFiles: failedFiles,
-              totalCount: totalFiles,
-              status: 'complete'
-            })
-
-            this.notifier.notifyProgress(session.id, {
-              type: 'done',
-              completed: completedFiles,
-              completedBytes: completedBytes,
-              failed: failedCount,
-              failedFiles,
-              total: totalFiles,
-              totalBytes: totalBytes
-            })
-            this.activeUploads.delete(session.id)
-            return
-          }
-
-          const current = this.sessionSingletonInstance.get(session.id)
-          if (current) {
-            if (percent === -1 || percent === 100) {
-              current.progress[file] = percent
-            }
-
-            const now = Date.now()
-            if (now - lastSessionWrite > SESSION_WRITE_INTERVAL) {
-              lastSessionWrite = now
-              this.sessionSingletonInstance.update(session.id, {
-                progress: current.progress,
-                completedCount: completedFiles,
-                failedCount: failedCount,
-                failedFiles: failedFiles,
-                totalCount: totalFiles
-              })
-            }
-            this.notifier.notifyProgress(session.id, {
-              type: 'progress',
-              file,
-              percent,
-              completed: completedFiles,
-              completedBytes: completedBytes,
-              failed: failedCount,
-              total: totalFiles,
-              totalBytes: totalBytes
-            })
-          }
-        }
+        onScan: progressHandler.onScan,
+        onProgress: progressHandler.onProgress
       })
+      
+      this.activeUploads.delete(session.id)
     } catch (err: any) {
       logger.error('UploadManager', 'Upload failed', { error: err.message })
-      this.sessionSingletonInstance.update(session.id, { status: 'error' })
-      this.notifier.notifyProgress(session.id, { type: 'error', message: err.message })
+      progressHandler.onError(err.message)
       this.activeUploads.delete(session.id)
     }
   }

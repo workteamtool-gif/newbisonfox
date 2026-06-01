@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { useUploadManager } from '@renderer/hooks/useUploadManager'
+import { useUploadManager } from '@renderer/pages/UploadPage/hooks/useUploadManager'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
 import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
-import { ErrorUpload } from './UploadPageComponents/ErrorUpload'
-import { CountingUpload } from './UploadPageComponents/CountingUpload'
-import { UploadComponent } from './UploadPageComponents/UploadComponent'
+import { ErrorUpload } from './components/ErrorUpload'
+import { CountingUpload } from './components/CountingUpload'
+import { UploadComponent } from './components/UploadComponent'
 
 export function UploadPage(): JSX.Element | null {
   const {

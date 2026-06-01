@@ -1,4 +1,3 @@
-export type ValidationResult = {
-    valid: boolean
-    message?: string
-}
+export type ValidationResult<T = void> =
+  | (T extends void ? { valid: true } : { valid: true; data: T })
+  | { valid: false; message: string }

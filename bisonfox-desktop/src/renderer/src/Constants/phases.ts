@@ -7,7 +7,7 @@ import {
   WizardStep
 } from '@renderer/entites/Wizard'
 
-export interface PhaseGroup {
+interface PhaseGroup {
   key: string
   label: string
   steps: WizardStep[]
