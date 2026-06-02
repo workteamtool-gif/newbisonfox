@@ -32,11 +32,6 @@ export function DriveList({ drives, loadingDrives, selectedLetter, onSelectLette
                 <div className="drive-icon">{drive.selectable ? '💾' : '🚫'}</div>
                 <div className="drive-info">
                   <div className="drive-name">({drive.letter})</div>
-                  <div className="drive-meta">
-                    {drive.selectable
-                      ? `${Math.round(drive.totalSize / 1024 / 1024 / 1024)}GB`
-                      : drive.disabledReason || <>לא זמין</>}
-                  </div>
                 </div>
                 {drive.selectable && <div className="drive-check">✓</div>}
               </div>

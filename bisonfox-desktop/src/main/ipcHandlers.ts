@@ -1,5 +1,5 @@
+const { app } = require('electron')
 import { ipcMain, BrowserWindow } from 'electron'
-import { exec } from 'child_process'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { IDiskService } from './domain/interfaces/IDiskService'
 import { IFileService } from './domain/interfaces/IFileService'
@@ -134,11 +134,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
   })
 
   ipcMain.handle('system:restart', () => {
-    exec('shutdown /r /t 0', (error) => {
-      if (error) {
-        console.error(`Failed to restart: ${error}`)
-      }
-    })
+    app.quit()
+
     return { success: true }
   })
 }

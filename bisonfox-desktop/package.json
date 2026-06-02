@@ -1,9 +1,9 @@
 {
   "name": "bisonfox-desktop",
   "version": "1.0.0",
-  "description": "BisonFox Enterprise Data Migration Tool",
+  "description": "IronFox",
   "main": "./out/main/index.js",
-  "author": "BisonFox",
+  "author": "IronFox",
   "homepage": "https://github.com/your-username/bisonfox-desktop",
   "scripts": {
     "format": "prettier --write .",
@@ -58,8 +58,8 @@
     "vite": "^7.2.6"
   },
   "build": {
-    "appId": "com.bisonfox.desktop",
-    "productName": "BisonFox",
+    "appId": "com.IronFox.desktop",
+    "productName": "IronFox",
     "directories": {
       "buildResources": "build"
     },

@@ -57,7 +57,6 @@ export class DiskService implements IDiskService {
             }
             drives.push({
               letter,
-              totalSize: 0, // fsutil fsinfo drives doesn't provide size
               selectable,
               disabledReason
             })
