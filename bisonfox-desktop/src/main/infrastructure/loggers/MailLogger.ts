@@ -3,8 +3,14 @@ import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
+import { config } from '@main/appConfig'
+
 function resolveMailLogDir(): string | null {
-  const envPath = process.env.MAIL_LOG_DIR
+  let envPath = ''
+  try {
+    envPath = config.mailLogDir
+  } catch {
+  }
   if (!envPath || envPath.trim() === '') {
     logger.warn('MailLogger', 'MAIL_LOG_DIR is not configured')
     return null

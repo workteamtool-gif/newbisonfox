@@ -5,12 +5,19 @@ import { v4 as uuidv4 } from 'uuid'
 import { exec } from 'child_process'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
+import { config } from '@main/appConfig'
+
 const KEEP_ALIVE_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 
 function resolveKeepAliveDir(): string | null {
-  const envPath = process.env.KEEP_ALIVE_LOG_DIR
+  let envPath = ''
+  try {
+    envPath = config.keepAliveLogDir
+  } catch {
+    //
+  }
   if (!envPath || envPath.trim() === '') {
-    logger.warn('KeepAlive', 'KEEP_ALIVE_LOG_DIR is not configured')
+    logger.warn('KeepAlive', 'keepAliveLogDir is not configured')
     return null
   }
   

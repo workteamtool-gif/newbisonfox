@@ -1,8 +1,9 @@
 import { ISubfolderValidator } from '../interfaces/IValidators/ISubfolderValidator'
 import { ValidationResult } from '../entities/ValidationInfo'
+import { config } from '@main/appConfig'
 
 export class SubfolderValidator implements ISubfolderValidator {
-  private static readonly MAX_LENGTH = Number(process.env.VITE_SUBFOLDER_LENGTH)
+  private static readonly MAX_LENGTH = config.subfolderLength
   private static readonly VALID_PATTERN = /^[a-zA-Z0-9 _-]+$/
   private static readonly RESERVED_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
  

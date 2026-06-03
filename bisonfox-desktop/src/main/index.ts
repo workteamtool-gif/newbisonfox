@@ -11,6 +11,7 @@ import { setupApplication } from './setup'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { UploadManager } from './application/UploadManager'
 import { startKeepAliveLogger } from '@main/infrastructure/loggers/keepAliveLogger'
+import { config } from './appConfig'
 
 // --- GLOBAL STATE ---
 let appServices: { uploadManager: UploadManager } | null = null
@@ -113,6 +114,10 @@ app.whenReady().then(() => {
         resolve({ hasKeyboard })
       })
     })
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_CONFIG, () => {
+    return config
   })
 
   // 2. Initialize the backend engine and register domain IPC handlers

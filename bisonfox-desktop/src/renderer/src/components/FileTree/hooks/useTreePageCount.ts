@@ -25,9 +25,15 @@ export function useTreePageCount({
         .getDirCount(nodePath)
         .then((count) => {
           if (!isCancelled) {
-            const limit = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
-            setTotalPages(Math.max(1, Math.ceil(count / limit)))
-            setCountLoading(false)
+            import('@renderer/services/configService').then(({ getConfig }) => {
+              getConfig().then(config => {
+                if (!isCancelled) {
+                  const limit = config.itemsInOnePage || 48
+                  setTotalPages(Math.max(1, Math.ceil(count / limit)))
+                  setCountLoading(false)
+                }
+              })
+            })
           }
         })
         .catch(() => {

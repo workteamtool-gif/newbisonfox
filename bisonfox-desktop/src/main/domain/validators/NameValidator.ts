@@ -1,8 +1,9 @@
 import { INameValidator } from '../interfaces/IValidators/INameValidator'
 import { ValidationResult } from '../entities/ValidationInfo'
+import { config } from '@main/appConfig'
 
 export class NameValidator implements INameValidator {
-  private static readonly MAX_LENGTH = Number(process.env.VITE_USERNAME_LENGTH)
+  private static readonly MAX_LENGTH = config.usernameLength
   private static readonly VALID_PATTERN = /^[a-zA-Z0-9_.-]+$/
   private static readonly RESERVED_PATTERN = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
  

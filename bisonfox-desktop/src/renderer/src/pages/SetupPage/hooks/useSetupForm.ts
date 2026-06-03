@@ -32,8 +32,19 @@ export function useSetupForm(
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
   const [activeInput, setActiveInput] = useState<'name' | 'subfolder'>('name')
 
-  const maxNameLength = Number(import.meta.env.VITE_USERNAME_LENGTH)
-  const maxSubfolderLength = Number(import.meta.env.VITE_SUBFOLDER_LENGTH)
+  const [maxNameLength, setMaxNameLength] = useState(30)
+  const [maxSubfolderLength, setMaxSubfolderLength] = useState(20)
+
+  import('react').then(({ useEffect }) => {
+    useEffect(() => {
+      import('@renderer/services/configService').then(({ getConfig }) => {
+        getConfig().then(config => {
+          setMaxNameLength(config.usernameLength || 30)
+          setMaxSubfolderLength(config.subfolderLength || 20)
+        })
+      })
+    }, [])
+  })
 
   const validNamePattern = /^[a-zA-Z0-9_.-]+$/
   const validSubfolderPattern = /^[a-zA-Z0-9 _-]+$/

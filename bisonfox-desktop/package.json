@@ -26,7 +26,6 @@
     "@fontsource/rubik": "^5.2.8",
     "@fontsource/rubik-glitch": "^5.2.7",
     "@fontsource/rubik-storm": "^5.2.7",
-    "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "immer": "^11.1.4",
     "p-limit": "^7.3.0",

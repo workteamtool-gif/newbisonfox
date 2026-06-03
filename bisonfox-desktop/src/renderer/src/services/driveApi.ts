@@ -3,7 +3,7 @@ import { DriveInfo } from '@shared/entities/DriveInfo'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 
-const ITEMS_IN_ONE_PAGE = Number(import.meta.env.VITE_ITEMS_IN_ONE_PAGE) || 48
+import { getConfig } from '@renderer/services/configService'
 
 export const driveApi = {
   listDrives: async (): Promise<DriveInfo[]> => {
@@ -14,18 +14,22 @@ export const driveApi = {
   getDriveTree: async (
     drive: string,
     page: number = 1,
-    limit: number = ITEMS_IN_ONE_PAGE
+    limit?: number
   ): Promise<PaginatedResult<ItemNode[]>> => {
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, { drive, page, limit })
+    const config = await getConfig()
+    const actualLimit = limit ?? config.itemsInOnePage
+    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, { drive, page, limit: actualLimit })
     return result ?? { nodes: [], hasMore: false }
   },
 
   getDir: async (
     dirPath: string,
     page: number = 1,
-    limit: number = ITEMS_IN_ONE_PAGE
+    limit?: number
   ): Promise<PaginatedResult<ItemNode[]>> => {
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, { dirPath, page, limit })
+    const config = await getConfig()
+    const actualLimit = limit ?? config.itemsInOnePage
+    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, { dirPath, page, limit: actualLimit })
     return result ?? { nodes: [], hasMore: false, totalPages: 1 }
   },
 

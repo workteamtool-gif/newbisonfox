@@ -13,7 +13,13 @@ export function useSuccessPage() {
   )
   const failedCountTotal = snapshot.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
   const failedFiles = snapshot.flatMap((d) => d.failedItems || [])
-  const destinationUserEndpoint = import.meta.env.VITE_ENDPOINT_DESTINATION_FOLDER
+  const [destinationUserEndpoint, setDestinationUserEndpoint] = useState('')
+
+  useEffect(() => {
+    import('@renderer/services/configService').then(({ getConfig }) => {
+      getConfig().then(config => setDestinationUserEndpoint(config.endpointDestinationFolder))
+    })
+  }, [])
 
   const handleReturnHome = () => {
     window.api.invoke('system:restart')

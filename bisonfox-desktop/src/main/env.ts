@@ -1,3 +1,3 @@
-import 'dotenv/config'
+import { config } from './appConfig'
 
-process.env.UV_THREADPOOL_SIZE = process.env.COPY_CONCURRENCY || '32'
+process.env.UV_THREADPOOL_SIZE = config.copyConcurrency.toString()

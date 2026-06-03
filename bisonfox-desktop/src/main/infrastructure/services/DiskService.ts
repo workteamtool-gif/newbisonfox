@@ -4,6 +4,7 @@ import * as fs from 'fs'
 import { IDiskService } from '@main/domain/interfaces/IDiskService'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { logger } from '@main/infrastructure/loggers/Logger'
+import { config } from '@main/appConfig'
 
 const execAsync = promisify(exec)
 
@@ -33,7 +34,7 @@ export class DiskService implements IDiskService {
         .filter(d => /^[A-Z]:$/i.test(d))
 
       const drives: DriveInfo[] = []
-      const blacklistDrivesEnv = process.env.BLACKLIST_DRIVES || 'X:'
+      const blacklistDrivesEnv = config.blacklistDrives
       const blacklistDrives = blacklistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
 
       for (const deviceId of driveLetters) {

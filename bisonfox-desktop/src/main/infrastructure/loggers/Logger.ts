@@ -2,6 +2,8 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
 
+import { config } from '@main/appConfig'
+
 // ─── Log Levels ──────────────────────────────────────────────────────────────
 export enum LogLevel {
   DEBUG = 0,
@@ -53,8 +55,13 @@ class Logger {
     // ─────────────────────────────────────────────────────────────────
     // GUARD CLAUSE: Check for missing Environment Variable
     // ─────────────────────────────────────────────────────────────────
-    const envLogDir = process.env.LOG_DIR
-    const envTempLogDir = process.env.TEMP_LOG_DIR
+    let envLogDir = ''
+    let envTempLogDir = ''
+    try {
+      envLogDir = config.logDir
+      envTempLogDir = config.tempLogDir
+    } catch {
+    }
 
     if (!envLogDir || envLogDir.trim() === '' || !envTempLogDir || envTempLogDir.trim() === '') {
       // Fail-fast for file logging, but don't crash the app.

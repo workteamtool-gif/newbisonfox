@@ -1,0 +1,19 @@
+{
+  "uploadBaseDir": "C:\\Users\\c591683\\ironfoxcopieddata",
+  "endpointDestinationFolder": "C:\\Users\\c591683\\ironfoxcopieddata",
+  "logDir": "C:\\Users\\c591683\\ironfoxlogs",
+  "tempLogDir": "C:\\Users\\c591683\\ironfoxlogstemp",
+  "keepAliveLogDir": "C:\\Users\\c591683\\ironfoxkeepalive",
+  "mailLogDir": "C:\\Users\\c591683\\ironfoxmail",
+  "itemsInOnePage": 24,
+  "copyConcurrency": 32,
+  "deepSearchConcurrency": 32,
+  "heavyFileThresholdMb": 100,
+  "reportCopiedFilesIntervalMs": 500,
+  "maxReportedFailures": 10,
+  "failIntervalMs": 500,
+  "failRetries": 5,
+  "blacklistDrives": "Z:",
+  "subfolderLength": 20,
+  "usernameLength": 30
+}

@@ -10,7 +10,6 @@ export interface FailedItemsUploadProps {
   retryAll: () => void
 }
 
-const MAX_TRACKED_FAILURES = Number(import.meta.env.VITE_MAX_REPORTED_FAILURES) || 100_000
 export function FailedItemsUpload({
   failedCount,
   failedFilesList,
@@ -18,7 +17,15 @@ export function FailedItemsUpload({
   retryFailed,
   retryAll
 }: FailedItemsUploadProps): React.JSX.Element {
-  const exceedsTrackingLimit = failedCount > MAX_TRACKED_FAILURES
+  const [maxTrackedFailures, setMaxTrackedFailures] = React.useState(100_000)
+
+  React.useEffect(() => {
+    import('@renderer/services/configService').then(({ getConfig }) => {
+      getConfig().then(config => setMaxTrackedFailures(config.maxReportedFailures || 100_000))
+    })
+  }, [])
+
+  const exceedsTrackingLimit = failedCount > maxTrackedFailures
 
   return (
     <>
@@ -30,7 +37,7 @@ export function FailedItemsUpload({
           <FailedFilesList
             failedFiles={failedFilesList}
             totalFailedCount={failedCount}
-            maxToShow={MAX_TRACKED_FAILURES}
+            maxToShow={maxTrackedFailures}
           />
         </div>
 
@@ -47,7 +54,7 @@ export function FailedItemsUpload({
                 🔄 נסה שוב את כל הקבצים
               </button>
               <div className="failed-review-warning">
-                ⚠️ נכשלו יותר מ-{MAX_TRACKED_FAILURES.toLocaleString()} קבצים. המערכת לא שמרה את כל
+                ⚠️ נכשלו יותר מ-{maxTrackedFailures.toLocaleString()} קבצים. המערכת לא שמרה את כל
                 הכשלונות. לחיצה על "נסה שוב את כל הקבצים" תעלה מחדש את כל הקבצים שנבחרו.
               </div>
             </>

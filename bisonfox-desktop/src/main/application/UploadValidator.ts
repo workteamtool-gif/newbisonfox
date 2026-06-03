@@ -4,13 +4,14 @@ import type { UploadSession } from '../domain/entities/UploadSession'
 
 import { ValidationResult } from '../domain/entities/ValidationInfo'
 import type { UploadValidationData } from '../domain/entities/UploadValidationData'
+import { config } from '@main/appConfig'
 
 
 export class UploadValidator {
   public validate(session: UploadSession, body: any): ValidationResult<UploadValidationData> {
     const { files, subfolder } = body
 
-    const rawBaseDir = process.env.UPLOAD_BASE_DIR
+    const rawBaseDir = config.uploadBaseDir
     if (!rawBaseDir || rawBaseDir.trim() === '') {
       logger.error(
         'UploadValidator',

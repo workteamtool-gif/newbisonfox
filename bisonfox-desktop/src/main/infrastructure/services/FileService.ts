@@ -6,16 +6,18 @@ import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
 
+import { config } from '@main/appConfig'
+
 // Folders and files that won't be shown in the explorer and be excluded from the copy process
 const EXCLUDED = new Set<string>([])
-const COPY_CONCURRENCY = Number(process.env.COPY_CONCURRENCY) || 32
-const DEEP_SEARCH_CONCURRENCY = Number(process.env.DEEP_SEARCH_CONCURRENCY) || 32
-const HEAVY_FILE_THRESHOLD = (Number(process.env.HEAVY_FILE_THRESHOLD_MB) || 100) * 1024 * 1024
-const ITEMS_IN_ONE_PAGE = Number(process.env.VITE_ITEMS_IN_ONE_PAGE) || 48
-const FAIL_INTERVAL_MS = Number(process.env.FAIL_INTERVAL_MS) || 500
-const FAIL_RETRIES = Number(process.env.FAIL_RETRIES) || 5
-const REPORT_COPIED_FILES_INTERVAL_MS = Number(process.env.REPORT_COPIED_FILES_INTERVAL_MS) || 500
-const MAX_REPORTED_FAILURES = Number(process.env.VITE_MAX_REPORTED_FAILURES) || 10_000
+const COPY_CONCURRENCY = config.copyConcurrency
+const DEEP_SEARCH_CONCURRENCY = config.deepSearchConcurrency
+const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
+const ITEMS_IN_ONE_PAGE = config.itemsInOnePage
+const FAIL_INTERVAL_MS = config.failIntervalMs
+const FAIL_RETRIES = config.failRetries
+const REPORT_COPIED_FILES_INTERVAL_MS = config.reportCopiedFilesIntervalMs
+const MAX_REPORTED_FAILURES = config.maxReportedFailures
 
 /**
  * A custom Semaphore to strictly limit how many massive files can copy concurrently.
