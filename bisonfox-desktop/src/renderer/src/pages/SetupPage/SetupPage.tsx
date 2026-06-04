@@ -12,6 +12,9 @@ import { useSetupForm } from './hooks/useSetupForm'
 import { DriveList } from './components/DriveList'
 import { UserNameInput, SubfolderInput } from './components/SetupInputs'
 
+import { EasterEgg } from '@renderer/components/EasterEgg/EasterEgg'
+import { useEasterEggTrigger } from '@renderer/components/EasterEgg/useEasterEggTrigger'
+
 import './SetupPage.css'
 
 export function SetupPage(): JSX.Element {
@@ -45,6 +48,12 @@ export function SetupPage(): JSX.Element {
 
   const openKeyboard = useKeyboardDetection()
   const showKeyboard = openKeyboard && !isCancelModalOpen && !isConfirmOpen
+
+  const showEasterEgg = useEasterEggTrigger(isCancelModalOpen, {
+    triggerCount: 7,
+    durationMs: 3000,
+    resetTimeoutMs: 5000
+  })
 
   useEffect(() => {
     setKeyboardVisible(showKeyboard)
@@ -136,6 +145,8 @@ export function SetupPage(): JSX.Element {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirm}
       />
+      
+      <EasterEgg isVisible={showEasterEgg} />
     </>
   )
 }

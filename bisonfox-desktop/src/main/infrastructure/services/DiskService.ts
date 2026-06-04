@@ -8,6 +8,9 @@ import { config } from '@main/appConfig'
 
 const execAsync = promisify(exec)
 
+/**
+ * Service responsible for listing and analyzing physical and logical disk drives
+ */
 export class DiskService implements IDiskService {
   async listDrives(): Promise<DriveInfo[]> {
     if (process.platform !== 'win32') {
@@ -17,6 +20,13 @@ export class DiskService implements IDiskService {
     return this.listWindowsDrives()
   }
 
+  /**
+   * Internal Windows implementation for drive detection.
+   * Uses `fsutil` to list drive letters and checks read accessibility for each.
+   * Filters out any blacklisted drive letters configured in the application config.
+   * 
+   * @returns A promise resolving to an array of Windows drive details.
+   */
   private async listWindowsDrives(): Promise<DriveInfo[]> {
     try {
       // Use fsutil fsinfo drives to get list of available drives
@@ -43,7 +53,7 @@ export class DiskService implements IDiskService {
         if (!upperDeviceId) {
           logger.info('DiskService', 'Skipping drive: No DeviceID found', { drive: deviceId })
         } else {
-            if (!blacklistDrives.includes(upperDeviceId)) {              
+          if (!blacklistDrives.includes(upperDeviceId)) {              
             
             let selectable = true
             let disabledReason: string | undefined
@@ -61,8 +71,8 @@ export class DiskService implements IDiskService {
               selectable,
               disabledReason
             })
-            }
           }
+        }
       }
 
       return drives

@@ -1,3 +1,5 @@
+import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
+
 export interface IFileScanner {
   /**
    * Recursively scans directories to build a list of all files to copy.
@@ -12,7 +14,8 @@ export interface IFileScanner {
     onFile: (fullPath: string, relativePath: string) => void,
     onDir: (relDir: string) => void,
     onScanError: (filePath: string, errorMessage: string) => void,
-    signal: AbortSignal
+    signal: AbortSignal,
+    backpressureGate?: BackpressureGate
   ): Promise<{ fullPath: string; relativePath: string }[]>
 
   /**
