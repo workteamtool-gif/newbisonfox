@@ -26,7 +26,7 @@ export function useTreePageCount({
         .then((count) => {
           if (!isCancelled) {
             import('@renderer/services/configService').then(({ getConfig }) => {
-              getConfig().then(config => {
+              getConfig().then((config) => {
                 if (!isCancelled) {
                   const limit = config.itemsInOnePage || 48
                   setTotalPages(Math.max(1, Math.ceil(count / limit)))

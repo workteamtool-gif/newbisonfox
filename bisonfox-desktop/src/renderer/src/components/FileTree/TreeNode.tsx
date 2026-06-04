@@ -55,8 +55,7 @@ export function TreeNode({
   const isExplicitlyChecked = selected.has(node.path)
   const checked = isExplicitlyChecked || (inheritedCheck && !isExcluded)
 
-  const showChildren =
-    node.isDirectory && expanded && loadedChildren && loadedChildren.length > 0
+  const showChildren = node.isDirectory && expanded && loadedChildren && loadedChildren.length > 0
 
   return (
     <div>

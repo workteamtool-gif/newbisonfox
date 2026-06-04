@@ -5,7 +5,6 @@ import { WizardLayout } from '@renderer/components/WizardLayout/WizardLayout'
 import { Toast } from '@renderer/components/Toast/Toast'
 import { ErrorBoundary } from '@renderer/components/ErrorBoundary'
 
-
 function PageRouter(): React.JSX.Element {
   const Step = useWizardStore((s) => s.step)
 

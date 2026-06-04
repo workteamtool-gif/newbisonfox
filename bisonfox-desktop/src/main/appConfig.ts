@@ -36,9 +36,7 @@ function loadConfig(): AppConfig {
 
   try {
     // In dev mode, use project root. In prod, use the folder containing the exe.
-    const baseDir = is.dev
-      ? path.resolve(process.cwd())
-      : path.dirname(app.getPath('exe'))
+    const baseDir = is.dev ? path.resolve(process.cwd()) : path.dirname(app.getPath('exe'))
 
     const configPath = path.join(baseDir, 'config.json')
 

@@ -8,8 +8,8 @@ export function isSubPath(parent: string, child: string, strict = false): boolea
   if (!parent || !child) return false
 
   // 1. Normalize slashes and remove trailing slashes to start from a clean baseline
-  var normalizedParent = parent.replace(/\\/g, '/').replace(/\/$/, '')
-  var normalizedChild = child.replace(/\\/g, '/').replace(/\/$/, '')
+  let normalizedParent = parent.replace(/\\/g, '/').replace(/\/$/, '')
+  let normalizedChild = child.replace(/\\/g, '/').replace(/\/$/, '')
 
   // 2. Handle Identity: Is it the exact same folder?
   if (normalizedParent.toLowerCase() === normalizedChild.toLowerCase()) {

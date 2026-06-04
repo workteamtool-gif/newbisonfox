@@ -63,7 +63,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
   })
 
   ipcMain.handle('start-count-files', async (_, { scanId, selectedPaths, excludedPaths }) => {
-    const onCount = (count: number, size: number): void => pushToFrontend(`count-files-${scanId}`, { count, size })
+    const onCount = (count: number, size: number): void =>
+      pushToFrontend(`count-files-${scanId}`, { count, size })
 
     const controller = new AbortController()
     countFileControllers.set(scanId, controller)
@@ -97,14 +98,21 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     return { success: true, sessionId: session.id }
   })
 
-  ipcMain.handle('add-disk-files', (_, { sessionId, driveLetter, selectedItemPaths, excludedItemPaths }) => {
-    const session = sessionSingletonInstance.get(sessionId)
-    if (!session) throw new Error('Session not found')
+  ipcMain.handle(
+    'add-disk-files',
+    (_, { sessionId, driveLetter, selectedItemPaths, excludedItemPaths }) => {
+      const session = sessionSingletonInstance.get(sessionId)
+      if (!session) throw new Error('Session not found')
 
-    session.diskSessions.push({ driveLetter, selectedItemPaths, excludedItemPaths: excludedItemPaths ?? [] })
-    sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
-    return { success: true }
-  })
+      session.diskSessions.push({
+        driveLetter,
+        selectedItemPaths,
+        excludedItemPaths: excludedItemPaths ?? []
+      })
+      sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
+      return { success: true }
+    }
+  )
 
   ipcMain.handle('remove-file', (_, { sessionId, filePath, diskIndex }) => {
     const session = sessionSingletonInstance.get(sessionId)
@@ -112,26 +120,39 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
     const diskSession = session.diskSessions[diskIndex]
     if (diskSession) {
-      diskSession.selectedItemPaths = diskSession.selectedItemPaths.filter((itemPath) => itemPath !== filePath)
+      diskSession.selectedItemPaths = diskSession.selectedItemPaths.filter(
+        (itemPath) => itemPath !== filePath
+      )
       sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
     }
     return { success: true }
   })
 
-  ipcMain.handle('start-upload', async (_, { sessionId, files, subfolder, expectedTotalFiles, expectedTotalBytes }) => {
-    uploadManager.startUpload(sessionId, { files, subfolder, expectedTotalFiles, expectedTotalBytes })
-    return { success: true, message: 'Upload started' }
-  })
+  ipcMain.handle(
+    'start-upload',
+    async (_, { sessionId, files, subfolder, expectedTotalFiles, expectedTotalBytes }) => {
+      uploadManager.startUpload(sessionId, {
+        files,
+        subfolder,
+        expectedTotalFiles,
+        expectedTotalBytes
+      })
+      return { success: true, message: 'Upload started' }
+    }
+  )
 
   ipcMain.handle('cancel-upload', (_, { sessionId }) => {
     uploadManager.cancelUpload(sessionId)
     return { success: true }
   })
 
-  ipcMain.handle('log-mail', (_, { userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount }) => {
-    logMail(userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount)
-    return { success: true }
-  })
+  ipcMain.handle(
+    'log-mail',
+    (_, { userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount }) => {
+      logMail(userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount)
+      return { success: true }
+    }
+  )
 
   ipcMain.handle('system:restart', () => {
     app.quit()

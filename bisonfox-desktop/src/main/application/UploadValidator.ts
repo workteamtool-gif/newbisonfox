@@ -6,7 +6,6 @@ import { ValidationResult } from '../domain/entities/ValidationInfo'
 import type { UploadValidationData } from '../domain/entities/UploadValidationData'
 import { config } from '@main/appConfig'
 
-
 export class UploadValidator {
   public validate(session: UploadSession, body: any): ValidationResult<UploadValidationData> {
     const { files, subfolder } = body
@@ -19,7 +18,8 @@ export class UploadValidator {
       )
       return {
         valid: false,
-        message: 'System Configuration Error: The destination directory is not configured. We cannot copy files at this time.'
+        message:
+          'System Configuration Error: The destination directory is not configured. We cannot copy files at this time.'
       }
     }
 

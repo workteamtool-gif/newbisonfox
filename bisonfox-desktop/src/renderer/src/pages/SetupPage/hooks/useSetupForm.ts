@@ -6,10 +6,7 @@ import { SelectFilesPage, SuccessPage } from '@renderer/entites/Wizard'
 import { createTimeFolderName } from '@renderer/utils/folderCreator'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 
-export function useSetupForm(
-  drives: DriveInfo[],
-  selectedLetter: string
-) {
+export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const {
     setStep,
     setUserName,
@@ -38,7 +35,7 @@ export function useSetupForm(
   import('react').then(({ useEffect }) => {
     useEffect(() => {
       import('@renderer/services/configService').then(({ getConfig }) => {
-        getConfig().then(config => {
+        getConfig().then((config) => {
           setMaxNameLength(config.usernameLength || 30)
           setMaxSubfolderLength(config.subfolderLength || 20)
         })
@@ -182,7 +179,8 @@ export function useSetupForm(
     }
   }
 
-  const isFormValid = name.trim() !== '' && selectedLetter !== '' && nameError === '' && subfolderError === ''
+  const isFormValid =
+    name.trim() !== '' && selectedLetter !== '' && nameError === '' && subfolderError === ''
 
   return {
     name,

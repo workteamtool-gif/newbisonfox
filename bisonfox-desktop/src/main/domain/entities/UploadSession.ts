@@ -1,4 +1,4 @@
-import { DiskSession } from "@shared/entities/DiskSession"
+import { DiskSession } from '@shared/entities/DiskSession'
 
 export interface UploadSession {
   id: string

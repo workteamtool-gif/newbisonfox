@@ -89,9 +89,7 @@ export function UploadComponent({
       {!showFailedReview && (
         <div>
           <div className="progress-header">
-            <span className="progress-name upload-progress-name">
-              {phaseLabel}
-            </span>
+            <span className="progress-name upload-progress-name">{phaseLabel}</span>
             <span className="progress-pct">{overallPercentage}%</span>
           </div>
           <div className="progress-track upload-progress-track">

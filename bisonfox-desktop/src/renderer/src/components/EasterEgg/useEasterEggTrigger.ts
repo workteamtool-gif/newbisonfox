@@ -7,7 +7,7 @@ export interface EasterEggTriggerConfig {
 
 export function useEasterEggTrigger(
   isModalOpen: boolean,
-  config: EasterEggTriggerConfig = { triggerCount: 7, durationMs: 5000}
+  config: EasterEggTriggerConfig = { triggerCount: 7, durationMs: 5000 }
 ): boolean {
   const [showEasterEgg, setShowEasterEgg] = useState(false)
   const prevIsOpen = useRef(isModalOpen)
@@ -35,7 +35,7 @@ export function useEasterEggTrigger(
         }, config.durationMs)
       }
     }
-    
+
     prevIsOpen.current = isModalOpen
   }, [isModalOpen, config.triggerCount, config.durationMs])
 

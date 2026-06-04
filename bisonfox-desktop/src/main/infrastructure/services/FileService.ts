@@ -19,7 +19,7 @@ export class FileService implements IFileService {
   /**
    * Retrieves a paginated listing of a directory, enriching entries with filesystem node metadata.
    * Delegates the actual retrieval to `DirectoryExplorer.ts`.
-   * 
+   *
    * @param dirPath Absolute folder path to read.
    * @param page Target page number (starts at 1).
    * @param limit Maximum nodes per page.
@@ -36,7 +36,7 @@ export class FileService implements IFileService {
   /**
    * Counts the immediate children inside a folder.
    * Delegates count execution to `DirectoryExplorer.ts`.
-   * 
+   *
    * @param dirPath The folder to count items in.
    * @returns Total number of immediate non-excluded children.
    */
@@ -47,7 +47,7 @@ export class FileService implements IFileService {
   /**
    * Identifies the pagination page index of a specific child entry.
    * Delegates page index search to `DirectoryExplorer.ts`.
-   * 
+   *
    * @param dirPath Parent folder path.
    * @param query Target name of the child item.
    * @param limit Items per page config.
@@ -60,7 +60,7 @@ export class FileService implements IFileService {
   /**
    * Recursively searches for an item and computes the parent hierarchy page markers to expand the tree view.
    * Delegates the crawler and path traversal to `DirectoryExplorer.ts`.
-   * 
+   *
    * @param basePath Search root directory.
    * @param query Item name search string.
    * @returns Found path and pages dictionary, or null.
@@ -77,7 +77,7 @@ export class FileService implements IFileService {
   /**
    * Scans paths rapidly to calculate total file counts and sum of bytes.
    * Delegates size estimation tasks to the underlying `FileScanner` service.
-   * 
+   *
    * @param files Root search inputs.
    * @param excludedFiles File paths or names to skip.
    * @param onCount Progress updates callback.
@@ -98,7 +98,7 @@ export class FileService implements IFileService {
   /**
    * Copies selected files/folders to the destination, monitoring progress and applying retries.
    * Delegates copy task worker coordination to `FileCopyEngine.ts`.
-   * 
+   *
    * @param initialPaths Array of paths to copy.
    * @param destination Target directory to copy files to.
    * @param options Execution settings and callbacks.

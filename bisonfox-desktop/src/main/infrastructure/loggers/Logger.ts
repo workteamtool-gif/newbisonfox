@@ -60,8 +60,7 @@ class Logger {
     try {
       envLogDir = config.logDir
       envTempLogDir = config.tempLogDir
-    } catch {
-    }
+    } catch {}
 
     if (!envLogDir || envLogDir.trim() === '' || !envTempLogDir || envTempLogDir.trim() === '') {
       // Fail-fast for file logging, but don't crash the app.

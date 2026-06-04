@@ -20,7 +20,7 @@ function resolveKeepAliveDir(): string | null {
     logger.warn('KeepAlive', 'keepAliveLogDir is not configured')
     return null
   }
-  
+
   return path.resolve(envPath)
 }
 

@@ -188,7 +188,7 @@ export function useSelectFilesPage() {
         } else {
           useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
         }
-        return false;
+        return false
       } else {
         const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
         if (gen !== searchGenRef.current) return false // cancelled
@@ -208,7 +208,7 @@ export function useSelectFilesPage() {
 
           setAutoExpandMap(expandedPages)
           setScrollToPath(deepMatch.path)
-          return true; // indicates success deep find, we can clear query
+          return true // indicates success deep find, we can clear query
         } else {
           useWizardStore
             .getState()
@@ -224,7 +224,7 @@ export function useSelectFilesPage() {
         setLoading(false)
       }
     }
-    return false;
+    return false
   }
 
   const handleContinue = async (): Promise<void> => {

@@ -36,9 +36,7 @@ export function SelectFilesPage(): JSX.Element {
 
   return (
     <div className="glass-card">
-      <p className="page-title select-files-title">
-        בחירת קבצים ותיקיות
-      </p>
+      <p className="page-title select-files-title">בחירת קבצים ותיקיות</p>
 
       <div className="info-box disk-info-box">
         <span>
@@ -52,10 +50,7 @@ export function SelectFilesPage(): JSX.Element {
             <span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}
           </p>
           {searching && (
-            <button
-              className="btn btn-secondary cancel-search-btn"
-              onClick={handleCancelSearch}
-            >
+            <button className="btn btn-secondary cancel-search-btn" onClick={handleCancelSearch}>
               ✕ ביטול חיפוש
             </button>
           )}
@@ -107,4 +102,3 @@ export function SelectFilesPage(): JSX.Element {
     </div>
   )
 }
-

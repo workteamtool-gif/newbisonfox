@@ -23,7 +23,7 @@ const heavyLock = new AsyncSemaphore(4)
  * Copies a single file from the source path to the destination path.
  * Checks file size first, and if it exceeds the heavy threshold, acquires a permit
  * from `heavyLock` to limit simultaneous large-file network and disk I/O.
- * 
+ *
  * @param src The source file path.
  * @param dest The destination file path.
  * @param signal Optional AbortSignal to cancel the copy.
@@ -54,7 +54,7 @@ async function copyOneFast(src: string, dest: string, signal?: AbortSignal): Pro
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.
  * Utilizes `IFileScanner` to continuously discover paths in the background while workers process the queue.
  * Integrates `BackpressureGate` to limit memory growth and applies automatic retries on worker failures.
- * 
+ *
  * @param scanner The scanner implementation used to walk directories in parallel.
  * @param initialPaths Array of file or directory paths to copy.
  * @param destination Target directory to copy files to.
@@ -66,7 +66,8 @@ export async function copyFiles(
   destination: string,
   options: CopyOptions
 ): Promise<void> {
-  const { basePath, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } = options
+  const { basePath, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } =
+    options
 
   const internalController = new AbortController()
   const triggerExternalAbort = (): void => internalController.abort()
@@ -159,7 +160,16 @@ export async function copyFiles(
       lastBroadcastTime = now
       const totalFiles = expectedTotal ?? totalDiscovered
       const totalBytes = expectedTotalBytes ?? 0 // Unknown initially if not precalc
-      onProgress(file, pct, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes)
+      onProgress(
+        file,
+        pct,
+        completedFiles,
+        completedBytes,
+        failedCount,
+        failedFiles,
+        totalFiles,
+        totalBytes
+      )
     } else if (!reportTimer) {
       reportTimer = setTimeout(
         () => {
@@ -167,7 +177,16 @@ export async function copyFiles(
           lastBroadcastTime = Date.now()
           const totalFiles = expectedTotal ?? totalDiscovered
           const totalBytes = expectedTotalBytes ?? 0
-          onProgress(lastReportFile, lastReportPct, completedFiles, completedBytes, failedCount, failedFiles, totalFiles, totalBytes)
+          onProgress(
+            lastReportFile,
+            lastReportPct,
+            completedFiles,
+            completedBytes,
+            failedCount,
+            failedFiles,
+            totalFiles,
+            totalBytes
+          )
         },
         REPORT_COPIED_FILES_INTERVAL_MS - (now - lastBroadcastTime)
       )
@@ -236,5 +255,14 @@ export async function copyFiles(
 
   const finalTotalFiles = expectedTotal ?? totalDiscovered
   const finalTotalBytes = expectedTotalBytes ?? completedBytes
-  onProgress('__done__', 100, completedFiles, completedBytes, failedCount, failedFiles, finalTotalFiles, finalTotalBytes)
+  onProgress(
+    '__done__',
+    100,
+    completedFiles,
+    completedBytes,
+    failedCount,
+    failedFiles,
+    finalTotalFiles,
+    finalTotalBytes
+  )
 }

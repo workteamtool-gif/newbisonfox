@@ -1,15 +1,15 @@
 import { useState, JSX } from 'react'
 
 interface TreePaginationBarProps {
-  rootPage: number;
-  rootTotalPages: number;
-  rootHasMore: boolean;
-  loading: boolean;
-  searching: boolean;
-  onLoadPrevRoot: () => void;
-  onLoadNextRoot: () => void;
-  onJumpToPage: (page: number) => void;
-  onSearch: (query: string) => Promise<boolean>;
+  rootPage: number
+  rootTotalPages: number
+  rootHasMore: boolean
+  loading: boolean
+  searching: boolean
+  onLoadPrevRoot: () => void
+  onLoadNextRoot: () => void
+  onJumpToPage: (page: number) => void
+  onSearch: (query: string) => Promise<boolean>
 }
 
 export function TreePaginationBar({
@@ -80,10 +80,7 @@ export function TreePaginationBar({
 
       <div className="pagination-divider" />
 
-      <form
-        onSubmit={handleSearchSubmit}
-        className="pagination-search-form ltr-form"
-      >
+      <form onSubmit={handleSearchSubmit} className="pagination-search-form ltr-form">
         <input
           type="text"
           placeholder="🔍 Search file or folder..."

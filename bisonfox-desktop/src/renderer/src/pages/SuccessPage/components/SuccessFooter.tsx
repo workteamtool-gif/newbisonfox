@@ -1,8 +1,8 @@
 import { JSX } from 'react'
 
 interface SuccessFooterProps {
-  countdown: number;
-  onReturnHome: () => void;
+  countdown: number
+  onReturnHome: () => void
 }
 
 export function SuccessFooter({ countdown, onReturnHome }: SuccessFooterProps): JSX.Element {

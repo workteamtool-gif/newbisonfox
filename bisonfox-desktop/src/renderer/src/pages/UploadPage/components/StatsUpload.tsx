@@ -134,9 +134,7 @@ export function StatsUpload({
               <div className="stat-lbl">סה"כ</div>
             </div>
             <div className="stat-card">
-              <div className="stat-val upload-stat-val-rtl">
-                {etaLabel}
-              </div>
+              <div className="stat-val upload-stat-val-rtl">{etaLabel}</div>
               <div className="stat-lbl">זמן משוער לסיום</div>
             </div>
           </>

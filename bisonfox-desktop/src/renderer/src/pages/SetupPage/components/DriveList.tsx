@@ -2,19 +2,22 @@ import { JSX } from 'react'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 
 interface DriveListProps {
-  drives: DriveInfo[];
-  loadingDrives: boolean;
-  selectedLetter: string;
-  onSelectLetter: (letter: string) => void;
+  drives: DriveInfo[]
+  loadingDrives: boolean
+  selectedLetter: string
+  onSelectLetter: (letter: string) => void
 }
 
-export function DriveList({ drives, loadingDrives, selectedLetter, onSelectLetter }: DriveListProps): JSX.Element {
+export function DriveList({
+  drives,
+  loadingDrives,
+  selectedLetter,
+  onSelectLetter
+}: DriveListProps): JSX.Element {
   return (
     <div className="form-group">
       {drives.length === 0 && !loadingDrives ? (
-        <div className="info-box drive-list-waiting">
-          ממתין לחיבור כונן...
-        </div>
+        <div className="info-box drive-list-waiting">ממתין לחיבור כונן...</div>
       ) : (
         <>
           <label className="form-label drive-list-header">

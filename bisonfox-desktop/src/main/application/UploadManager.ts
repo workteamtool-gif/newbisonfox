@@ -64,7 +64,7 @@ export class UploadManager {
     if (!session) return
 
     const validationResult = this.validator.validate(session, body)
-    
+
     if (!validationResult.valid) {
       this.sessionSingletonInstance.update(session.id, { status: 'error' })
       this.notifier.notifyProgress(session.id, {
@@ -101,7 +101,7 @@ export class UploadManager {
         onScan: progressHandler.onScan,
         onProgress: progressHandler.onProgress
       })
-      
+
       this.activeUploads.delete(session.id)
     } catch (err: any) {
       logger.error('UploadManager', 'Upload failed', { error: err.message })

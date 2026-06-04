@@ -17,7 +17,7 @@ export function useSuccessPage() {
 
   useEffect(() => {
     import('@renderer/services/configService').then(({ getConfig }) => {
-      getConfig().then(config => setDestinationUserEndpoint(config.endpointDestinationFolder))
+      getConfig().then((config) => setDestinationUserEndpoint(config.endpointDestinationFolder))
     })
   }, [])
 

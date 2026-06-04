@@ -22,9 +22,7 @@ export function AnotherDiskPage(): React.JSX.Element {
     <div className="glass-card another-disk-card">
       <p className="page-title">כונן נוסף?</p>
 
-      <p className="page-subtitle">
-        לא לשכוח לנתק את הכונן החיצוני!
-      </p>
+      <p className="page-subtitle">לא לשכוח לנתק את הכונן החיצוני!</p>
 
       <div className="another-disk-content">
         <AnotherDiskStats diskSessionsLength={diskSessions.length} totalFiles={totalFiles} />
@@ -53,4 +51,3 @@ export function AnotherDiskPage(): React.JSX.Element {
     </div>
   )
 }
-

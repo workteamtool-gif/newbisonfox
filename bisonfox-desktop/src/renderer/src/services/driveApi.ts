@@ -18,7 +18,11 @@ export const driveApi = {
   ): Promise<PaginatedResult<ItemNode[]>> => {
     const config = await getConfig()
     const actualLimit = limit ?? config.itemsInOnePage
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, { drive, page, limit: actualLimit })
+    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, {
+      drive,
+      page,
+      limit: actualLimit
+    })
     return result ?? { nodes: [], hasMore: false }
   },
 
@@ -29,7 +33,11 @@ export const driveApi = {
   ): Promise<PaginatedResult<ItemNode[]>> => {
     const config = await getConfig()
     const actualLimit = limit ?? config.itemsInOnePage
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, { dirPath, page, limit: actualLimit })
+    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, {
+      dirPath,
+      page,
+      limit: actualLimit
+    })
     return result ?? { nodes: [], hasMore: false, totalPages: 1 }
   },
 

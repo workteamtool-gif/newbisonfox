@@ -66,14 +66,9 @@ export function SetupPage(): JSX.Element {
   return (
     <>
       <div className="glass-card">
-        <p className="page-title setup-page-title">
-          הגדרת העברה
-        </p>
+        <p className="page-title setup-page-title">הגדרת העברה</p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="setup-form-container"
-        >
+        <form onSubmit={handleSubmit} className="setup-form-container">
           {/* 2-Column Grid/Flex layout */}
           <div className="setup-grid">
             {/* RIGHT SIDE (in RTL): User Name */}
@@ -154,4 +149,3 @@ export function SetupPage(): JSX.Element {
     </>
   )
 }
-

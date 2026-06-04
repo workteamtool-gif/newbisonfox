@@ -12,9 +12,9 @@ export class BackpressureGate {
   ) {}
 
   /**
-   * Called by the scanner before pushing new items. 
+   * Called by the scanner before pushing new items.
    * Blocks if the current queue size meets or exceeds the high-water mark.
-   * 
+   *
    * @param queueLength The current number of items waiting in the copy queue.
    */
   async waitIfNeeded(queueLength: number): Promise<void> {

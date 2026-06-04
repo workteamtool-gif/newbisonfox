@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import type { UploadSession } from '../domain/entities/UploadSession'
 
-
 export class sessionSingleton {
   private static instance: sessionSingleton
 
@@ -12,7 +11,7 @@ export class sessionSingleton {
     if (!sessionSingleton.instance) {
       sessionSingleton.instance = new sessionSingleton()
     }
-    
+
     return sessionSingleton.instance
   }
 
@@ -65,5 +64,4 @@ export class sessionSingleton {
       this.activeSession = null
     }
   }
-
 }

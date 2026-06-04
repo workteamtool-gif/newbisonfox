@@ -32,8 +32,7 @@ export async function countFiles(
             count++
             size += stat.size
           }
-        } catch {
-        }
+        } catch {}
       }
     })
   )
@@ -89,7 +88,7 @@ export async function countFiles(
       // Use up to 50 concurrent fs.stat calls per directory batch
       const maxWorkers = Math.min(50, files.length)
       const workers = Array.from({ length: maxWorkers }, statWorker)
-      
+
       await Promise.all(workers)
 
       activeStatBatches--
@@ -131,7 +130,7 @@ export async function countFiles(
                 count++
                 filesToStat.push(fullPath)
               }
-              
+
               if (i % 500 === 0) {
                 reportProgress()
               }

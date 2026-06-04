@@ -1,12 +1,12 @@
 import { JSX } from 'react'
 
 interface UserNameInputProps {
-  name: string;
-  setName: (v: string) => void;
-  nameError: string;
-  maxNameLength: number;
-  validateName: (v: string) => void;
-  setActiveInput: (input: 'name') => void;
+  name: string
+  setName: (v: string) => void
+  nameError: string
+  maxNameLength: number
+  validateName: (v: string) => void
+  setActiveInput: (input: 'name') => void
 }
 
 export function UserNameInput({
@@ -54,12 +54,12 @@ export function UserNameInput({
 }
 
 interface SubfolderInputProps {
-  subfolder: string;
-  setSubfolder: (v: string) => void;
-  subfolderError: string;
-  maxSubfolderLength: number;
-  validateSubfolder: (v: string) => void;
-  setActiveInput: (input: 'subfolder') => void;
+  subfolder: string
+  setSubfolder: (v: string) => void
+  subfolderError: string
+  maxSubfolderLength: number
+  validateSubfolder: (v: string) => void
+  setActiveInput: (input: 'subfolder') => void
 }
 
 export function SubfolderInput({
@@ -91,9 +91,7 @@ export function SubfolderInput({
         className="form-msg setup-form-msg"
         style={{
           visibility:
-            subfolderError || subfolder.length >= maxSubfolderLength
-              ? 'visible'
-              : 'hidden',
+            subfolderError || subfolder.length >= maxSubfolderLength ? 'visible' : 'hidden',
           color: subfolderError ? 'var(--accent-red)' : 'var(--accent-orange)'
         }}
       >

@@ -54,4 +54,3 @@ export function SuccessPage(): JSX.Element {
     </div>
   )
 }
-

@@ -21,7 +21,7 @@ export function FailedItemsUpload({
 
   React.useEffect(() => {
     import('@renderer/services/configService').then(({ getConfig }) => {
-      getConfig().then(config => setMaxTrackedFailures(config.maxReportedFailures || 100_000))
+      getConfig().then((config) => setMaxTrackedFailures(config.maxReportedFailures || 100_000))
     })
   }, [])
 
@@ -42,10 +42,7 @@ export function FailedItemsUpload({
         </div>
 
         <div className="failed-review-actions">
-          <button
-            className="btn btn-skip-failed"
-            onClick={skipFailed}
-          >
+          <button className="btn btn-skip-failed" onClick={skipFailed}>
             דלג על פריטים שנכשלו
           </button>
           {exceedsTrackingLimit ? (

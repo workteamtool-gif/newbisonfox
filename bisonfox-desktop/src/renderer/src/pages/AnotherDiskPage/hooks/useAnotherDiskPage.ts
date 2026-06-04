@@ -4,8 +4,16 @@ import { SetupPage, SuccessPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function useAnotherDiskPage() {
-  const { setStep, diskSessions, userName, sessionId, reset, setCurrentDisk, setCurrentSubfolder, currentSubfolder } =
-    useWizardStore()
+  const {
+    setStep,
+    diskSessions,
+    userName,
+    sessionId,
+    reset,
+    setCurrentDisk,
+    setCurrentSubfolder,
+    currentSubfolder
+  } = useWizardStore()
   const [countdown, setCountdown] = useState(150)
   const mailLogged = useRef(false)
 

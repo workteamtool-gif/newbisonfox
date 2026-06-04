@@ -1,8 +1,8 @@
 import { JSX } from 'react'
 
 interface AnotherDiskChoicesProps {
-  onYes: () => void;
-  onNo: () => void;
+  onYes: () => void
+  onNo: () => void
 }
 
 export function AnotherDiskChoices({ onYes, onNo }: AnotherDiskChoicesProps): JSX.Element {

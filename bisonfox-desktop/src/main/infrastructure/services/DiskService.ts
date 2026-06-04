@@ -24,7 +24,7 @@ export class DiskService implements IDiskService {
    * Internal Windows implementation for drive detection.
    * Uses `fsutil` to list drive letters and checks read accessibility for each.
    * Filters out any blacklisted drive letters configured in the application config.
-   * 
+   *
    * @returns A promise resolving to an array of Windows drive details.
    */
   private async listWindowsDrives(): Promise<DriveInfo[]> {
@@ -33,19 +33,21 @@ export class DiskService implements IDiskService {
       const { stdout } = await execAsync('fsutil fsinfo drives')
 
       if (!stdout.trim()) return []
-      
+
       // Parse output: "Drives: C:\ D:\ E:\" -> extract drive letters
       const drivesMatch = stdout.match(/Drives:\s*(.*)/i)
       if (!drivesMatch) return []
-      
+
       const driveLetters = drivesMatch[1]
         .split(/\s+/)
-        .map(d => d.trim().replace(/\\$/, '')) // Remove trailing backslash
-        .filter(d => /^[A-Z]:$/i.test(d))
+        .map((d) => d.trim().replace(/\\$/, '')) // Remove trailing backslash
+        .filter((d) => /^[A-Z]:$/i.test(d))
 
       const drives: DriveInfo[] = []
       const blacklistDrivesEnv = config.blacklistDrives
-      const blacklistDrives = blacklistDrivesEnv.split(',').map((drive) => drive.trim().toUpperCase())
+      const blacklistDrives = blacklistDrivesEnv
+        .split(',')
+        .map((drive) => drive.trim().toUpperCase())
 
       for (const deviceId of driveLetters) {
         const upperDeviceId = deviceId.toUpperCase()
@@ -53,8 +55,7 @@ export class DiskService implements IDiskService {
         if (!upperDeviceId) {
           logger.info('DiskService', 'Skipping drive: No DeviceID found', { drive: deviceId })
         } else {
-          if (!blacklistDrives.includes(upperDeviceId)) {              
-            
+          if (!blacklistDrives.includes(upperDeviceId)) {
             let selectable = true
             let disabledReason: string | undefined
 

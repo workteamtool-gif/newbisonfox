@@ -90,7 +90,17 @@ export function useTreeSearch({
           .catch(() => setLoading(false))
       }
     }
-  }, [autoExpandMap, nodePath, expanded, page, onLoadChildren, lastAutoExpandRef, setLoading, setExpanded, loadPage])
+  }, [
+    autoExpandMap,
+    nodePath,
+    expanded,
+    page,
+    onLoadChildren,
+    lastAutoExpandRef,
+    setLoading,
+    setExpanded,
+    loadPage
+  ])
 
   return { handleSearchSubmit }
 }
