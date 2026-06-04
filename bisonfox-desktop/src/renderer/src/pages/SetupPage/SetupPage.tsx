@@ -14,6 +14,8 @@ import { UserNameInput, SubfolderInput } from './components/SetupInputs'
 
 import { EasterEgg } from '@renderer/components/EasterEgg/EasterEgg'
 import { useEasterEggTrigger } from '@renderer/components/EasterEgg/useEasterEggTrigger'
+import { EasterEgg2 } from '@renderer/components/EasterEgg2/EasterEgg2'
+import { useUsernameEasterEggTrigger } from '@renderer/components/EasterEgg2/useUsernameEasterEggTrigger'
 
 import './SetupPage.css'
 
@@ -51,9 +53,10 @@ export function SetupPage(): JSX.Element {
 
   const showEasterEgg = useEasterEggTrigger(isCancelModalOpen, {
     triggerCount: 7,
-    durationMs: 3000,
-    resetTimeoutMs: 5000
+    durationMs: 5000
   })
+
+  const showEasterEgg2 = useUsernameEasterEggTrigger(name, 't_t_t_lightning_fox', 5000)
 
   useEffect(() => {
     setKeyboardVisible(showKeyboard)
@@ -145,8 +148,9 @@ export function SetupPage(): JSX.Element {
         onClose={() => setIsConfirmOpen(false)}
         onConfirm={handleConfirm}
       />
-      
+
       <EasterEgg isVisible={showEasterEgg} />
+      <EasterEgg2 isVisible={showEasterEgg2} />
     </>
   )
 }

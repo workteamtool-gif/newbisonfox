@@ -3,12 +3,11 @@ import { useState, useEffect, useRef } from 'react'
 export interface EasterEggTriggerConfig {
   triggerCount: number
   durationMs: number
-  resetTimeoutMs: number
 }
 
 export function useEasterEggTrigger(
   isModalOpen: boolean,
-  config: EasterEggTriggerConfig = { triggerCount: 7, durationMs: 5000, resetTimeoutMs: 5000 }
+  config: EasterEggTriggerConfig = { triggerCount: 7, durationMs: 5000}
 ): boolean {
   const [showEasterEgg, setShowEasterEgg] = useState(false)
   const prevIsOpen = useRef(isModalOpen)
@@ -25,9 +24,6 @@ export function useEasterEggTrigger(
       if (resetTimer.current) {
         clearTimeout(resetTimer.current)
       }
-      resetTimer.current = setTimeout(() => {
-        count.current = 0
-      }, config.resetTimeoutMs)
 
       if (count.current >= config.triggerCount) {
         setShowEasterEgg(true)
@@ -41,7 +37,7 @@ export function useEasterEggTrigger(
     }
     
     prevIsOpen.current = isModalOpen
-  }, [isModalOpen, config.triggerCount, config.durationMs, config.resetTimeoutMs])
+  }, [isModalOpen, config.triggerCount, config.durationMs])
 
   useEffect(() => {
     return () => {
