@@ -12,10 +12,10 @@ import { useSetupForm } from './hooks/useSetupForm'
 import { DriveList } from './components/DriveList'
 import { UserNameInput, SubfolderInput } from './components/SetupInputs'
 
-import { EasterEgg } from '@renderer/components/EasterEgg/EasterEgg'
-import { useEasterEggTrigger } from '@renderer/components/EasterEgg/useEasterEggTrigger'
-import { EasterEgg2 } from '@renderer/components/EasterEgg2/EasterEgg2'
-import { useUsernameEasterEggTrigger } from '@renderer/components/EasterEgg2/useUsernameEasterEggTrigger'
+import { EasterEgg } from '@renderer/components/EasterEggs/EasterEgg/EasterEgg'
+import { useEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg/useEasterEggTrigger'
+import { EasterEgg2 } from '@renderer/components/EasterEggs/EasterEgg2/EasterEgg2'
+import { useUsernameEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg2/useEasterEgg2Trigger'
 
 import './SetupPage.css'
 
