@@ -9,7 +9,6 @@ const configSchema = z.object({
   uploadBaseDir: z.string().min(1, 'Upload base directory must be provided'),
   endpointDestinationFolder: z.string().min(1, 'Endpoint destination folder must be provided'),
   logDir: z.string().min(1, 'Log directory must be provided'),
-  tempLogDir: z.string().min(1, 'Temporary log directory must be provided'),
   keepAliveLogDir: z.string().min(1, 'Keep-alive log directory must be provided'),
   mailLogDir: z.string().min(1, 'Mail log directory must be provided'),
   itemsInOnePage: z.number().int().positive().default(24),

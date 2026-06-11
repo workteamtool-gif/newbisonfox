@@ -2,7 +2,6 @@ export interface AppConfig {
   uploadBaseDir: string
   endpointDestinationFolder: string
   logDir: string
-  tempLogDir: string
   keepAliveLogDir: string
   mailLogDir: string
   itemsInOnePage: number
