@@ -109,8 +109,10 @@ class Logger {
     streamToClose.end()
   }
 
+  private isFlushed = false
+
   private getStream(): fs.WriteStream | null {
-    if (!this.finalLogDir) return null
+    if (!this.finalLogDir || this.isFlushed) return null
 
     // Check size limit on the active file
     if (this.activeFilePath && fs.existsSync(this.activeFilePath)) {
@@ -151,20 +153,21 @@ class Logger {
     const metaStr = meta ? ` | ${JSON.stringify(meta)}` : ''
     const line = `[${timestamp}] [${label}] [${context}] ${message}${metaStr}\n`
 
-    // 1. Try to write to file if configured
-    if (this.finalLogDir) {
+    // 1. Try to write to file if configured and not flushed
+    if (this.finalLogDir && !this.isFlushed) {
       const stream = this.getStream()
       if (stream) stream.write(line)
     }
 
-    // 2. Always output to console if file logging is dead, OR if it's an Error/Warn
-    if (!this.finalLogDir || level === LogLevel.ERROR || level === LogLevel.WARN) {
+    // 2. Always output to console if file logging is dead, flushed, OR if it's an Error/Warn
+    if (!this.finalLogDir || this.isFlushed || level === LogLevel.ERROR || level === LogLevel.WARN) {
       process.stderr.write(line)
     }
   }
 
   /** Flush all streams (call on shutdown) */
   async flush(): Promise<void> {
+    this.isFlushed = true
     if (this.activeStream) {
       const streamToClose = this.activeStream
       this.activeStream = null
