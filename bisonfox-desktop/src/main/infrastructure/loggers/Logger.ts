@@ -48,6 +48,7 @@ class Logger {
   private activeFilePath: string | null = null
 
   private rotationTimer: NodeJS.Timeout | null = null
+  private isRotating = false
 
   constructor(minLevel: LogLevel = LogLevel.DEBUG) {
     this.minLevel = minLevel
@@ -60,7 +61,7 @@ class Logger {
     try {
       envLogDir = config.logDir
       envTempLogDir = config.tempLogDir
-    } catch {}
+    } catch { }
 
     if (!envLogDir || envLogDir.trim() === '' || !envTempLogDir || envTempLogDir.trim() === '') {
       // Fail-fast for file logging, but don't crash the app.
@@ -119,7 +120,11 @@ class Logger {
   }
 
   private rotateAndMoveFile(): void {
+    // Guard: skip if a previous rotation is still copying to the network share
+    if (this.isRotating) return
     if (!this.activeStream || !this.activeFilePath || !this.finalLogDir) return
+
+    this.isRotating = true
 
     const streamToClose = this.activeStream
     const filePathToMove = this.activeFilePath
@@ -128,19 +133,21 @@ class Logger {
     this.activeStream = null
     this.activeFilePath = null
 
-    streamToClose.end(() => {
+    streamToClose.end(async () => {
       try {
         if (fs.existsSync(filePathToMove)) {
           const fileName = path.basename(filePathToMove)
           const finalPath = path.join(this.finalLogDir!, fileName)
-          // Safely move the file
-          fs.copyFileSync(filePathToMove, finalPath)
-          fs.unlinkSync(filePathToMove)
+          // Async copy — won't block the event loop or starve RAM on network shares
+          await fs.promises.copyFile(filePathToMove, finalPath)
+          await fs.promises.unlink(filePathToMove)
         }
       } catch (err) {
         process.stderr.write(
           `[SYSTEM ERROR] Failed to move log file from temp to final dir: ${err}\n`
         )
+      } finally {
+        this.isRotating = false
       }
     })
   }
@@ -213,13 +220,13 @@ class Logger {
       this.activeFilePath = null
 
       return new Promise((resolve) => {
-        streamToClose.end(() => {
+        streamToClose.end(async () => {
           try {
             if (fs.existsSync(filePathToMove)) {
               const fileName = path.basename(filePathToMove)
               const finalPath = path.join(this.finalLogDir!, fileName)
-              fs.copyFileSync(filePathToMove, finalPath)
-              fs.unlinkSync(filePathToMove)
+              await fs.promises.copyFile(filePathToMove, finalPath)
+              await fs.promises.unlink(filePathToMove)
             }
           } catch (e) {
             // ignore flush errors

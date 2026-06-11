@@ -34,6 +34,10 @@ async function gracefulShutdown(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   logger.info('System', 'Shutdown complete. Exiting process.')
+
+  // 3. Flush the logger — moves the active log file from tempLogDir to finalLogDir
+  await logger.flush()
+
   app.quit()
 }
 

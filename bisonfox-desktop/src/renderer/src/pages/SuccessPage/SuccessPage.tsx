@@ -26,9 +26,9 @@ export function SuccessPage(): JSX.Element {
         {destinationUserEndpoint && (
           <p className="page-subtitle">
             ניתן לראות את הקבצים ברשת היחידה בעזרת הנתיב: <br />
-            <code className="destination-path">
+            <div className="destination-path">
               {destinationUserEndpoint}\{userName}
-            </code>
+            </div>
             <br />
             אם אינכם רואים את הנתיב - ניתן לפנות לצוותי התמיכה הטכנית
           </p>
