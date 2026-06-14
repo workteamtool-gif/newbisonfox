@@ -154,7 +154,7 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     }
   )
 
-  ipcMain.handle('system:restart', () => {
+  ipcMain.handle('system:close', () => {
     app.quit()
 
     return { success: true }

@@ -47,7 +47,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     }
 
     // Trigger OS restart
-    window.api.invoke('system:restart')
+    window.api.invoke('system:close')
   }
 
   const showSteppersAndHeader = step !== WelcomePage && step !== SuccessPage

@@ -22,7 +22,7 @@ export function useSuccessPage() {
   }, [])
 
   const handleReturnHome = () => {
-    window.api.invoke('system:restart')
+    window.api.invoke('system:close')
   }
 
   useEffect(() => {
