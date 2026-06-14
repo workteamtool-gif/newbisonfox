@@ -33,6 +33,8 @@ export function useSelectFilesPage() {
   const searchGenRef = useRef(0)
   const [saving, setSaving] = useState(false)
 
+  const [rootCountLoading, setRootCountLoading] = useState(false)
+
   useEffect(() => {
     if (!currentDisk) return
 
@@ -49,6 +51,26 @@ export function useSelectFilesPage() {
           setRootHasMore(res.hasMore)
           setRootTotalPages(res.totalPages ?? 1)
           setLoading(false)
+
+          // Fetch root directory count asynchronously for pagination
+          if (res.totalPages === -1) {
+            setRootCountLoading(true)
+            driveApi.getDirCount(currentDisk.driveLetter!).then((count) => {
+              if (!isMounted) return
+              import('@renderer/services/configService').then(({ getConfig }) => {
+                getConfig().then((config) => {
+                  if (!isMounted) return
+                  const limit = config.itemsInOnePage || 48
+                  setRootTotalPages(Math.max(1, Math.ceil(count / limit)))
+                  setRootCountLoading(false)
+                })
+              })
+            }).catch(() => {
+              if (!isMounted) return
+              setRootTotalPages(1)
+              setRootCountLoading(false)
+            })
+          }
         })
         .catch(() => {
           if (isMounted) setLoading(false)
@@ -262,6 +284,7 @@ export function useSelectFilesPage() {
     tree,
     rootPage,
     rootTotalPages,
+    rootCountLoading,
     rootHasMore,
     scrollToPath,
     setScrollToPath,

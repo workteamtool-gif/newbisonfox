@@ -10,6 +10,7 @@ export function SelectFilesPage(): JSX.Element {
     tree,
     rootPage,
     rootTotalPages,
+    rootCountLoading,
     rootHasMore,
     scrollToPath,
     setScrollToPath,
@@ -60,6 +61,7 @@ export function SelectFilesPage(): JSX.Element {
           <TreePaginationBar
             rootPage={rootPage}
             rootTotalPages={rootTotalPages}
+            rootCountLoading={rootCountLoading}
             rootHasMore={rootHasMore}
             loading={loading}
             searching={searching}

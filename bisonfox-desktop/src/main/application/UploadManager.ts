@@ -25,7 +25,7 @@ export class UploadManager {
     }
 
     this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
-    this.notifier.notifyProgress(sessionId, { type: 'error', message: 'Upload cancelled by user.' })
+    // We intentionally don't send an 'error' notification here because the app is restarting
   }
 
   public cancelAllUploads(): void {
@@ -40,11 +40,7 @@ export class UploadManager {
       controller.abort()
 
       this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
-
-      this.notifier.notifyProgress(sessionId, {
-        type: 'error',
-        message: 'Upload aborted: Application is shutting down.'
-      })
+      // No need to notify the UI of an error since the application is literally closing
     }
 
     this.activeUploads.clear()
@@ -104,8 +100,12 @@ export class UploadManager {
 
       this.activeUploads.delete(session.id)
     } catch (err: any) {
-      logger.error('UploadManager', 'Upload failed', { error: err.message })
-      progressHandler.onError(err.message)
+      if (err.message && err.message.includes('Aborted')) {
+        logger.info('UploadManager', 'Upload aborted successfully.')
+      } else {
+        logger.error('UploadManager', 'Upload failed', { error: err.message })
+        progressHandler.onError(err.message)
+      }
       this.activeUploads.delete(session.id)
     }
   }

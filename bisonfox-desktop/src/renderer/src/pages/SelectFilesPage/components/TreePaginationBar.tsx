@@ -3,6 +3,7 @@ import { useState, JSX } from 'react'
 interface TreePaginationBarProps {
   rootPage: number
   rootTotalPages: number
+  rootCountLoading?: boolean
   rootHasMore: boolean
   loading: boolean
   searching: boolean
@@ -15,6 +16,7 @@ interface TreePaginationBarProps {
 export function TreePaginationBar({
   rootPage,
   rootTotalPages,
+  rootCountLoading,
   rootHasMore,
   loading,
   searching,
@@ -56,17 +58,40 @@ export function TreePaginationBar({
             }
           }}
         >
-          <input
-            type="number"
-            min={1}
-            max={rootTotalPages}
-            placeholder={String(rootPage)}
-            value={jumpToPageInput}
-            onChange={(e) => setJumpToPageInput(e.target.value)}
-            className="pagination-jump-input"
-            disabled={loading}
-          />
-          <span className="pagination-text">/ {Math.max(rootTotalPages, 1)}</span>
+          {loading ? (
+            <span
+              className="pagination-jump-input"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <span className="spin" style={{ display: 'inline-block', fontSize: '0.75rem' }}>
+                ⟳
+              </span>
+            </span>
+          ) : (
+            <input
+              type="number"
+              min={1}
+              max={rootTotalPages > 0 ? rootTotalPages : undefined}
+              placeholder={String(rootPage)}
+              value={jumpToPageInput}
+              onChange={(e) => setJumpToPageInput(e.target.value)}
+              className="pagination-jump-input"
+              disabled={loading || rootCountLoading}
+            />
+          )}
+          <span className="pagination-text">
+            /{' '}
+            {rootCountLoading ? (
+              <span
+                className="spin"
+                style={{ display: 'inline-block', fontSize: '0.75rem', marginLeft: '4px' }}
+              >
+                ⟳
+              </span>
+            ) : (
+              Math.max(rootTotalPages, 1)
+            )}
+          </span>
         </form>
 
         <button

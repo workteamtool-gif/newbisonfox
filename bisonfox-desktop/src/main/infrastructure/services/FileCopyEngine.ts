@@ -29,24 +29,73 @@ const heavyLock = new AsyncSemaphore(4)
  * @param signal Optional AbortSignal to cancel the copy.
  * @returns A promise resolving to the file size in bytes upon success.
  */
-async function copyOneFast(src: string, dest: string, signal?: AbortSignal): Promise<number> {
+async function copyOneFast(
+  src: string,
+  dest: string,
+  signal?: AbortSignal,
+  onProgressBytes?: (chunkSize: number) => void
+): Promise<number> {
   const st = await fs.promises.stat(src).catch(() => null)
   if (!st) throw new Error('File not accessible')
 
   if (signal?.aborted) return 0
 
+  const doCopy = (): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      let aborted = false
+      const onAbort = () => {
+        aborted = true
+        readStream.destroy()
+        writeStream.destroy()
+        reject(new Error('Aborted'))
+      }
+
+      if (signal) {
+        if (signal.aborted) return reject(new Error('Aborted'))
+        signal.addEventListener('abort', onAbort)
+      }
+
+      const readStream = fs.createReadStream(src)
+      const writeStream = fs.createWriteStream(dest)
+
+      readStream.on('data', (chunk) => {
+        if (aborted) return
+        if (onProgressBytes) onProgressBytes(chunk.length)
+      })
+
+      readStream.on('error', (err) => {
+        if (signal) signal.removeEventListener('abort', onAbort)
+        writeStream.destroy()
+        reject(err)
+      })
+
+      writeStream.on('error', (err) => {
+        if (signal) signal.removeEventListener('abort', onAbort)
+        readStream.destroy()
+        reject(err)
+      })
+
+      writeStream.on('finish', () => {
+        if (signal) signal.removeEventListener('abort', onAbort)
+        resolve()
+      })
+
+      readStream.pipe(writeStream)
+    })
+  }
+
   if (st.size > HEAVY_FILE_THRESHOLD) {
     await heavyLock.acquire()
     try {
       if (signal?.aborted) return 0
-      await fs.promises.copyFile(src, dest)
+      await doCopy()
     } finally {
       heavyLock.release()
     }
     return st.size
   }
 
-  await fs.promises.copyFile(src, dest)
+  await doCopy()
   return st.size
 }
 
@@ -215,6 +264,7 @@ export async function copyFiles(
       while (attempt < FAIL_RETRIES && !success) {
         if (activeSignal.aborted) break
 
+        let partialBytes = 0
         try {
           if (attempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * attempt))
           const dir = path.dirname(destPath)
@@ -223,10 +273,23 @@ export async function copyFiles(
             mkdirCache.add(dir)
           }
 
-          const fileSize = await copyOneFast(src, destPath, activeSignal)
-          completedBytes += fileSize
+          const st = await fs.promises.stat(src).catch(() => null)
+          const expectedFileSize = st ? st.size : 1
+
+          const fileSize = await copyOneFast(
+            src, 
+            destPath, 
+            activeSignal,
+            (chunkSize) => {
+              partialBytes += chunkSize
+              completedBytes += chunkSize
+              const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
+              throttledReport(src, pct)
+            }
+          )
           success = true
         } catch (err: any) {
+          completedBytes -= partialBytes // Rollback partial progress
           lastError = err.message || 'Unknown copy error'
           attempt++
         }
