@@ -274,9 +274,9 @@ export async function copyFiles(
           }
 
           const st = await fs.promises.stat(src).catch(() => null)
-          const expectedFileSize = st ? st.size : 1
+          const expectedFileSize = st && st.size > 0 ? st.size : 1
 
-          const fileSize = await copyOneFast(
+          await copyOneFast(
             src, 
             destPath, 
             activeSignal,
