@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { v4 as uuidv4 } from 'uuid'
-import { logger } from '@main/infrastructure/loggers/Logger'
+import { logger, getFirstMacAddress } from '@main/infrastructure/loggers/Logger'
 
 import { config } from '@main/appConfig'
 
@@ -9,7 +8,7 @@ function resolveMailLogDir(): string | null {
   let envPath = ''
   try {
     envPath = config.mailLogDir
-  } catch {}
+  } catch { }
   if (!envPath || envPath.trim() === '') {
     logger.warn('MailLogger', 'MAIL_LOG_DIR is not configured')
     return null
@@ -25,7 +24,7 @@ function ensureMailLogDir(dir: string): void {
 
 function getMailLogFilePath(dir: string, timestamp: string): string {
   const safeTimestamp = timestamp.replace(/:/g, '-').replace(/\./g, '-')
-  return path.join(dir, `mail-log-${safeTimestamp}-${uuidv4()}.json`)
+  return path.join(dir, `${safeTimestamp}-${getFirstMacAddress()}.json`)
 }
 
 export function logMail(
