@@ -38,7 +38,7 @@ export function useAnotherDiskPage() {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
           clearInterval(interval)
-          window.api.invoke('system:restart')
+          window.api.invoke('system:close')
         }
         return currentCountdown - 1
       })

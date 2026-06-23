@@ -22,18 +22,13 @@ async function gracefulShutdown(): Promise<void> {
   if (isShuttingDown) return
   isShuttingDown = true
 
-  logger.info('System', 'Initiating graceful shutdown...')
-
   // 1. Instantly abort all active copy engines and scanners
   if (appServices?.uploadManager) {
-    logger.info('System', 'Aborting all active transfers...')
     appServices.uploadManager.cancelAllUploads()
   }
 
   // 2. Brief pause to allow File I/O finally blocks to execute and flush buffers
   await new Promise((resolve) => setTimeout(resolve, 500))
-
-  logger.info('System', 'Shutdown complete. Exiting process.')
 
   await logger.flush()
 
@@ -105,15 +100,11 @@ app.whenReady().then(() => {
       exec(cmd, { timeout: 5000 }, (err, stdout) => {
         if (err) {
           // On error, assume keyboard is present to avoid showing VK unexpectedly
-          logger.warn('KeyboardDetect', 'WMI query failed, assuming keyboard present', {
-            error: err.message
-          })
           resolve({ hasKeyboard: true })
           return
         }
         const count = parseInt(stdout.trim(), 10)
         const hasKeyboard = !isNaN(count) && count > 0
-        logger.info('KeyboardDetect', `WMI keyboard count: ${count}, hasKeyboard: ${hasKeyboard}`)
         resolve({ hasKeyboard })
       })
     })

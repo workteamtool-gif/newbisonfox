@@ -24,7 +24,6 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     setStep: (step: React.LazyExoticComponent<() => React.JSX.Element | null>) => set({ step }),
 
     setUserName: (userName) => {
-      clientLogger.info('WizardStore', `Username set to: ${userName}`)
       set({ userName })
     },
 

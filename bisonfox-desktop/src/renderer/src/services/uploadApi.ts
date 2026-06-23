@@ -95,7 +95,6 @@ export const uploadApi = {
       if (data.type === 'error') {
         onMessage({ type: 'error', message: data.message || 'Server error' })
       } else if (data.type === 'done') {
-        clientLogger.info('IPC', 'Received DONE signal from engine', { total: data.total })
         onMessage({
           type: 'done',
           percent: 100,
