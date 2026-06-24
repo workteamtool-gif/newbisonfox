@@ -122,7 +122,9 @@ export async function copyFiles(
   const triggerExternalAbort = (): void => internalController.abort()
 
   if (signal) {
-    if (signal.aborted) return
+    if (signal.aborted) {
+      return { completedFiles: 0, completedBytes: 0, failedCount: 0, failedFiles: [], totalFiles: 0, totalBytes: 0 }
+    }
     signal.addEventListener('abort', triggerExternalAbort)
   }
 
@@ -141,7 +143,9 @@ export async function copyFiles(
 
   const excludedSet = new Set<string>(excludedFiles ?? [])
 
-  if (initialPaths.length === 0) return
+  if (initialPaths.length === 0) {
+    return { completedFiles: 0, completedBytes: 0, failedCount: 0, failedFiles: [], totalFiles: 0, totalBytes: 0 }
+  }
 
   await fs.promises.mkdir(destination, { recursive: true }).catch(() => {})
 
