@@ -1,5 +1,6 @@
 export interface UploadValidationData {
-  targetDest: string
+  stagingDest: string
+  finalDest: string
   filesToUpload: string[]
   allExcluded: string[]
   basePath: string | undefined

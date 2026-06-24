@@ -70,13 +70,13 @@ export class UploadManager {
       return
     }
 
-    const { targetDest, filesToUpload, allExcluded, basePath } = validationResult.data
+    const { stagingDest, finalDest, filesToUpload, allExcluded, basePath } = validationResult.data
 
     const controller = new AbortController()
     this.activeUploads.set(session.id, controller)
 
     this.sessionSingletonInstance.update(session.id, {
-      destination: targetDest,
+      destination: finalDest,
       status: 'uploading',
       progress: {}
     })
@@ -88,25 +88,47 @@ export class UploadManager {
     )
 
     try {
-      await this.fileService.copyFiles(filesToUpload, targetDest, {
+      // ── Phase 1: Copy all files into the staging directory ──────────────────
+      const summary = await this.fileService.copyFiles(filesToUpload, stagingDest, {
         basePath,
         excludedFiles: allExcluded,
         expectedTotal: body.expectedTotal,
         expectedTotalBytes: body.expectedTotalBytes,
-        signal: controller.signal, // Connects the scanner and workers to this controller
+        signal: controller.signal,
         onScan: progressHandler.onScan,
         onProgress: progressHandler.onProgress
       })
 
       this.activeUploads.delete(session.id)
+
+      // ── Phase 2: Move staging directory to the final destination ────────────
+      try {
+        await this.fileService.moveDir(stagingDest, finalDest)
+        progressHandler.notifyDone(summary)
+      } catch (moveErr: any) {
+        logger.error('UploadManager', 'Failed to move staging folder to final destination', {
+          error: moveErr.message,
+          stagingDest,
+          finalDest
+        })
+        // Best-effort cleanup of the orphaned staging folder
+        await this.fileService.deleteDir(stagingDest).catch(() => {})
+        progressHandler.onError(
+          'Upload failed: files were copied but could not be moved to the destination.'
+        )
+      }
     } catch (err: any) {
+      this.activeUploads.delete(session.id)
+
+      // Best-effort cleanup of any partially-written staging data
+      await this.fileService.deleteDir(stagingDest).catch(() => {})
+
       if (err.message && err.message.includes('Aborted')) {
-        logger.info('UploadManager', 'Upload aborted successfully.')
+        logger.info('UploadManager', 'Upload aborted successfully. Staging folder cleaned up.')
       } else {
         logger.error('UploadManager', 'Upload failed', { error: err.message })
         progressHandler.onError(err.message)
       }
-      this.activeUploads.delete(session.id)
     }
   }
 }

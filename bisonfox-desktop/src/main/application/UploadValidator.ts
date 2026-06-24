@@ -23,21 +23,37 @@ export class UploadValidator {
       }
     }
 
-    const baseDir = path.resolve(rawBaseDir || '')
-    const targetDest = path.resolve(baseDir, session.userName, subfolder || '')
+    const rawTempDir = config.tempBaseDir
+    if (!rawTempDir || rawTempDir.trim() === '') {
+      logger.error(
+        'UploadValidator',
+        'Upload aborted: TEMP_BASE_DIR is missing or empty in the config file.'
+      )
+      return {
+        valid: false,
+        message:
+          'System Configuration Error: The temporary staging directory is not configured. We cannot copy files at this time.'
+      }
+    }
+
+    const baseDir = path.resolve(rawBaseDir)
+    const finalDest = path.resolve(baseDir, session.userName, subfolder || '')
 
     // SECURITY: Case-insensitive Path Traversal Check for Network Drives
-    if (!targetDest.toLowerCase().startsWith(baseDir.toLowerCase())) {
+    if (!finalDest.toLowerCase().startsWith(baseDir.toLowerCase())) {
       logger.error('UploadValidator', 'SECURITY: Path traversal attempt blocked!', {
         sessionId: session.id,
         user: session.userName,
-        attemptedPath: targetDest
+        attemptedPath: finalDest
       })
       return {
         valid: false,
         message: 'Security Error: Invalid target destination.'
       }
     }
+
+    // Staging destination: same structure as final, but rooted under tempBaseDir
+    const stagingDest = path.resolve(rawTempDir, session.userName, subfolder || '')
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
@@ -59,7 +75,8 @@ export class UploadValidator {
     return {
       valid: true,
       data: {
-        targetDest,
+        stagingDest,
+        finalDest,
         filesToUpload,
         allExcluded,
         basePath

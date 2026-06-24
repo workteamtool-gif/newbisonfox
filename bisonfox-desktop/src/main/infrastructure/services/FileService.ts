@@ -1,6 +1,8 @@
+import * as fs from 'fs'
+import * as path from 'path'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { IFileService, CopyOptions } from '@main/domain/interfaces/IFileService'
+import { IFileService, CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
 import { listDir, getDirCount, findItemPage, deepFindItem } from './DirectoryExplorer'
 import { copyFiles } from './FileCopyEngine'
@@ -107,7 +109,61 @@ export class FileService implements IFileService {
     initialPaths: string[],
     destination: string,
     options: CopyOptions
-  ): Promise<void> {
+  ): Promise<CopySummary> {
     return copyFiles(this.scanner, initialPaths, destination, options)
   }
+
+  /**
+   * Moves a directory from src to dest.
+   * Tries a fast atomic rename first (works on the same filesystem).
+   * Falls back to a recursive copy + delete for cross-device moves (EXDEV)
+   * or when the destination directory already exists (EEXIST / ENOTEMPTY).
+   *
+   * @param src Source directory path.
+   * @param dest Destination directory path.
+   */
+  async moveDir(src: string, dest: string): Promise<void> {
+    // Ensure the parent of the destination exists before attempting rename
+    await fs.promises.mkdir(path.dirname(dest), { recursive: true })
+    try {
+      await fs.promises.rename(src, dest)
+    } catch (err: any) {
+      if (err.code === 'EXDEV' || err.code === 'EPERM' || err.code === 'EEXIST' || err.code === 'ENOTEMPTY') {
+        // Cross-device or destination already exists — copy every file then delete source
+        await this.recursiveCopy(src, dest)
+        await fs.promises.rm(src, { recursive: true, force: true })
+      } else {
+        throw err
+      }
+    }
+  }
+
+  /**
+   * Recursively copies all files and subdirectories from src into dest.
+   * Creates dest if it does not exist, and overwrites any existing files.
+   */
+  private async recursiveCopy(src: string, dest: string): Promise<void> {
+    await fs.promises.mkdir(dest, { recursive: true })
+    const entries = await fs.promises.readdir(src, { withFileTypes: true })
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name)
+      const destPath = path.join(dest, entry.name)
+      if (entry.isDirectory()) {
+        await this.recursiveCopy(srcPath, destPath)
+      } else {
+        await fs.promises.copyFile(srcPath, destPath)
+      }
+    }
+  }
+
+  /**
+   * Deletes a directory and all its contents recursively.
+   * Safe to call even if the directory does not exist.
+   *
+   * @param dirPath Path to the directory to delete.
+   */
+  async deleteDir(dirPath: string): Promise<void> {
+    await fs.promises.rm(dirPath, { recursive: true, force: true })
+  }
 }
+

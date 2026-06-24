@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { CopyOptions } from '@main/domain/interfaces/IFileService'
+import { CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 import { BackpressureGate } from './BackpressureGate'
 import { AsyncSemaphore } from './AsyncSemaphore'
@@ -114,7 +114,7 @@ export async function copyFiles(
   initialPaths: string[],
   destination: string,
   options: CopyOptions
-): Promise<void> {
+): Promise<CopySummary> {
   const { basePath, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } =
     options
 
@@ -318,6 +318,10 @@ export async function copyFiles(
 
   const finalTotalFiles = expectedTotal ?? totalDiscovered
   const finalTotalBytes = expectedTotalBytes ?? completedBytes
+
+  // Notify progress handler so it can update session state.
+  // The done notification to the renderer is deferred to UploadManager,
+  // which fires it only after the staging folder is successfully moved.
   onProgress(
     '__done__',
     100,
@@ -328,4 +332,13 @@ export async function copyFiles(
     finalTotalFiles,
     finalTotalBytes
   )
+
+  return {
+    completedFiles,
+    completedBytes,
+    failedCount,
+    failedFiles,
+    totalFiles: finalTotalFiles,
+    totalBytes: finalTotalBytes
+  }
 }
