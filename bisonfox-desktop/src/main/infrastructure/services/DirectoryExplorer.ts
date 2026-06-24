@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'original-fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { ItemNode } from '@shared/entities/ItemNode'

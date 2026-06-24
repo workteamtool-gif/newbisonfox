@@ -1,4 +1,4 @@
-import * as fs from 'fs'
+import * as fs from 'original-fs'
 import * as path from 'path'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'

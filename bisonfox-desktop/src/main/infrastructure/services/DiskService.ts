@@ -1,6 +1,6 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
-import * as fs from 'fs'
+import * as fs from 'original-fs'
 import { IDiskService } from '@main/domain/interfaces/IDiskService'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { logger } from '@main/infrastructure/loggers/Logger'
