@@ -31,6 +31,7 @@ async function gracefulShutdown(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   await logger.flush()
+  await logger.moveToFinal()
 
   app.quit()
 }

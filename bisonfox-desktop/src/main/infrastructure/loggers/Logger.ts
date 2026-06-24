@@ -29,33 +29,85 @@ export function getFirstMacAddress(): string {
   return 'unknown_mac'
 }
 
+function safeMoveFileSync(src: string, dest: string, retries = 5, delayMs = 200): void {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      fs.copyFileSync(src, dest)
+      fs.unlinkSync(src)
+      return
+    } catch (err: any) {
+      if (i === retries) throw err
+      if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
+        const start = Date.now()
+        while (Date.now() - start < delayMs) { /* sync sleep */ }
+      } else {
+        throw err
+      }
+    }
+  }
+}
+
+async function safeMoveFile(src: string, dest: string, retries = 5, delayMs = 200): Promise<void> {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      await fs.promises.copyFile(src, dest)
+      await fs.promises.unlink(src)
+      return
+    } catch (err: any) {
+      if (i === retries) throw err
+      if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
+        await new Promise(res => setTimeout(res, delayMs))
+      } else {
+        throw err
+      }
+    }
+  }
+}
+
 // ─── Logger ──────────────────────────────────────────────────────────────────
 class Logger {
   private minLevel: LogLevel
   private winstonLogger: winston.Logger
+  private stagingLogDir: string | null = null
+  private finalLogDir: string | null = null
 
   constructor(minLevel: LogLevel = LogLevel.DEBUG) {
     this.minLevel = minLevel
 
     let envLogDir = ''
+    let tempBaseDir = ''
     try {
       envLogDir = config.logDir
+      tempBaseDir = config.tempBaseDir
     } catch { }
 
-    let finalLogDir: string | null = null
-    if (!envLogDir || envLogDir.trim() === '') {
+    if (!envLogDir || envLogDir.trim() === '' || !tempBaseDir || tempBaseDir.trim() === '') {
       process.stderr.write(
-        '\n[SYSTEM WARNING] LOG_DIR environment variable is missing or empty!\n'
+        '\n[SYSTEM WARNING] logDir or tempBaseDir is missing or empty!\n'
       )
       process.stderr.write(
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
     } else {
       const macFolder = getFirstMacAddress()
-      finalLogDir = path.resolve(envLogDir, macFolder)
+      this.finalLogDir = path.resolve(envLogDir, macFolder)
+      this.stagingLogDir = path.resolve(tempBaseDir, 'app_logs_staging', macFolder)
 
-      if (!fs.existsSync(finalLogDir)) {
-        fs.mkdirSync(finalLogDir, { recursive: true })
+      if (!fs.existsSync(this.finalLogDir)) fs.mkdirSync(this.finalLogDir, { recursive: true })
+      if (!fs.existsSync(this.stagingLogDir)) fs.mkdirSync(this.stagingLogDir, { recursive: true })
+
+      // Proactively move any old logs from a previous crashed session to final
+      try {
+        const files = fs.readdirSync(this.stagingLogDir)
+        for (const file of files) {
+          if (file.endsWith('.json')) {
+            const src = path.join(this.stagingLogDir, file)
+            const dest = path.join(this.finalLogDir, file)
+            safeMoveFileSync(src, dest)
+          }
+        }
+      } catch (e) {
+        // Ignore sweep errors
       }
     }
 
@@ -65,7 +117,7 @@ class Logger {
     // Show 'warn'/'error' when file logging is active, otherwise show all active levels.
     transports.push(
       new winston.transports.Console({
-        level: finalLogDir ? 'warn' : this.getWinstonLevel(minLevel),
+        level: this.stagingLogDir ? 'warn' : this.getWinstonLevel(minLevel),
         format: winston.format.combine(
           winston.format.timestamp(),
           winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
@@ -76,13 +128,13 @@ class Logger {
       })
     )
 
-    if (finalLogDir) {
+    if (this.stagingLogDir) {
       const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
       const fileName = `${timestamp}.json`
 
       transports.push(
         new winston.transports.File({
-          filename: path.join(finalLogDir, fileName),
+          filename: path.join(this.stagingLogDir, fileName),
           maxsize: MAX_FILE_SIZE,
           level: this.getWinstonLevel(minLevel),
           format: winston.format.combine(
@@ -148,6 +200,24 @@ class Logger {
       this.winstonLogger.on('finish', () => resolve())
       this.winstonLogger.end()
     })
+  }
+
+  /** Move all logs from the staging directory to the final log directory */
+  async moveToFinal(): Promise<void> {
+    if (!this.stagingLogDir || !this.finalLogDir) return
+
+    try {
+      const files = await fs.promises.readdir(this.stagingLogDir)
+      for (const file of files) {
+        if (file.endsWith('.json')) {
+          const src = path.join(this.stagingLogDir, file)
+          const dest = path.join(this.finalLogDir, file)
+          await safeMoveFile(src, dest)
+        }
+      }
+    } catch (e) {
+      console.error('Logger error: Failed to move logs to final directory', e)
+    }
   }
 }
 

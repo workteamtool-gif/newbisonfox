@@ -128,10 +128,17 @@ export class FileService implements IFileService {
     try {
       await fs.promises.rename(src, dest)
     } catch (err: any) {
-      if (err.code === 'EXDEV' || err.code === 'EPERM' || err.code === 'EEXIST' || err.code === 'ENOTEMPTY') {
-        // Cross-device or destination already exists — copy every file then delete source
+      if (
+        err.code === 'EXDEV' ||
+        err.code === 'EPERM' ||
+        err.code === 'EEXIST' ||
+        err.code === 'ENOTEMPTY' ||
+        err.code === 'EBUSY' ||
+        err.code === 'EACCES'
+      ) {
+        // Cross-device, destination exists, or Windows locked the folder — copy every file then delete source
         await this.recursiveCopy(src, dest)
-        await fs.promises.rm(src, { recursive: true, force: true })
+        await fs.promises.rm(src, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
       } else {
         throw err
       }
@@ -163,7 +170,7 @@ export class FileService implements IFileService {
    * @param dirPath Path to the directory to delete.
    */
   async deleteDir(dirPath: string): Promise<void> {
-    await fs.promises.rm(dirPath, { recursive: true, force: true })
+    await fs.promises.rm(dirPath, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
   }
 }
 
