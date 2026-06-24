@@ -60,7 +60,6 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
-    logger.info('Electron', 'Main window is ready and displayed.')
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {

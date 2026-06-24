@@ -126,7 +126,6 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
 
     try {
       setUserName(trimmedName)
-      clientLogger.info('SetupPage', `User ${trimmedName} logged in.`)
 
       const { sessionId: newSessionId } = await sessionApi.createSession(trimmedName)
       setSessionId(newSessionId)
@@ -146,10 +145,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
         setCurrentSubfolder(trimmedSubfolder)
       }
 
-      clientLogger.info(
-        'SetupPage',
-        `User: ${trimmedName} | Session: ${newSessionId} | Drive: ${drive?.letter} | Subfolder: "${trimmedSubfolder}"`
-      )
+      clientLogger.info('SetupPage', `Login successful. Drive: ${drive?.letter || 'None'}`)
 
       setStep(SelectFilesPage)
     } catch {

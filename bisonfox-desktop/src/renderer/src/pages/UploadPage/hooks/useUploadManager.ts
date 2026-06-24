@@ -118,12 +118,12 @@ export function useUploadManager(): {
     const intervalId = setInterval(() => {
       clientLogger.info(
         'UploadManager',
-        `For user: ${userName} in session: ${sessionId} copy in progress: ${completedRef.current} files copied so far.`
+        `Copy in progress: ${completedRef.current} files copied so far.`
       )
     }, 60000) // 1 minute
 
     return () => clearInterval(intervalId)
-  }, [phase, sessionId, userName])
+  }, [phase])
 
   useEffect(() => {
     if (!sessionId || phase === 'ready') return
@@ -208,7 +208,7 @@ export function useUploadManager(): {
     if (failedRef.current === 0) {
       clientLogger.info(
         'UploadManager',
-        `For user: ${userName} in session: ${sessionId} copied successfully ${finalCount} files.`
+        `Copied successfully ${finalCount} files.`
       )
       setTimeout(() => setStep(AnotherDiskPage), 1800)
     } else {
@@ -218,8 +218,7 @@ export function useUploadManager(): {
         .join(', ')
       clientLogger.error(
         'UploadManager',
-        `For user: ${userName} in session: ${sessionId} copy failed for ${failedRef.current} files and ${finalCount} copied successfully.
-         Failed examples: ${top3Failed}.`
+        `Copy failed for ${failedRef.current} files and ${finalCount} copied successfully. Failed examples: ${top3Failed}.`
       )
     }
   }
@@ -251,7 +250,7 @@ export function useUploadManager(): {
       .catch((err: any) => {
         clientLogger.error(
           'UploadManager',
-          `For user: ${userName} in session: ${sessionId} failed to upload.`,
+          `Failed to upload.`,
           err
         )
         setUploadError(err.message || 'Failed to start upload.')
@@ -264,7 +263,7 @@ export function useUploadManager(): {
     const filesToRetry = failedFilesList.map((f) => f.path)
     clientLogger.info(
       'UploadManager',
-      `For user: ${userName} in session: ${sessionId} user decided to retry copying for ${filesToRetry.length} failed files.`
+      `User decided to retry copying for ${filesToRetry.length} failed files.`
     )
 
     setUploadDone(false)
@@ -285,11 +284,7 @@ export function useUploadManager(): {
 
     const subfolder = currentDisk.subfolder || ''
     uploadApi.startUpload(sessionId, filesToRetry, subfolder, 0).catch((err: any) => {
-      clientLogger.error(
-        'UploadManager',
-        `For user: ${userName} in session: ${sessionId} retry failed.`,
-        err
-      )
+      clientLogger.error('UploadManager', `Retry failed.`, err)
       setUploadError(err.message || 'Retry failed.')
     })
   }
@@ -297,7 +292,7 @@ export function useUploadManager(): {
   const skipFailed = (): void => {
     clientLogger.info(
       'UploadManager',
-      `For user: ${userName} in session: ${sessionId} skipping ${failedFilesList.length} failed file(s).`
+      `Skipping ${failedFilesList.length} failed file(s).`
     )
     setStep(AnotherDiskPage)
   }
@@ -307,7 +302,7 @@ export function useUploadManager(): {
 
     clientLogger.info(
       'UploadManager',
-      `For user: ${userName} in session: ${sessionId} retrying ALL ${currentDisk.selectedItemPaths.length} original files (failures exceeded tracking limit).`
+      `Retrying ALL ${currentDisk.selectedItemPaths.length} original files (failures exceeded tracking limit).`
     )
 
     // Reset state completely
@@ -334,7 +329,7 @@ export function useUploadManager(): {
       .catch((err: any) => {
         clientLogger.error(
           'UploadManager',
-          `For user: ${userName} in session: ${sessionId} retry-all failed.`,
+          `Retry-all failed.`,
           err
         )
         setUploadError(err.message || 'Retry all failed.')

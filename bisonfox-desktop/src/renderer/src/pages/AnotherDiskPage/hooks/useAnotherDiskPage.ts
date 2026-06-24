@@ -8,7 +8,6 @@ export function useAnotherDiskPage() {
     setStep,
     diskSessions,
     userName,
-    sessionId,
     reset,
     setCurrentDisk,
     setCurrentSubfolder,
@@ -49,7 +48,7 @@ export function useAnotherDiskPage() {
   function handleYes(): void {
     clientLogger.info(
       'AnotherDiskPage',
-      `The user: ${userName} in session: ${sessionId} wants to add another disk,
+      `Adding another disk,
        finishing the disk session and moving to SetupPage`
     )
     setCurrentDisk(null)
@@ -60,8 +59,7 @@ export function useAnotherDiskPage() {
   function handleNo(): void {
     clientLogger.info(
       'AnotherDiskPage',
-      `The user: ${userName} in session: ${sessionId} wants to finish the session,
-       finishing the session and moving to SuccessPage`
+      `Finishing session and moving to SuccessPage`
     )
     setStep(SuccessPage)
   }

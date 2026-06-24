@@ -22,10 +22,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
   React.useEffect(() => {
     const handleUnload = (): void => {
       if (sessionId) {
-        clientLogger.info(
-          'WizardLayout',
-          `For user: ${userName} in session: ${sessionId} session stopped because the program was closed or unloaded.`
-        )
+        clientLogger.info('WizardLayout', `Session stopped because the program was closed or unloaded.`)
       }
     }
     window.addEventListener('beforeunload', handleUnload)
@@ -33,10 +30,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
   }, [sessionId, userName])
 
   const handleConfirmCancel = async (): Promise<void> => {
-    clientLogger.info(
-      'WizardLayout',
-      `For user: ${userName} in session: ${sessionId} user cancelled the session.`
-    )
+    clientLogger.info('WizardLayout', `User cancelled the session.`)
     setCancelModalOpen(false)
     if (sessionId) {
       try {

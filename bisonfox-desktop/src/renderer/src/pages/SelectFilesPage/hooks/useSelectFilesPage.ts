@@ -8,7 +8,7 @@ import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 
 export function useSelectFilesPage() {
-  const { setStep, currentDisk, setCurrentDisk, currentSubfolder, userName, sessionId } =
+  const { setStep, currentDisk, setCurrentDisk, currentSubfolder } =
     useWizardStore()
 
   useDriveMonitor()
@@ -258,12 +258,6 @@ export function useSelectFilesPage() {
       selectedItemPaths: Array.from(selected),
       excludedItemPaths: Array.from(excluded)
     })
-    const selectedArrayStr = `[${Array.from(selected).join(', ')}]`
-    const excludedArrayStr = `[${Array.from(excluded).join(', ')}]`
-    clientLogger.info(
-      'SelectFilesPage',
-      `The user: ${userName} in session: ${sessionId} is proceeding with ${selectedArrayStr} items selected, ${excludedArrayStr} exclusions`
-    )
     setStep(ReviewPage)
     setSaving(false)
   }

@@ -47,12 +47,29 @@ async function sendToMainProcess(
   data?: any
 ): Promise<void> {
   try {
+    let enrichedMessage = message
+    try {
+      const store = await import('@renderer/store/useWizardStore')
+      const { userName, sessionId, currentSubfolder } = store.useWizardStore.getState()
+      
+      const parts: string[] = []
+      if (userName) parts.push(`User: ${userName}`)
+      if (sessionId) parts.push(`Session: ${sessionId}`)
+      if (currentSubfolder) parts.push(`Subfolder: ${currentSubfolder}`)
+      
+      if (parts.length > 0) {
+        enrichedMessage = `[${parts.join(' | ')}] ${message}`
+      }
+    } catch (e) {
+      // Ignore store import errors
+    }
+
     const sanitizedData =
       data instanceof Error ? { message: data.message, stack: data.stack } : data
     await window.api.invoke('log-from-client', {
       level,
       context,
-      message,
+      message: enrichedMessage,
       data: sanitizedData
     })
   } catch {

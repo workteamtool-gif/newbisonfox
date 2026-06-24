@@ -4,16 +4,13 @@ import { ProgressMessage } from '@renderer/entites/ProgressMessage'
 
 export const uploadApi = {
   countFiles: async (
-    sessionId: string,
+    _sessionId: string,
     selectedPaths: string[],
     excludedPaths: string[],
     signal?: AbortSignal,
     onCount?: (c: number, s: number) => void
   ): Promise<{ count: number; size: number }> => {
-    clientLogger.info(
-      'API',
-      `Starting background file count session (IPC) for session ${sessionId}...`
-    )
+    clientLogger.info('API', `Starting background file count session`)
     const scanId = Math.random().toString(36).substring(2, 10)
 
     return new Promise((resolve, reject) => {
@@ -75,7 +72,6 @@ export const uploadApi = {
     subfolder: string,
     expectedTotalBytes?: number
   ) => {
-    clientLogger.info('API', `Sending Start Upload command for session ${sessionId}...`)
     return await window.api.invoke(IPC_CHANNELS.UPLOAD.START, {
       sessionId,
       files,
@@ -126,7 +122,6 @@ export const uploadApi = {
 
     return {
       close: () => {
-        clientLogger.info('IPC', 'Closing upload stream manually.')
         unsubscribe()
       }
     }

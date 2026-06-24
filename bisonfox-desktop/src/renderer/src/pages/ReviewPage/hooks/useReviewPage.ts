@@ -111,7 +111,7 @@ export function useReviewPage() {
       addDiskSession(finalDisk)
       clientLogger.info(
         'ReviewPage',
-        `The user: ${userName} in session: ${sessionId} is starting upload of ${finalDisk.selectedItemPaths} files`
+        `Starting upload of ${finalDisk.selectedItemPaths} files`
       )
 
       setStep(UploadPage)
@@ -125,7 +125,7 @@ export function useReviewPage() {
   const handleBack = useCallback(() => {
     clientLogger.info(
       'ReviewPage',
-      `The user: ${userName} in session: ${sessionId} is returning to file selection`
+      `Returning to file selection`
     )
     if (currentDisk) {
       setCurrentDisk({
@@ -141,7 +141,7 @@ export function useReviewPage() {
     if (!currentDisk) {
       clientLogger.warn(
         'ReviewPage',
-        `The user: ${userName} in session: ${sessionId} has no current disk found, navigating back to SetupPage`
+        `No current disk found, navigating back to SetupPage`
       )
       setStep(SetupPage)
     }
