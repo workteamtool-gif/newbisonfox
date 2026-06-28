@@ -1,5 +1,5 @@
 import path from 'path'
-import { logger } from '@main/infrastructure/loggers/Logger'
+import { logger, getFirstMacAddress } from '@main/infrastructure/loggers/Logger'
 import type { UploadSession } from '../domain/entities/UploadSession'
 
 import { ValidationResult } from '../domain/entities/ValidationInfo'
@@ -52,8 +52,9 @@ export class UploadValidator {
       }
     }
 
-    // Staging destination: same structure as final, but rooted under tempBaseDir
-    const stagingDest = path.resolve(rawTempDir, session.userName, subfolder || '')
+    // Staging destination: flat GUID storage keyed by MAC and session.id
+    const macFolder = getFirstMacAddress()
+    const stagingDest = path.resolve(rawTempDir, macFolder, session.id)
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])

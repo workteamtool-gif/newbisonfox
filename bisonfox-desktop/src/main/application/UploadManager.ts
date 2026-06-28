@@ -88,9 +88,10 @@ export class UploadManager {
     )
 
     try {
-      // ── Phase 1: Copy all files into the staging directory ──────────────────
+      // ── Phase 1: Copy and immediately move all files ──────────────────────────
       const summary = await this.fileService.copyFiles(filesToUpload, stagingDest, {
         basePath,
+        finalDest,
         excludedFiles: allExcluded,
         expectedTotal: body.expectedTotal,
         expectedTotalBytes: body.expectedTotalBytes,
@@ -100,23 +101,11 @@ export class UploadManager {
       })
 
       this.activeUploads.delete(session.id)
+      
+      // Best-effort cleanup of the now-empty staging folder
+      await this.fileService.deleteDir(stagingDest).catch(() => {})
 
-      // ── Phase 2: Move staging directory to the final destination ────────────
-      try {
-        await this.fileService.moveDir(stagingDest, finalDest)
-        progressHandler.notifyDone(summary)
-      } catch (moveErr: any) {
-        logger.error('UploadManager', 'Failed to move staging folder to final destination', {
-          error: moveErr.message,
-          stagingDest,
-          finalDest
-        })
-        // Best-effort cleanup of the orphaned staging folder
-        await this.fileService.deleteDir(stagingDest).catch(() => {})
-        progressHandler.onError(
-          'Upload failed: files were copied but could not be moved to the destination.'
-        )
-      }
+      progressHandler.notifyDone(summary)
     } catch (err: any) {
       this.activeUploads.delete(session.id)
 

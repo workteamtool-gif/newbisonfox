@@ -1,5 +1,6 @@
 import * as fs from 'original-fs'
 import * as path from 'path'
+import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
@@ -115,7 +116,7 @@ export async function copyFiles(
   destination: string,
   options: CopyOptions
 ): Promise<CopySummary> {
-  const { basePath, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } =
+  const { basePath, finalDest, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } =
     options
 
   const internalController = new AbortController()
@@ -149,7 +150,7 @@ export async function copyFiles(
 
   await fs.promises.mkdir(destination, { recursive: true }).catch(() => {})
 
-  const queue: { src: string; destPath: string }[] = []
+  const queue: { src: string; destPath: string; finalPath: string }[] = []
   let isScanningDone = false
   let totalDiscovered = 0
 
@@ -173,10 +174,13 @@ export async function copyFiles(
       excludedSet,
       (src, rel) => {
         totalDiscovered++
-        queue.push({ src, destPath: path.join(destination, rel) })
+        const fileGuid = uuidv4()
+        const stagingPath = path.join(destination, fileGuid)
+        const finalPath = finalDest ? path.join(finalDest, rel) : stagingPath
+        queue.push({ src, destPath: stagingPath, finalPath })
       },
-      (relDir) => {
-        fs.promises.mkdir(path.join(destination, relDir), { recursive: true }).catch(() => {})
+      () => {
+        // We no longer pre-create directories in staging since files are flat
       },
       (failedPath, errorMsg) => {
         failedCount++
@@ -260,7 +264,7 @@ export async function copyFiles(
       // Notify the backpressure gate that an item was consumed
       gate.notify(queue.length)
 
-      const { src, destPath } = item
+      const { src, destPath, finalPath } = item
       let attempt = 0
       let success = false
 
@@ -271,11 +275,6 @@ export async function copyFiles(
         let partialBytes = 0
         try {
           if (attempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * attempt))
-          const dir = path.dirname(destPath)
-          if (!mkdirCache.has(dir)) {
-            await fs.promises.mkdir(dir, { recursive: true }).catch(() => {})
-            mkdirCache.add(dir)
-          }
 
           const st = await fs.promises.stat(src).catch(() => null)
           const expectedFileSize = st && st.size > 0 ? st.size : 1
@@ -291,6 +290,32 @@ export async function copyFiles(
               throttledReport(src, pct)
             }
           )
+
+          if (finalDest && finalPath !== destPath) {
+            const finalDir = path.dirname(finalPath)
+            if (!mkdirCache.has(finalDir)) {
+              await fs.promises.mkdir(finalDir, { recursive: true }).catch(() => {})
+              mkdirCache.add(finalDir)
+            }
+            try {
+              await fs.promises.rename(destPath, finalPath)
+            } catch (renameErr: any) {
+              if (
+                renameErr.code === 'EXDEV' ||
+                renameErr.code === 'EPERM' ||
+                renameErr.code === 'EEXIST' ||
+                renameErr.code === 'ENOTEMPTY' ||
+                renameErr.code === 'EBUSY' ||
+                renameErr.code === 'EACCES'
+              ) {
+                await fs.promises.copyFile(destPath, finalPath)
+                await fs.promises.rm(destPath, { force: true, maxRetries: 5, retryDelay: 200 })
+              } else {
+                throw renameErr
+              }
+            }
+          }
+
           success = true
         } catch (err: any) {
           completedBytes -= partialBytes // Rollback partial progress

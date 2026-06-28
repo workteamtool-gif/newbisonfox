@@ -4,6 +4,7 @@ import { PaginatedResult } from '@shared/entities/PaginatedResult'
 /** Options for configuring the high-speed copy engine */
 export interface CopyOptions {
   basePath?: string
+  finalDest?: string
   excludedFiles?: string[]
   expectedTotal?: number
   expectedTotalBytes?: number
