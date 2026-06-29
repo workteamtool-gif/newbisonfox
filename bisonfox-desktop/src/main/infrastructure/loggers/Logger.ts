@@ -29,7 +29,7 @@ export function getFirstMacAddress(): string {
   return 'unknown_mac'
 }
 
-function safeMoveFileSync(src: string, dest: string, retries = 5, delayMs = 200): void {
+function safeMoveFileSync(src: string, dest: string, retries = 25, delayMs = 200): void {
   for (let i = 0; i <= retries; i++) {
     try {
       fs.copyFileSync(src, dest)
@@ -47,7 +47,7 @@ function safeMoveFileSync(src: string, dest: string, retries = 5, delayMs = 200)
   }
 }
 
-async function safeMoveFile(src: string, dest: string, retries = 5, delayMs = 200): Promise<void> {
+async function safeMoveFile(src: string, dest: string, retries = 25, delayMs = 200): Promise<void> {
   for (let i = 0; i <= retries; i++) {
     try {
       await fs.promises.copyFile(src, dest)

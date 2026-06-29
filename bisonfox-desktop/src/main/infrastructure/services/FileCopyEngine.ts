@@ -1,6 +1,5 @@
 import * as fs from 'original-fs'
 import * as path from 'path'
-import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
 import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
@@ -101,6 +100,27 @@ async function copyOneFast(
 }
 
 /**
+ * Fallback: recursively merges `src` directory tree into `dest`.
+ * Used only when the final destination already exists (same subfolder reused across sessions).
+ * Each file is renamed individually — still atomic per file on the same drive.
+ */
+async function mergeDir(src: string, dest: string): Promise<void> {
+  await fs.promises.mkdir(dest, { recursive: true }).catch(() => {})
+  const entries = await fs.promises.readdir(src, { withFileTypes: true })
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name)
+    const destPath = path.join(dest, entry.name)
+    if (entry.isDirectory()) {
+      await mergeDir(srcPath, destPath)
+      await fs.promises.rmdir(srcPath).catch(() => {})
+    } else {
+      await fs.promises.rename(srcPath, destPath)
+    }
+  }
+  await fs.promises.rmdir(src).catch(() => {})
+}
+
+/**
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.
  * Utilizes `IFileScanner` to continuously discover paths in the background while workers process the queue.
  * Integrates `BackpressureGate` to limit memory growth and applies automatic retries on worker failures.
@@ -148,7 +168,7 @@ export async function copyFiles(
     return { completedFiles: 0, completedBytes: 0, failedCount: 0, failedFiles: [], totalFiles: 0, totalBytes: 0 }
   }
 
-  await fs.promises.mkdir(destination, { recursive: true }).catch(() => {})
+  await fs.promises.mkdir(destination, { recursive: true }).catch(() => { })
 
   const queue: { src: string; destPath: string; finalPath: string }[] = []
   let isScanningDone = false
@@ -174,13 +194,14 @@ export async function copyFiles(
       excludedSet,
       (src, rel) => {
         totalDiscovered++
-        const fileGuid = uuidv4()
-        const stagingPath = path.join(destination, fileGuid)
-        const finalPath = finalDest ? path.join(finalDest, rel) : stagingPath
-        queue.push({ src, destPath: stagingPath, finalPath })
+        // Mirror the real relative path in staging.
+        // This lets us do a single atomic folder rename at the end
+        // so the Windows Service sees the entire tree appear at once.
+        const stagingPath = path.join(destination, rel)
+        queue.push({ src, destPath: stagingPath, finalPath: stagingPath })
       },
       () => {
-        // We no longer pre-create directories in staging since files are flat
+        // Directory pre-creation is handled per-file inside the worker
       },
       (failedPath, errorMsg) => {
         failedCount++
@@ -264,7 +285,7 @@ export async function copyFiles(
       // Notify the backpressure gate that an item was consumed
       gate.notify(queue.length)
 
-      const { src, destPath, finalPath } = item
+      const { src, destPath } = item
       let attempt = 0
       let success = false
 
@@ -279,9 +300,16 @@ export async function copyFiles(
           const st = await fs.promises.stat(src).catch(() => null)
           const expectedFileSize = st && st.size > 0 ? st.size : 1
 
+          // Ensure the staging subdirectory exists before copying into it
+          const stagingDir = path.dirname(destPath)
+          if (stagingDir !== destination && !mkdirCache.has(stagingDir)) {
+            await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => {})
+            mkdirCache.add(stagingDir)
+          }
+
           await copyOneFast(
-            src, 
-            destPath, 
+            src,
+            destPath,
             activeSignal,
             (chunkSize) => {
               partialBytes += chunkSize
@@ -290,31 +318,9 @@ export async function copyFiles(
               throttledReport(src, pct)
             }
           )
-
-          if (finalDest && finalPath !== destPath) {
-            const finalDir = path.dirname(finalPath)
-            if (!mkdirCache.has(finalDir)) {
-              await fs.promises.mkdir(finalDir, { recursive: true }).catch(() => {})
-              mkdirCache.add(finalDir)
-            }
-            try {
-              await fs.promises.rename(destPath, finalPath)
-            } catch (renameErr: any) {
-              if (
-                renameErr.code === 'EXDEV' ||
-                renameErr.code === 'EPERM' ||
-                renameErr.code === 'EEXIST' ||
-                renameErr.code === 'ENOTEMPTY' ||
-                renameErr.code === 'EBUSY' ||
-                renameErr.code === 'EACCES'
-              ) {
-                await fs.promises.copyFile(destPath, finalPath)
-                await fs.promises.rm(destPath, { force: true, maxRetries: 5, retryDelay: 200 })
-              } else {
-                throw renameErr
-              }
-            }
-          }
+          // No per-file rename to finalDest here.
+          // After all files are copied, a single atomic rename moves the
+          // entire staging tree to the final destination at once.
 
           success = true
         } catch (err: any) {
@@ -344,6 +350,26 @@ export async function copyFiles(
 
   if (signal) signal.removeEventListener('abort', triggerExternalAbort)
   if (reportTimer) clearTimeout(reportTimer)
+
+  // ── Atomic move: staging tree → final destination ──────────────────────────
+  // Because staging and finalDest are on the same drive, rename() is a single
+  // atomic OS call: the Windows Service sees the entire folder tree appear at
+  // once, with no empty intermediate directories and no partially-written files.
+  if (finalDest && !activeSignal.aborted) {
+    // Ensure the parent of finalDest exists (e.g. userName folder)
+    await fs.promises.mkdir(path.dirname(finalDest), { recursive: true }).catch(() => {})
+    try {
+      await fs.promises.rename(destination, finalDest)
+    } catch (err: any) {
+      if (err.code === 'ENOTEMPTY' || err.code === 'EEXIST') {
+        // finalDest already exists (same subfolder reused) — merge per-file as fallback
+        logger.warn('FileCopyEngine', 'finalDest already exists; falling back to per-file merge', { finalDest })
+        await mergeDir(destination, finalDest)
+      } else {
+        throw err
+      }
+    }
+  }
 
   const finalTotalFiles = expectedTotal ?? totalDiscovered
   const finalTotalBytes = expectedTotalBytes ?? completedBytes
