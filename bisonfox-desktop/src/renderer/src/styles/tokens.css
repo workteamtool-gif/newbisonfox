@@ -26,8 +26,8 @@
     --shadow-btn: 0 0.33vh 2vh rgba(20, 184, 166, .35);
     --t-fast: 140ms cubic-bezier(.4, 0, .2, 1);
     --t-base: 240ms cubic-bezier(.4, 0, .2, 1);
-    --font: 'Inter', system-ui, sans-serif;
-    --font-display: 'Rubik', 'Space Grotesk', system-ui, sans-serif;
+    --font: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+    --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
 
     /* Responsive Design Tokens */
     --space-page-padding: clamp(1.5rem, 2.5vh, 2.5rem);

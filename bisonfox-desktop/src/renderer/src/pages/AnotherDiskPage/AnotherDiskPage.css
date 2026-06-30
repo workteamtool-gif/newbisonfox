@@ -58,17 +58,17 @@
     color: var(--text-primary);
 }
 
-.stat-icon {
+.another-disk-stats .stat-icon {
     font-size: clamp(1.2rem, 3vh, 1.5rem);
     margin-bottom: clamp(0.2rem, 1vh, 0.5rem);
 }
 
-.stat-val {
+.another-disk-stats .stat-val {
     font-size: clamp(1.4rem, 4vh, 1.8rem);
     font-weight: 600;
 }
 
-.stat-lbl {
+.another-disk-stats .stat-lbl {
     font-size: clamp(0.8rem, 1.5vh, 1rem);
     color: var(--text-secondary);
 }

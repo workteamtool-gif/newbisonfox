@@ -37,10 +37,19 @@ export function StatsUpload({
   const prevPercentageRef = useRef(overallPercentage)
   const [now, setNow] = useState(() => Date.now())
 
+  // Enterprise ETA Algorithm References
+  const historyRef = useRef<{ time: number; bytes: number }[]>([])
+  const emaRef = useRef<number | null>(null)
+
+  const ETA_WINDOW_MS = 3000 // 3 seconds sliding window
+  const ETA_ALPHA = 0.2 // Smoothing factor for EMA
+
   useEffect(() => {
     if (overallPercentage === 0 && prevPercentageRef.current > 0) {
       startedAtRef.current = null
       startCompletedCountRef.current = completedCount
+      historyRef.current = []
+      emaRef.current = null
     }
     prevPercentageRef.current = overallPercentage
   }, [overallPercentage, completedCount])
@@ -54,6 +63,22 @@ export function StatsUpload({
     }
   }, [completedBytes, completedCount])
 
+  // Pass 2 (Execution): Track byte progression events
+  useEffect(() => {
+    const time = Date.now()
+    const history = historyRef.current
+    
+    // Sample transfer state to prevent array flooding (e.g. every 250ms)
+    if (history.length === 0 || time - history[history.length - 1].time >= 250) {
+      history.push({ time, bytes: completedBytes })
+      
+      // Keep memory clean: drop anything older than our window + buffer
+      while (history.length > 0 && time - history[0].time > ETA_WINDOW_MS + 1000) {
+        history.shift()
+      }
+    }
+  }, [completedBytes])
+
   // Tick every second so the ETA display stays live
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000)
@@ -63,32 +88,49 @@ export function StatsUpload({
   const etaLabel = (() => {
     if (overallPercentage >= 100) return '✓'
     if (startedAtRef.current === null) return '—'
-    const sessionCompletedCount = Math.max(0, completedCount - startCompletedCountRef.current)
-    if (completedBytes <= 0 && sessionCompletedCount <= 0) return '—'
-    const elapsedSec = (now - startedAtRef.current) / 1000
-    if (elapsedSec < 2) return '—' // wait a couple of seconds for a stable estimate
+    
+    const elapsedTotal = (now - startedAtRef.current) / 1000
+    if (elapsedTotal < 2) return '—' // wait for initialization
 
-    const bytesPerSec = completedBytes / elapsedSec
-    const remainingBytes = Math.max(0, totalBytes - completedBytes)
-    const etaBytes = bytesPerSec > 0 ? remainingBytes / bytesPerSec : 0
+    let rollingSpeed = 0
+    
+    // 1. Sliding Window (Speed Measurement)
+    // Filter strictly against 'now' so if the transfer stalls (bytes stop updating), 
+    // the window empties and speed mathematically drops exactly to zero.
+    const validHistory = historyRef.current.filter(h => now - h.time <= ETA_WINDOW_MS)
+    
+    if (validHistory.length >= 2) {
+      const oldest = validHistory[0]
+      const newest = validHistory[validHistory.length - 1]
+      const windowElapsed = (newest.time - oldest.time) / 1000
+      
+      if (windowElapsed > 0) {
+        rollingSpeed = (newest.bytes - oldest.bytes) / windowElapsed
+      }
+    }
 
-    const totalFiles = totalDiscovered > 0 ? totalDiscovered : shown
-    const filesPerSec = sessionCompletedCount / elapsedSec
-    const remainingFiles = Math.max(0, totalFiles - completedCount)
-    const etaFiles = filesPerSec > 0 ? remainingFiles / filesPerSec : 0
-
-    let finalEta = 0
-    if (bytesPerSec > 0 && filesPerSec > 0) {
-      finalEta = (etaBytes + etaFiles) / 2
-    } else if (bytesPerSec > 0) {
-      finalEta = etaBytes
-    } else if (filesPerSec > 0) {
-      finalEta = etaFiles
+    // 2. Exponential Moving Average (UI Smoothing)
+    // Formula: EMA_current = alpha * Speed_rolling + (1 - alpha) * EMA_previous
+    if (emaRef.current === null) {
+      emaRef.current = rollingSpeed
     } else {
+      emaRef.current = ETA_ALPHA * rollingSpeed + (1 - ETA_ALPHA) * emaRef.current
+    }
+
+    const currentSpeed = emaRef.current
+    const remainingBytes = Math.max(0, totalBytes - completedBytes)
+
+    if (currentSpeed < 1024) {
+      // Complete stall fallback: if speed is ~0, fallback to overall historical average
+      // to prevent "Infinity" ETA or jumping to massive numbers momentarily.
+      const overallSpeed = elapsedTotal > 0 ? completedBytes / elapsedTotal : 0
+      if (overallSpeed > 0) {
+        return formatEta(remainingBytes / overallSpeed)
+      }
       return '—'
     }
 
-    return formatEta(finalEta)
+    return formatEta(remainingBytes / currentSpeed)
   })()
 
   const formatSize = (bytes: number) => {

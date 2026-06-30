@@ -99,26 +99,6 @@ async function copyOneFast(
   return st.size
 }
 
-/**
- * Fallback: recursively merges `src` directory tree into `dest`.
- * Used only when the final destination already exists (same subfolder reused across sessions).
- * Each file is renamed individually — still atomic per file on the same drive.
- */
-async function mergeDir(src: string, dest: string): Promise<void> {
-  await fs.promises.mkdir(dest, { recursive: true }).catch(() => {})
-  const entries = await fs.promises.readdir(src, { withFileTypes: true })
-  for (const entry of entries) {
-    const srcPath = path.join(src, entry.name)
-    const destPath = path.join(dest, entry.name)
-    if (entry.isDirectory()) {
-      await mergeDir(srcPath, destPath)
-      await fs.promises.rmdir(srcPath).catch(() => {})
-    } else {
-      await fs.promises.rename(srcPath, destPath)
-    }
-  }
-  await fs.promises.rmdir(src).catch(() => {})
-}
 
 /**
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.
@@ -194,11 +174,10 @@ export async function copyFiles(
       excludedSet,
       (src, rel) => {
         totalDiscovered++
-        // Mirror the real relative path in staging.
-        // This lets us do a single atomic folder rename at the end
-        // so the Windows Service sees the entire tree appear at once.
+        // Track both the staging path (temp) and the final destination path
         const stagingPath = path.join(destination, rel)
-        queue.push({ src, destPath: stagingPath, finalPath: stagingPath })
+        const trueFinalPath = finalDest ? path.join(finalDest, rel) : stagingPath
+        queue.push({ src, destPath: stagingPath, finalPath: trueFinalPath })
       },
       () => {
         // Directory pre-creation is handled per-file inside the worker
@@ -285,7 +264,7 @@ export async function copyFiles(
       // Notify the backpressure gate that an item was consumed
       gate.notify(queue.length)
 
-      const { src, destPath } = item
+      const { src, destPath, finalPath } = item
       let attempt = 0
       let success = false
 
@@ -318,9 +297,11 @@ export async function copyFiles(
               throttledReport(src, pct)
             }
           )
-          // No per-file rename to finalDest here.
-          // After all files are copied, a single atomic rename moves the
-          // entire staging tree to the final destination at once.
+          // Rename the file to its final destination immediately after copying
+          if (finalDest) {
+            await fs.promises.mkdir(path.dirname(finalPath), { recursive: true }).catch(() => {})
+            await fs.promises.rename(destPath, finalPath)
+          }
 
           success = true
         } catch (err: any) {
@@ -351,25 +332,7 @@ export async function copyFiles(
   if (signal) signal.removeEventListener('abort', triggerExternalAbort)
   if (reportTimer) clearTimeout(reportTimer)
 
-  // ── Atomic move: staging tree → final destination ──────────────────────────
-  // Because staging and finalDest are on the same drive, rename() is a single
-  // atomic OS call: the Windows Service sees the entire folder tree appear at
-  // once, with no empty intermediate directories and no partially-written files.
-  if (finalDest && !activeSignal.aborted) {
-    // Ensure the parent of finalDest exists (e.g. userName folder)
-    await fs.promises.mkdir(path.dirname(finalDest), { recursive: true }).catch(() => {})
-    try {
-      await fs.promises.rename(destination, finalDest)
-    } catch (err: any) {
-      if (err.code === 'ENOTEMPTY' || err.code === 'EEXIST') {
-        // finalDest already exists (same subfolder reused) — merge per-file as fallback
-        logger.warn('FileCopyEngine', 'finalDest already exists; falling back to per-file merge', { finalDest })
-        await mergeDir(destination, finalDest)
-      } else {
-        throw err
-      }
-    }
-  }
+  // (Removed atomic directory move block as per-file moves are now used)
 
   const finalTotalFiles = expectedTotal ?? totalDiscovered
   const finalTotalBytes = expectedTotalBytes ?? completedBytes

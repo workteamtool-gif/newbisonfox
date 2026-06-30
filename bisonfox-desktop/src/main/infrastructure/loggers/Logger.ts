@@ -196,10 +196,25 @@ class Logger {
 
   /** Flush all streams (call on shutdown) */
   async flush(): Promise<void> {
-    return new Promise((resolve) => {
-      this.winstonLogger.on('finish', () => resolve())
+    await new Promise<void>((resolve) => {
+      this.winstonLogger.once('finish', resolve)
       this.winstonLogger.end()
     })
+
+    const fileTransportDrains = this.winstonLogger.transports
+      .filter((t): t is winston.transports.FileTransportInstance =>
+        t instanceof winston.transports.File
+      )
+      .map((t) => {
+        const stream: NodeJS.WritableStream | undefined = (t as any)._stream
+        if (!stream || (stream as any).writableEnded) return Promise.resolve()
+        return new Promise<void>((resolve) => {
+          stream.once('finish', resolve)
+          stream.once('close', resolve)
+        })
+      })
+
+    await Promise.all(fileTransportDrains)
   }
 
   /** Move all logs from the staging directory to the final log directory */
