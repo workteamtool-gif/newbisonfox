@@ -15,12 +15,10 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public static getDerivedStateFromError(): State {
-    // Update state so the next render shows the fallback UI.
     return { hasError: true }
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Catch the crash and send it to our shiny new logger!
     clientLogger.error('ReactBoundary', 'Component tree crashed!', {
       message: error.message,
       componentStack: errorInfo.componentStack

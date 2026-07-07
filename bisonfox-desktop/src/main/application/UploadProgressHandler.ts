@@ -1,6 +1,7 @@
 import { IEventNotifier } from '@main/domain/interfaces/IEventNotifier'
 import { sessionSingleton } from './UploadSession'
 import { CopySummary } from '@main/domain/interfaces/IFileService'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export class UploadProgressHandler {
   private lastSessionWrite = 0
@@ -22,7 +23,7 @@ export class UploadProgressHandler {
     completedFiles: number,
     completedBytes: number,
     failedCount: number,
-    failedFiles: { path: string; reason: string }[],
+    failedFiles: FailedFile[],
     totalFiles: number,
     totalBytes: number
   ): void => {
@@ -77,7 +78,7 @@ export class UploadProgressHandler {
     completedFiles: number,
     _completedBytes: number,
     failedCount: number,
-    failedFiles: { path: string; reason: string }[],
+    failedFiles: FailedFile[],
     totalFiles: number,
     _totalBytes: number
   ): void {

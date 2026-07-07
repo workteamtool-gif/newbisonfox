@@ -52,7 +52,6 @@ export function UploadPage(): JSX.Element | null {
       </>
     )
 
-  // Show failed files review when upload is done AND there are failures
   const showFailedReview = uploadDone && failedFilesList.length > 0
 
   const MAX_FAILED_FILES_TO_SHOW = 20

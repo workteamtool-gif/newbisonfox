@@ -6,8 +6,8 @@ import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
 import { BackpressureGate } from './BackpressureGate'
 import { AsyncSemaphore } from './AsyncSemaphore'
 import { config } from '@main/appConfig'
+import { FailedFile } from '@shared/entities/FailedFile'
 
-// Folders and files that won't be shown in the explorer and be excluded from the copy process
 const EXCLUDED = new Set<string>([])
 const COPY_CONCURRENCY = config.copyConcurrency
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
@@ -99,7 +99,6 @@ async function copyOneFast(
   return st.size
 }
 
-
 /**
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.
  * Utilizes `IFileScanner` to continuously discover paths in the background while workers process the queue.
@@ -116,15 +115,30 @@ export async function copyFiles(
   destination: string,
   options: CopyOptions
 ): Promise<CopySummary> {
-  const { basePath, finalDest, excludedFiles, expectedTotal, expectedTotalBytes, signal, onScan, onProgress } =
-    options
+  const {
+    basePath,
+    finalDest,
+    excludedFiles,
+    expectedTotal,
+    expectedTotalBytes,
+    signal,
+    onScan,
+    onProgress
+  } = options
 
   const internalController = new AbortController()
   const triggerExternalAbort = (): void => internalController.abort()
 
   if (signal) {
     if (signal.aborted) {
-      return { completedFiles: 0, completedBytes: 0, failedCount: 0, failedFiles: [], totalFiles: 0, totalBytes: 0 }
+      return {
+        completedFiles: 0,
+        completedBytes: 0,
+        failedCount: 0,
+        failedFiles: [],
+        totalFiles: 0,
+        totalBytes: 0
+      }
     }
     signal.addEventListener('abort', triggerExternalAbort)
   }
@@ -136,8 +150,8 @@ export async function copyFiles(
     (() => {
       const first = initialPaths[0]
       if (first?.includes(':')) {
-        const m = first.match(/^[a-zA-Z]:\\/)
-        if (m) return m[0]
+        const driveMatch = first.match(/^[a-zA-Z]:\\/)
+        if (driveMatch) return driveMatch[0]
       }
       return path.dirname(initialPaths[0] ?? destination)
     })()
@@ -145,10 +159,19 @@ export async function copyFiles(
   const excludedSet = new Set<string>(excludedFiles ?? [])
 
   if (initialPaths.length === 0) {
-    return { completedFiles: 0, completedBytes: 0, failedCount: 0, failedFiles: [], totalFiles: 0, totalBytes: 0 }
+    return {
+      completedFiles: 0,
+      completedBytes: 0,
+      failedCount: 0,
+      failedFiles: [],
+      totalFiles: 0,
+      totalBytes: 0
+    }
   }
 
-  await fs.promises.mkdir(destination, { recursive: true }).catch(() => { })
+  await fs.promises.mkdir(destination, { recursive: true }).catch(() => {})
+
+  const resolvedTotalBytes = expectedTotalBytes || 0
 
   const queue: { src: string; destPath: string; finalPath: string }[] = []
   let isScanningDone = false
@@ -158,7 +181,7 @@ export async function copyFiles(
   const gate = new BackpressureGate(10_000, 5_000)
   const mkdirCache = new Set<string>()
 
-  const failedFiles: { path: string; reason: string }[] = []
+  const failedFiles: FailedFile[] = []
   let failedCount = 0
 
   const scanPromise = scanner
@@ -174,14 +197,11 @@ export async function copyFiles(
       excludedSet,
       (src, rel) => {
         totalDiscovered++
-        // Track both the staging path (temp) and the final destination path
         const stagingPath = path.join(destination, rel)
         const trueFinalPath = finalDest ? path.join(finalDest, rel) : stagingPath
         queue.push({ src, destPath: stagingPath, finalPath: trueFinalPath })
       },
-      () => {
-        // Directory pre-creation is handled per-file inside the worker
-      },
+      () => {},
       (failedPath, errorMsg) => {
         failedCount++
         if (failedFiles.length < MAX_REPORTED_FAILURES) {
@@ -216,7 +236,7 @@ export async function copyFiles(
       }
       lastBroadcastTime = now
       const totalFiles = expectedTotal ?? totalDiscovered
-      const totalBytes = expectedTotalBytes ?? 0 // Unknown initially if not precalc
+      const totalBytes = resolvedTotalBytes
       onProgress(
         file,
         pct,
@@ -233,7 +253,7 @@ export async function copyFiles(
           reportTimer = null
           lastBroadcastTime = Date.now()
           const totalFiles = expectedTotal ?? totalDiscovered
-          const totalBytes = expectedTotalBytes ?? 0
+          const totalBytes = resolvedTotalBytes
           onProgress(
             lastReportFile,
             lastReportPct,
@@ -261,12 +281,15 @@ export async function copyFiles(
         continue
       }
 
-      // Notify the backpressure gate that an item was consumed
       gate.notify(queue.length)
 
       const { src, destPath, finalPath } = item
       let attempt = 0
       let success = false
+      let fileSize = 0
+
+      const statForSize = await fs.promises.stat(src).catch(() => null)
+      if (statForSize?.isFile()) fileSize = statForSize.size
 
       let lastError: string | undefined
       while (attempt < FAIL_RETRIES && !success) {
@@ -276,27 +299,20 @@ export async function copyFiles(
         try {
           if (attempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * attempt))
 
-          const st = await fs.promises.stat(src).catch(() => null)
-          const expectedFileSize = st && st.size > 0 ? st.size : 1
+          const expectedFileSize = fileSize > 0 ? fileSize : 1
 
-          // Ensure the staging subdirectory exists before copying into it
           const stagingDir = path.dirname(destPath)
           if (stagingDir !== destination && !mkdirCache.has(stagingDir)) {
             await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => {})
             mkdirCache.add(stagingDir)
           }
 
-          await copyOneFast(
-            src,
-            destPath,
-            activeSignal,
-            (chunkSize) => {
-              partialBytes += chunkSize
-              completedBytes += chunkSize
-              const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
-              throttledReport(src, pct)
-            }
-          )
+          await copyOneFast(src, destPath, activeSignal, (chunkSize) => {
+            partialBytes += chunkSize
+            completedBytes += chunkSize
+            const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
+            throttledReport(src, pct)
+          })
           // Rename the file to its final destination immediately after copying
           if (finalDest) {
             await fs.promises.mkdir(path.dirname(finalPath), { recursive: true }).catch(() => {})
@@ -319,7 +335,11 @@ export async function copyFiles(
       } else {
         failedCount++
         if (failedCount <= MAX_REPORTED_FAILURES) {
-          failedFiles.push({ path: src, reason: lastError || 'Copy failed after 5 retries' })
+          failedFiles.push({
+            path: src,
+            reason: lastError || 'Copy failed after 5 retries',
+            sizeInBytes: fileSize
+          })
         }
         throttledReport(src, -1)
       }
@@ -332,14 +352,9 @@ export async function copyFiles(
   if (signal) signal.removeEventListener('abort', triggerExternalAbort)
   if (reportTimer) clearTimeout(reportTimer)
 
-  // (Removed atomic directory move block as per-file moves are now used)
-
   const finalTotalFiles = expectedTotal ?? totalDiscovered
-  const finalTotalBytes = expectedTotalBytes ?? completedBytes
+  const finalTotalBytes = resolvedTotalBytes || completedBytes
 
-  // Notify progress handler so it can update session state.
-  // The done notification to the renderer is deferred to UploadManager,
-  // which fires it only after the staging folder is successfully moved.
   onProgress(
     '__done__',
     100,

@@ -15,18 +15,17 @@ export function useDrives() {
 
     const pollDrives = async (): Promise<void> => {
       try {
-        const data = await driveApi.listDrives()
+        const drivesList = await driveApi.listDrives()
         if (!isMounted) return
 
-        setDrives(data)
+        setDrives(drivesList)
         setSelectedLetter((currentSelection) => {
-          if (currentSelection && !data.some((d) => d.letter === currentSelection)) {
+          if (currentSelection && !drivesList.some((d) => d.letter === currentSelection)) {
             return ''
           }
           return currentSelection
         })
       } catch {
-        // Silently ignore scan errors
       } finally {
         if (isMounted) {
           setLoadingDrives(false)

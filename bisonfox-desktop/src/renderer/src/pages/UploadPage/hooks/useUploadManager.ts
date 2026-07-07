@@ -5,6 +5,7 @@ import { uploadApi } from '@renderer/services/uploadApi'
 import { UploadPhase } from '@renderer/entites/Upload'
 import { DiskSession } from '@shared/entities/DiskSession'
 import { WizardStep, AnotherDiskPage } from '@renderer/entites/Wizard'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export function useUploadManager(): {
   phase: UploadPhase
@@ -17,7 +18,7 @@ export function useUploadManager(): {
   failedCount: number
   overallPercentage: number
   currentDisk: DiskSession | null
-  failedFilesList: { path: string; reason: string }[]
+  failedFilesList: FailedFile[]
   completedBytes: number
   totalBytes: number
   startUpload: () => void
@@ -43,7 +44,7 @@ export function useUploadManager(): {
   const [overallPercentage, setOverallPercentage] = useState(0)
   const [completedBytesState, setCompletedBytesState] = useState(0)
   const [totalBytesState, setTotalBytesState] = useState(0)
-  const [failedFilesList, setFailedFilesList] = useState<{ path: string; reason: string }[]>([])
+  const [failedFilesList, setFailedFilesList] = useState<FailedFile[]>([])
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [retryKey, setRetryKey] = useState(0)
   const [accumulatedCopied, setAccumulatedCopied] = useState(0)
@@ -52,7 +53,6 @@ export function useUploadManager(): {
   const [preCalcTotalBytes, setPreCalcTotalBytes] = useState<number | null>(null)
   const [countingComplete, setCountingComplete] = useState(false)
 
-  // Stable refs for SSE callbacks
   const completedRef = useRef(0)
   const failedRef = useRef(0)
   const totalRef = useRef(0)
@@ -66,7 +66,7 @@ export function useUploadManager(): {
     }
   }, [])
 
-  // Effect 1: Pre-calculate total files
+  // Pre-calculate total files
   useEffect(() => {
     if (!currentDisk || phase !== 'ready') return
 
@@ -99,9 +99,7 @@ export function useUploadManager(): {
             setCountingComplete(true)
           }
         })
-        .catch(() => {
-          /* Ignore aborts */
-        })
+        .catch(() => {})
     }, 50)
 
     return () => {
@@ -176,12 +174,21 @@ export function useUploadManager(): {
       closed = true
       controller.close()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId, phase, recalcPct, retryKey])
 
   const handleCompletion = (msg: any): void => {
     if (msg.failed !== undefined) failedRef.current = msg.failed
     setOverallPercentage(100)
+
+    // Update byte stats from the done message so the final display is accurate
+    if (msg.totalBytes !== undefined && msg.totalBytes > 0) {
+      totalBytesRef.current = msg.totalBytes
+      setTotalBytesState(msg.totalBytes)
+    }
+    if (msg.completedBytes !== undefined) {
+      completedBytesRef.current = msg.completedBytes
+      setCompletedBytesState(msg.completedBytes)
+    }
 
     let finalCount = msg.completed ?? completedRef.current
     if (finalCount === 0 && totalRef.current > 0 && failedRef.current === 0) {
@@ -194,7 +201,7 @@ export function useUploadManager(): {
     setFailedCount(failedRef.current)
     setCompletedFiles(totalSuccess)
 
-    const failed: { path: string; reason: string }[] = msg.failedFiles || []
+    const failed: FailedFile[] = msg.failedFiles || []
     setFailedFilesList(failed)
 
     useWizardStore.getState().updateLastDiskSession({
@@ -204,12 +211,8 @@ export function useUploadManager(): {
     })
     setUploadDone(true)
 
-    // Only auto-navigate if there are NO failures
     if (failedRef.current === 0) {
-      clientLogger.info(
-        'UploadManager',
-        `Copied successfully ${finalCount} files.`
-      )
+      clientLogger.info('UploadManager', `Copied successfully ${finalCount} files.`)
       setTimeout(() => setStep(AnotherDiskPage), 1800)
     } else {
       const top3Failed = failed
@@ -226,7 +229,6 @@ export function useUploadManager(): {
   const startUpload = (): void => {
     if (!sessionId || !currentDisk) return
 
-    // Reset any leftover state from a previous upload session
     setUploadDone(false)
     setFailedFilesList([])
     setFailedCount(0)
@@ -248,11 +250,7 @@ export function useUploadManager(): {
     uploadApi
       .startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0)
       .catch((err: any) => {
-        clientLogger.error(
-          'UploadManager',
-          `Failed to upload.`,
-          err
-        )
+        clientLogger.error('UploadManager', `Failed to upload.`, err)
         setUploadError(err.message || 'Failed to start upload.')
       })
   }
@@ -260,10 +258,15 @@ export function useUploadManager(): {
   const retryFailed = (): void => {
     if (!sessionId || !currentDisk || failedFilesList.length === 0) return
 
-    const filesToRetry = failedFilesList.map((f) => f.path)
+    const filesToRetry = failedFilesList.map((failedFile) => failedFile.path)
+
+    const retryTotalBytes = failedFilesList.reduce(
+      (sum, failedFile) => sum + (failedFile.sizeInBytes ?? 0),
+      0
+    )
     clientLogger.info(
       'UploadManager',
-      `User decided to retry copying for ${filesToRetry.length} failed files.`
+      `User decided to retry copying for ${filesToRetry.length} failed files (${retryTotalBytes} bytes).`
     )
 
     setUploadDone(false)
@@ -278,22 +281,21 @@ export function useUploadManager(): {
     setCompletedBytesState(0)
     setOverallPercentage(0)
     totalRef.current = filesToRetry.length
-    totalBytesRef.current = 0
-    setRetryKey((k) => k + 1)
+    totalBytesRef.current = retryTotalBytes
+    setTotalBytesState(retryTotalBytes)
+    setTotalDiscovered(filesToRetry.length)
+    setRetryKey((prevKey) => prevKey + 1)
     setPhase('copying')
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, filesToRetry, subfolder, 0).catch((err: any) => {
+    uploadApi.startUpload(sessionId, filesToRetry, subfolder, retryTotalBytes).catch((err: any) => {
       clientLogger.error('UploadManager', `Retry failed.`, err)
       setUploadError(err.message || 'Retry failed.')
     })
   }
 
   const skipFailed = (): void => {
-    clientLogger.info(
-      'UploadManager',
-      `Skipping ${failedFilesList.length} failed file(s).`
-    )
+    clientLogger.info('UploadManager', `Skipping ${failedFilesList.length} failed file(s).`)
     setStep(AnotherDiskPage)
   }
 
@@ -327,11 +329,7 @@ export function useUploadManager(): {
     uploadApi
       .startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0)
       .catch((err: any) => {
-        clientLogger.error(
-          'UploadManager',
-          `Retry-all failed.`,
-          err
-        )
+        clientLogger.error('UploadManager', `Retry-all failed.`, err)
         setUploadError(err.message || 'Retry all failed.')
       })
   }

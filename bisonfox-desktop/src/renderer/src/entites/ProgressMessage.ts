@@ -1,3 +1,5 @@
+import { FailedFile } from '@shared/entities/FailedFile'
+
 export interface ProgressMessage {
   type: 'progress' | 'done' | 'error' | 'sync' | 'discovery'
   file?: string
@@ -8,7 +10,7 @@ export interface ProgressMessage {
   completed?: number
   completedBytes?: number
   failed?: number
-  failedFiles?: { path: string; reason: string }[]
+  failedFiles?: FailedFile[]
   total?: number
   totalBytes?: number
   progress?: Record<string, number>

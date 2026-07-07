@@ -8,7 +8,6 @@
     direction: ltr;
 }
 
-/* --- Rows --- */
 .tree-row {
     display: flex;
     align-items: center;
@@ -34,7 +33,6 @@
     border-color: rgba(20, 184, 166, .3);
 }
 
-/* --- Custom Checkbox --- */
 .tree-checkbox-hit-area {
     padding: 0.2vh;
     cursor: pointer;
@@ -73,7 +71,6 @@
     font-weight: bold;
 }
 
-/* --- Toggle & Icons --- */
 .tree-toggle {
     width: 2vh;
     height: 2vh;
@@ -94,7 +91,6 @@
     flex-shrink: 0;
 }
 
-/* --- Text & Layout --- */
 .tree-name {
     flex: 1;
     white-space: nowrap;
@@ -117,7 +113,6 @@
     font-style: italic;
 }
 
-/* --- Pagination & Search Bar --- */
 .tree-pagination-bar {
     cursor: default;
     display: flex;
@@ -135,7 +130,6 @@
     border-color: rgba(255, 255, 255, 0.06);
 }
 
-/* --- Pagination Controls Group --- */
 .pagination-controls {
     display: flex;
     align-items: center;
@@ -218,7 +212,6 @@
     box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.15);
 }
 
-/* --- Search Form --- */
 .pagination-search-form {
     display: flex;
     align-items: center;
@@ -302,7 +295,6 @@
     color: rgba(255, 255, 255);
 }
 
-/* --- Auto-Scroll Highlight Animation --- */
 .highlighted-node {
     animation: highlightPulse 2s ease-out;
 }

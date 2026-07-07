@@ -39,7 +39,7 @@ function safeMoveFileSync(src: string, dest: string, retries = 25, delayMs = 200
       if (i === retries) throw err
       if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
         const start = Date.now()
-        while (Date.now() - start < delayMs) { /* sync sleep */ }
+        while (Date.now() - start < delayMs) {}
       } else {
         throw err
       }
@@ -56,7 +56,7 @@ async function safeMoveFile(src: string, dest: string, retries = 25, delayMs = 2
     } catch (err: any) {
       if (i === retries) throw err
       if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
-        await new Promise(res => setTimeout(res, delayMs))
+        await new Promise((res) => setTimeout(res, delayMs))
       } else {
         throw err
       }
@@ -79,12 +79,10 @@ class Logger {
     try {
       envLogDir = config.logDir
       tempBaseDir = config.tempBaseDir
-    } catch { }
+    } catch {}
 
     if (!envLogDir || envLogDir.trim() === '' || !tempBaseDir || tempBaseDir.trim() === '') {
-      process.stderr.write(
-        '\n[SYSTEM WARNING] logDir or tempBaseDir is missing or empty!\n'
-      )
+      process.stderr.write('\n[SYSTEM WARNING] logDir or tempBaseDir is missing or empty!\n')
       process.stderr.write(
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
@@ -96,7 +94,6 @@ class Logger {
       if (!fs.existsSync(this.finalLogDir)) fs.mkdirSync(this.finalLogDir, { recursive: true })
       if (!fs.existsSync(this.stagingLogDir)) fs.mkdirSync(this.stagingLogDir, { recursive: true })
 
-      // Proactively move any old logs from a previous crashed session to final
       try {
         const files = fs.readdirSync(this.stagingLogDir)
         for (const file of files) {
@@ -106,15 +103,11 @@ class Logger {
             safeMoveFileSync(src, dest)
           }
         }
-      } catch (e) {
-        // Ignore sweep errors
-      }
+      } catch (err) {}
     }
 
     const transports: winston.transport[] = []
 
-    // Always log to console. 
-    // Show 'warn'/'error' when file logging is active, otherwise show all active levels.
     transports.push(
       new winston.transports.Console({
         level: this.stagingLogDir ? 'warn' : this.getWinstonLevel(minLevel),
@@ -160,15 +153,18 @@ class Logger {
 
   private getWinstonLevel(level: LogLevel): string {
     switch (level) {
-      case LogLevel.DEBUG: return 'debug'
-      case LogLevel.INFO: return 'info'
-      case LogLevel.WARN: return 'warn'
-      case LogLevel.ERROR: return 'error'
-      default: return 'debug'
+      case LogLevel.DEBUG:
+        return 'debug'
+      case LogLevel.INFO:
+        return 'info'
+      case LogLevel.WARN:
+        return 'warn'
+      case LogLevel.ERROR:
+        return 'error'
+      default:
+        return 'debug'
     }
   }
-
-  // ── Public API ──
 
   debug(context: string, message: string, meta?: Record<string, unknown>): void {
     if (this.minLevel <= LogLevel.DEBUG) {
@@ -194,7 +190,6 @@ class Logger {
     }
   }
 
-  /** Flush all streams (call on shutdown) */
   async flush(): Promise<void> {
     await new Promise<void>((resolve) => {
       this.winstonLogger.once('finish', resolve)
@@ -202,8 +197,8 @@ class Logger {
     })
 
     const fileTransportDrains = this.winstonLogger.transports
-      .filter((t): t is winston.transports.FileTransportInstance =>
-        t instanceof winston.transports.File
+      .filter(
+        (t): t is winston.transports.FileTransportInstance => t instanceof winston.transports.File
       )
       .map((t) => {
         const stream: NodeJS.WritableStream | undefined = (t as any)._stream
@@ -230,11 +225,10 @@ class Logger {
           await safeMoveFile(src, dest)
         }
       }
-    } catch (e) {
-      console.error('Logger error: Failed to move logs to final directory', e)
+    } catch (err) {
+      console.error('Logger error: Failed to move logs to final directory', err)
     }
   }
 }
 
-// Singleton export
 export const logger = new Logger(LogLevel.DEBUG)

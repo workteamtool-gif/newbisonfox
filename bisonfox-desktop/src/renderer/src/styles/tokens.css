@@ -29,7 +29,6 @@
     --font: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
     --font-display: 'Segoe UI Variable Display', 'Segoe UI', system-ui, sans-serif;
 
-    /* Responsive Design Tokens */
     --space-page-padding: clamp(1.5rem, 2.5vh, 2.5rem);
     --font-size-title: clamp(2rem, 2.8vw, 3.2rem);
     --font-size-subtitle: clamp(1.4rem, 1.9vw, 2.1rem);
@@ -38,5 +37,4 @@
 
     overflow: hidden;
     user-select: none;
-    /* Prevents users from accidentally highlighting UI text like a webpage */
 }

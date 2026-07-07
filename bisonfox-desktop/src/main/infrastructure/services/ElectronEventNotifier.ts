@@ -8,7 +8,6 @@ import { IEventNotifier } from '../../domain/interfaces/IEventNotifier'
 export class ElectronEventNotifier implements IEventNotifier {
   /**
    * Sends progress updates to the active Electron renderer process webcontents.
-   * Emits events using a dynamic channel named `upload-progress-${sessionId}`.
    *
    * @param sessionId The unique ID of the current copy/upload session.
    * @param payload The progress payload containing counters, paths, and status.

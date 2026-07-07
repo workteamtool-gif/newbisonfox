@@ -41,13 +41,13 @@ export function useTreeSearch({
       try {
         const targetPage = await driveApi.findItemPage(nodePath, trimmedQuery)
         if (targetPage !== null) {
-          const res = await loadPage(targetPage)
+          const treeResponse = await loadPage(targetPage)
 
-          const match = res.nodes.find((n) =>
-            n.name.toLowerCase().includes(trimmedQuery.toLowerCase())
+          const match = treeResponse.nodes.find((node) =>
+            node.name.toLowerCase().includes(trimmedQuery.toLowerCase())
           )
           if (match && onAutoExpand) {
-            onAutoExpand(autoExpandMap || {}, match.path)
+            onAutoExpand(autoExpandMap || {}, match.absolutePath)
             useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           } else {
             useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
@@ -72,7 +72,6 @@ export function useTreeSearch({
     [nodePath, loading, onAutoExpand, autoExpandMap, loadPage, setLoading]
   )
 
-  // Auto-expand effect
   useEffect(() => {
     if (autoExpandMap && autoExpandMap[nodePath] !== undefined) {
       if (lastAutoExpandRef.current === autoExpandMap) return

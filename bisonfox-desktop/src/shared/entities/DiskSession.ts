@@ -1,3 +1,5 @@
+import { FailedFile } from './FailedFile'
+
 export interface DiskSession {
   driveLetter: string
   subfolder?: string
@@ -5,5 +7,5 @@ export interface DiskSession {
   excludedItemPaths?: string[]
   copiedCount?: number
   failedCount?: number
-  failedItems?: { path: string; reason: string }[]
+  failedItems?: FailedFile[]
 }

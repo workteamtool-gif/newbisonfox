@@ -34,7 +34,7 @@ export function FileTree({
       ) : (
         nodes.map((node) => (
           <TreeNode
-            key={node.path}
+            key={node.absolutePath}
             node={node}
             selected={selected}
             excluded={excluded}

@@ -8,8 +8,7 @@ import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 
 export function useSelectFilesPage() {
-  const { setStep, currentDisk, setCurrentDisk, currentSubfolder } =
-    useWizardStore()
+  const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
 
   useDriveMonitor()
 
@@ -44,32 +43,34 @@ export function useSelectFilesPage() {
     const timeoutId = setTimeout(() => {
       driveApi
         .getDriveTree(currentDisk.driveLetter!, 1)
-        .then((res) => {
+        .then((treeResponse) => {
           if (!isMounted) return
-          setTree(res.nodes)
+          setTree(treeResponse.nodes)
           setRootPage(1)
-          setRootHasMore(res.hasMore)
-          setRootTotalPages(res.totalPages ?? 1)
+          setRootHasMore(treeResponse.hasMore)
+          setRootTotalPages(treeResponse.totalPages ?? 1)
           setLoading(false)
 
-          // Fetch root directory count asynchronously for pagination
-          if (res.totalPages === -1) {
+          if (treeResponse.totalPages === -1) {
             setRootCountLoading(true)
-            driveApi.getDirCount(currentDisk.driveLetter!).then((count) => {
-              if (!isMounted) return
-              import('@renderer/services/configService').then(({ getConfig }) => {
-                getConfig().then((config) => {
-                  if (!isMounted) return
-                  const limit = config.itemsInOnePage || 48
-                  setRootTotalPages(Math.max(1, Math.ceil(count / limit)))
-                  setRootCountLoading(false)
+            driveApi
+              .getDirCount(currentDisk.driveLetter!)
+              .then((count) => {
+                if (!isMounted) return
+                import('@renderer/services/configService').then(({ getConfig }) => {
+                  getConfig().then((config) => {
+                    if (!isMounted) return
+                    const limit = config.itemsInOnePage || 48
+                    setRootTotalPages(Math.max(1, Math.ceil(count / limit)))
+                    setRootCountLoading(false)
+                  })
                 })
               })
-            }).catch(() => {
-              if (!isMounted) return
-              setRootTotalPages(1)
-              setRootCountLoading(false)
-            })
+              .catch(() => {
+                if (!isMounted) return
+                setRootTotalPages(1)
+                setRootCountLoading(false)
+              })
           }
         })
         .catch(() => {
@@ -88,11 +89,11 @@ export function useSelectFilesPage() {
     const nextPage = rootPage + 1
     setLoading(true)
     try {
-      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage)
-      setTree(res.nodes)
+      const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage)
+      setTree(treeResponse.nodes)
       setRootPage(nextPage)
-      setRootHasMore(res.hasMore)
-      setRootTotalPages(res.totalPages ?? 1)
+      setRootHasMore(treeResponse.hasMore)
+      setRootTotalPages(treeResponse.totalPages ?? 1)
     } finally {
       setLoading(false)
     }
@@ -103,11 +104,11 @@ export function useSelectFilesPage() {
     const prevPage = rootPage - 1
     setLoading(true)
     try {
-      const res = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage)
-      setTree(res.nodes)
+      const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage)
+      setTree(treeResponse.nodes)
       setRootPage(prevPage)
       setRootHasMore(true)
-      setRootTotalPages(res.totalPages ?? 1)
+      setRootTotalPages(treeResponse.totalPages ?? 1)
     } finally {
       setLoading(false)
     }
@@ -119,11 +120,11 @@ export function useSelectFilesPage() {
         return
       setLoading(true)
       try {
-        const res = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
-        setTree(res.nodes)
+        const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
+        setTree(treeResponse.nodes)
         setRootPage(targetPage)
-        setRootHasMore(res.hasMore)
-        setRootTotalPages(res.totalPages ?? 1)
+        setRootHasMore(treeResponse.hasMore)
+        setRootTotalPages(treeResponse.totalPages ?? 1)
       } finally {
         setLoading(false)
       }
@@ -139,36 +140,36 @@ export function useSelectFilesPage() {
     (path: string, _isDir: boolean, isExcluded: boolean, isInherited: boolean) => {
       if (isExcluded) {
         setExcluded((prev) => {
-          const n = new Set(prev)
-          n.delete(path)
-          return n
+          const updatedSet = new Set(prev)
+          updatedSet.delete(path)
+          return updatedSet
         })
       } else if (isInherited) {
         setExcluded((prev) => new Set([...prev, path]))
       } else {
         setSelected((prev) => {
-          const n = new Set(prev)
-          if (n.has(path)) n.delete(path)
-          else n.add(path)
+          const updatedSet = new Set(prev)
+          if (updatedSet.has(path)) updatedSet.delete(path)
+          else updatedSet.add(path)
 
-          for (const sel of n) {
+          for (const sel of updatedSet) {
             if (sel !== path && isSubPath(path, sel)) {
-              n.delete(sel)
+              updatedSet.delete(sel)
             }
           }
-          return n
+          return updatedSet
         })
 
         setExcluded((prev) => {
-          const n = new Set(prev)
+          const updatedSet = new Set(prev)
           let changed = false
-          for (const ex of n) {
+          for (const ex of updatedSet) {
             if (ex === path || isSubPath(path, ex)) {
-              n.delete(ex)
+              updatedSet.delete(ex)
               changed = true
             }
           }
-          return changed ? n : prev
+          return changed ? updatedSet : prev
         })
       }
     },
@@ -192,20 +193,22 @@ export function useSelectFilesPage() {
 
     try {
       const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
-      if (gen !== searchGenRef.current) return false // cancelled
+      if (gen !== searchGenRef.current) return false
 
       if (targetPage !== null) {
-        const res = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
-        if (gen !== searchGenRef.current) return false // cancelled
+        const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
+        if (gen !== searchGenRef.current) return false
 
-        setTree(res.nodes)
+        setTree(treeResponse.nodes)
         setRootPage(targetPage)
-        setRootHasMore(res.hasMore)
-        setRootTotalPages(res.totalPages ?? Math.max(1, targetPage))
+        setRootHasMore(treeResponse.hasMore)
+        setRootTotalPages(treeResponse.totalPages ?? Math.max(1, targetPage))
 
-        const match = res.nodes.find((n) => n.name.toLowerCase().includes(query.toLowerCase()))
+        const match = treeResponse.nodes.find((node) =>
+          node.name.toLowerCase().includes(query.toLowerCase())
+        )
         if (match) {
-          setScrollToPath(match.path)
+          setScrollToPath(match.absolutePath)
           useWizardStore.getState().setToast(`נמצא "${match.name}"`, 'success')
         } else {
           useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
@@ -213,24 +216,24 @@ export function useSelectFilesPage() {
         return false
       } else {
         const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
-        if (gen !== searchGenRef.current) return false // cancelled
+        if (gen !== searchGenRef.current) return false
 
         if (deepMatch) {
           useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
           const expandedPages = deepMatch.pages
           const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
 
-          const res = await driveApi.getDriveTree(currentDisk.driveLetter!, rootTargetPage)
-          if (gen !== searchGenRef.current) return false // cancelled
+          const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, rootTargetPage)
+          if (gen !== searchGenRef.current) return false
 
-          setTree(res.nodes)
+          setTree(treeResponse.nodes)
           setRootPage(rootTargetPage)
-          setRootHasMore(res.hasMore)
-          setRootTotalPages(res.totalPages ?? Math.max(1, rootTargetPage))
+          setRootHasMore(treeResponse.hasMore)
+          setRootTotalPages(treeResponse.totalPages ?? Math.max(1, rootTargetPage))
 
           setAutoExpandMap(expandedPages)
           setScrollToPath(deepMatch.path)
-          return true // indicates success deep find, we can clear query
+          return true
         } else {
           useWizardStore
             .getState()
@@ -238,7 +241,7 @@ export function useSelectFilesPage() {
         }
       }
     } catch {
-      if (gen !== searchGenRef.current) return false // cancelled
+      if (gen !== searchGenRef.current) return false
       useWizardStore.getState().setToast('אופס, אירעה שגיאה במהלך החיפוש.', 'error')
     } finally {
       if (gen === searchGenRef.current) {

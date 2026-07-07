@@ -1,6 +1,4 @@
-// ⚠️ CRITICAL: Must be the absolute first line before any other imports!
 import { exec } from 'child_process'
-// This unlocks Node's C++ I/O thread pool to match your Copy Engine concurrency.
 import './env'
 
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
@@ -13,21 +11,17 @@ import { UploadManager } from './application/UploadManager'
 import { startKeepAliveLogger } from '@main/infrastructure/loggers/keepAliveLogger'
 import { config } from './appConfig'
 
-// --- GLOBAL STATE ---
 let appServices: { uploadManager: UploadManager } | null = null
 let isShuttingDown = false
 
-// --- LIFECYCLE: TEARDOWN ---
 async function gracefulShutdown(): Promise<void> {
   if (isShuttingDown) return
   isShuttingDown = true
 
-  // 1. Instantly abort all active copy engines and scanners
   if (appServices?.uploadManager) {
     appServices.uploadManager.cancelAllUploads()
   }
 
-  // 2. Brief pause to allow File I/O finally blocks to execute and flush buffers
   await new Promise((resolve) => setTimeout(resolve, 500))
 
   await logger.flush()
@@ -36,10 +30,8 @@ async function gracefulShutdown(): Promise<void> {
   app.quit()
 }
 
-// --- LIFECYCLE: UI CREATION ---
 function createWindow(): void {
   let mainWindow
-  // Create the browser window.
   if (is.dev) {
     mainWindow = new BrowserWindow({
       show: false,
@@ -68,7 +60,6 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // HMR for renderer base on electron-vite cli.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -76,16 +67,13 @@ function createWindow(): void {
   }
 }
 
-// --- LIFECYCLE: BOOTSTRAP ---
 app.whenReady().then(() => {
-  // Set app user model id for windows
   electronApp.setAppUserModelId('com.lightningfox')
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // 1. Register Core System IPC Handlers FIRST
   ipcMain.handle(IPC_CHANNELS.SYSTEM.LOG, (_event, { level, context, message, data }) => {
     const fullContext = `CLIENT:${context}`
     if (level === 'ERROR') logger.error(fullContext, message, data)
@@ -99,7 +87,6 @@ app.whenReady().then(() => {
         'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
       exec(cmd, { timeout: 5000 }, (err, stdout) => {
         if (err) {
-          // On error, assume keyboard is present to avoid showing VK unexpectedly
           resolve({ hasKeyboard: true })
           return
         }
@@ -114,13 +101,10 @@ app.whenReady().then(() => {
     return config
   })
 
-  // 2. Initialize the backend engine and register domain IPC handlers
   appServices = setupApplication()
 
-  // 2.a Keep-alive heartbeat log: first write immediately, then every 5 minutes
   startKeepAliveLogger()
 
-  // 3. Finally, show the UI
   createWindow()
 
   app.on('activate', function () {
@@ -128,9 +112,6 @@ app.whenReady().then(() => {
   })
 })
 
-// --- SHUTDOWN EVENT LISTENERS ---
-
-// 1. Triggered when the user clicks the "X" on the last window
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     logger.info('Electron', 'All windows closed. Triggering shutdown.')
@@ -138,27 +119,25 @@ app.on('window-all-closed', () => {
   }
 })
 
-// 2. Triggered if they right-click the dock/taskbar and select "Quit"
 app.on('before-quit', (event) => {
   if (!isShuttingDown) {
-    event.preventDefault() // Pause the quit sequence!
-    gracefulShutdown() // Run our teardown, which will safely call app.quit() at the end
+    event.preventDefault()
+    gracefulShutdown()
   }
 })
 
-// 3. Triggered by Ctrl+C in terminal (Crucial for your dev environment)
+// Triggered by Ctrl+C in terminal (Crucial for your dev environment)
 process.on('SIGINT', () => {
   logger.info('System', 'SIGINT received (Ctrl+C).')
   gracefulShutdown()
 })
 
-// 4. Triggered by task manager kills or OS shutdown
+// Triggered by task manager kills or OS shutdown
 process.on('SIGTERM', () => {
   logger.info('System', 'SIGTERM received.')
   gracefulShutdown()
 })
 
-// --- FATAL ERROR HANDLING ---
 process.on('uncaughtException', (err) => {
   logger.error('Process', 'Uncaught Exception', { error: err.message, stack: err.stack })
 })

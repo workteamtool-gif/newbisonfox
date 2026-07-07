@@ -1,6 +1,3 @@
-/**
- * A custom Semaphore to strictly limit how many massive files can copy concurrently
- */
 export class AsyncSemaphore {
   private permits: number
   private queue: (() => void)[] = []

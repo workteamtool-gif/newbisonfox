@@ -22,8 +22,8 @@ export class BackpressureGate {
       if (!this.blocked) {
         this.blocked = true
       }
-      await new Promise<void>((r) => {
-        this.resolve = r
+      await new Promise<void>((resolveFn) => {
+        this.resolve = resolveFn
       })
     }
   }
@@ -31,9 +31,9 @@ export class BackpressureGate {
   notify(queueLength: number): void {
     if (this.blocked && queueLength <= this.lowWaterMark && this.resolve) {
       this.blocked = false
-      const r = this.resolve
+      const resolver = this.resolve
       this.resolve = null
-      r()
+      resolver()
     }
   }
 }

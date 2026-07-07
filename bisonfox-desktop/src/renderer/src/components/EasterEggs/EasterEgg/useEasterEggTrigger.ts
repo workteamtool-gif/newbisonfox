@@ -16,11 +16,9 @@ export function useEasterEggTrigger(
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Increment the count when the modal transitions from open to closed
     if (prevIsOpen.current && !isModalOpen) {
       count.current += 1
 
-      // Reset the counter if the user doesn't close it again within the timeout
       if (resetTimer.current) {
         clearTimeout(resetTimer.current)
       }

@@ -27,10 +27,10 @@ export function useTreeNode({
 
   const canExpand = node.isDirectory && node.hasChildren !== false
 
-  const pagination = useTreePagination({ nodePath: node.path, onLoadChildren })
+  const pagination = useTreePagination({ nodePath: node.absolutePath, onLoadChildren })
 
   useTreePageCount({
-    nodePath: node.path,
+    nodePath: node.absolutePath,
     expanded: pagination.expanded,
     totalPages: pagination.totalPages,
     setTotalPages: pagination.setTotalPages,
@@ -38,7 +38,7 @@ export function useTreeNode({
   })
 
   const { handleSearchSubmit } = useTreeSearch({
-    nodePath: node.path,
+    nodePath: node.absolutePath,
     loading: pagination.loading,
     expanded: pagination.expanded,
     page: pagination.page,
@@ -52,7 +52,7 @@ export function useTreeNode({
   })
 
   const { highlighted, rowRef } = useTreeScroll({
-    nodePath: node.path,
+    nodePath: node.absolutePath,
     scrollToPath,
     onScrolled
   })

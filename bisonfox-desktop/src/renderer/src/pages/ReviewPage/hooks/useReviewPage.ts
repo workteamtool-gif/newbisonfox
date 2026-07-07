@@ -27,12 +27,12 @@ export function useReviewPage() {
     setSelected(new Set(currentDisk.selectedItemPaths))
     setExcluded(new Set(currentDisk.excludedItemPaths ?? []))
 
-    const initialNodes = currentDisk.selectedItemPaths.map((fp) => {
-      const name = fp.split(/[/\\]/).pop() ?? fp
+    const initialNodes = currentDisk.selectedItemPaths.map((aboslutePath) => {
+      const name = aboslutePath.split(/[/\\]/).pop() ?? aboslutePath
       const isFileLike = name.includes('.')
       return {
-        name: `${name}   (${fp})`,
-        path: fp,
+        name: `${name}   (${aboslutePath})`,
+        absolutePath: aboslutePath,
         isDirectory: !isFileLike,
         hasChildren: !isFileLike
       }
@@ -48,40 +48,40 @@ export function useReviewPage() {
     (path: string, _isDir: boolean, isExcluded: boolean, isInherited: boolean) => {
       if (isExcluded) {
         setExcluded((prev) => {
-          const n = new Set(prev)
-          n.delete(path)
-          return n
+          const updatedSet = new Set(prev)
+          updatedSet.delete(path)
+          return updatedSet
         })
       } else if (isInherited) {
         setExcluded((prev) => new Set([...prev, path]))
       } else {
         setSelected((prev) => {
-          const n = new Set(prev)
-          if (n.has(path)) n.delete(path)
-          else n.add(path)
+          const updatedSet = new Set(prev)
+          if (updatedSet.has(path)) updatedSet.delete(path)
+          else updatedSet.add(path)
 
           const prefixWindows = path + '\\'
           const prefixPosix = path + '/'
-          for (const sel of n) {
+          for (const sel of updatedSet) {
             if (sel !== path && (sel.startsWith(prefixWindows) || sel.startsWith(prefixPosix))) {
-              n.delete(sel)
+              updatedSet.delete(sel)
             }
           }
-          return n
+          return updatedSet
         })
 
         setExcluded((prev) => {
-          const n = new Set(prev)
+          const updatedSet = new Set(prev)
           let changed = false
           const prefixWindows = path + '\\'
           const prefixPosix = path + '/'
-          for (const ex of n) {
+          for (const ex of updatedSet) {
             if (ex === path || ex.startsWith(prefixWindows) || ex.startsWith(prefixPosix)) {
-              n.delete(ex)
+              updatedSet.delete(ex)
               changed = true
             }
           }
-          return changed ? n : prev
+          return changed ? updatedSet : prev
         })
       }
     },
@@ -109,10 +109,7 @@ export function useReviewPage() {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info(
-        'ReviewPage',
-        `Starting upload of ${finalDisk.selectedItemPaths} files`
-      )
+      clientLogger.info('ReviewPage', `Starting upload of ${finalDisk.selectedItemPaths} files`)
 
       setStep(UploadPage)
     } catch (err: any) {
@@ -123,10 +120,7 @@ export function useReviewPage() {
   }
 
   const handleBack = useCallback(() => {
-    clientLogger.info(
-      'ReviewPage',
-      `Returning to file selection`
-    )
+    clientLogger.info('ReviewPage', `Returning to file selection`)
     if (currentDisk) {
       setCurrentDisk({
         ...currentDisk,
@@ -139,10 +133,7 @@ export function useReviewPage() {
 
   useEffect(() => {
     if (!currentDisk) {
-      clientLogger.warn(
-        'ReviewPage',
-        `No current disk found, navigating back to SetupPage`
-      )
+      clientLogger.warn('ReviewPage', `No current disk found, navigating back to SetupPage`)
       setStep(SetupPage)
     }
   }, [currentDisk, setStep, userName, sessionId])

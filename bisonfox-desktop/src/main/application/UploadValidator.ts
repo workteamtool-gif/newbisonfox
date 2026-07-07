@@ -52,7 +52,6 @@ export class UploadValidator {
       }
     }
 
-    // Staging destination: flat GUID storage keyed by MAC and session.id
     const macFolder = getFirstMacAddress()
     const stagingDest = path.resolve(rawTempDir, macFolder, session.id)
 

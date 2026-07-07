@@ -31,7 +31,6 @@
     margin-bottom: 1.5rem;
 }
 
-/* Overriding specific stat-card behavior for this page */
 .success-stat-card {
     min-width: 9.17vh;
 }

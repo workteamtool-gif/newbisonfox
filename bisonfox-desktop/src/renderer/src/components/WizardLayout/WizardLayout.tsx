@@ -22,7 +22,10 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
   React.useEffect(() => {
     const handleUnload = (): void => {
       if (sessionId) {
-        clientLogger.info('WizardLayout', `Session stopped because the program was closed or unloaded.`)
+        clientLogger.info(
+          'WizardLayout',
+          `Session stopped because the program was closed or unloaded.`
+        )
       }
     }
     window.addEventListener('beforeunload', handleUnload)
@@ -35,12 +38,9 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     if (sessionId) {
       try {
         await uploadApi.cancelSession(sessionId)
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     }
 
-    // Trigger OS restart
     window.api.invoke('system:close')
   }
 

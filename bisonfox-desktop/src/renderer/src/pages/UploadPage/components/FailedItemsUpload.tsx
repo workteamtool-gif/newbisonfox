@@ -1,9 +1,10 @@
 import React from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export interface FailedItemsUploadProps {
   failedCount: number
-  failedFilesList: { path: string; reason: string }[]
+  failedFilesList: FailedFile[]
   MAX_FAILED_FILES_TO_SHOW: number
   skipFailed: () => void
   retryFailed: () => void

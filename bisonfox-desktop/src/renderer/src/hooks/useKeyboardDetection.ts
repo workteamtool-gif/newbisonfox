@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 export function useKeyboardDetection(): boolean {
-  // Assume a keyboard is connected initially so we don't flash the virtual keyboard unnecessarily
   const [, setHasKeyboard] = useState(true)
 
   useEffect(() => {
@@ -9,7 +8,6 @@ export function useKeyboardDetection(): boolean {
 
     async function checkKeyboard(): Promise<void> {
       try {
-        // Assume API has been exposed via preload
         const result = await window.api.invoke('detect-keyboard')
         if (isMounted) {
           setHasKeyboard(result.hasKeyboard)
@@ -26,5 +24,5 @@ export function useKeyboardDetection(): boolean {
     }
   }, [])
 
-  return false // Return true if virtual keyboard should be shown
+  return false
 }

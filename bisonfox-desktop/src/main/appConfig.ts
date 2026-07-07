@@ -4,7 +4,6 @@ import { app } from 'electron'
 import { z } from 'zod'
 import { is } from '@electron-toolkit/utils'
 
-// 1. Define the Zod schema for configuration
 const configSchema = z.object({
   uploadBaseDir: z.string().min(1, 'Upload base directory must be provided'),
   tempBaseDir: z.string().min(1, 'Temp staging directory must be provided'),
@@ -35,7 +34,6 @@ function loadConfig(): AppConfig {
   }
 
   try {
-    // In dev mode, use project root. In prod, use the folder containing the exe.
     const baseDir = is.dev ? path.resolve(process.cwd()) : path.dirname(app.getPath('exe'))
 
     const configPath = path.join(baseDir, 'config.json')
@@ -47,13 +45,10 @@ function loadConfig(): AppConfig {
     const rawConfig = fs.readFileSync(configPath, 'utf8')
     const parsedJson = JSON.parse(rawConfig)
 
-    // Validate using zod
     const validationResult = configSchema.safeParse(parsedJson)
 
     if (!validationResult.success) {
       console.error('Configuration validation failed:', validationResult.error.format())
-      // We log to console here because the logger might not be fully initialized yet
-      // if it depends on config values.
       throw new Error('Invalid configuration format in config.json')
     }
 
@@ -61,7 +56,6 @@ function loadConfig(): AppConfig {
     return cachedConfig
   } catch (error) {
     console.error('Failed to load application configuration:', error)
-    // Re-throw or provide default fallback. For now, it's critical to have a valid config.
     throw error
   }
 }

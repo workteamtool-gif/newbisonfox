@@ -76,16 +76,13 @@ export async function countFiles(
           try {
             const stats = await fs.promises.stat(filePath)
             size += stats.size
-          } catch {
-            // ignore inaccessible files
-          }
+          } catch {}
           if (index % 500 === 0) {
             reportProgress()
           }
         }
       }
 
-      // Use up to 50 concurrent fs.stat calls per directory batch
       const maxWorkers = Math.min(50, files.length)
       const workers = Array.from({ length: maxWorkers }, statWorker)
 

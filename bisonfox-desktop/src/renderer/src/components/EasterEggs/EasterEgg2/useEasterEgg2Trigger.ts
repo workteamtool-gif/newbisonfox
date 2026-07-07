@@ -22,7 +22,6 @@ export function useUsernameEasterEggTrigger(
         }, durationMs)
       }
     } else {
-      // Reset so it can be triggered again if they edit and re-type it
       hasTriggered.current = false
     }
   }, [name, targetUsername, durationMs])

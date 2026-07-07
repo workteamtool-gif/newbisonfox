@@ -18,12 +18,12 @@ export function useTreePagination({ nodePath, onLoadChildren }: UseTreePaginatio
 
   const loadPage = useCallback(
     async (targetPage: number) => {
-      const res = await onLoadChildren(nodePath, targetPage)
-      setLoadedChildren(res.nodes)
+      const treeResponse = await onLoadChildren(nodePath, targetPage)
+      setLoadedChildren(treeResponse.nodes)
       setPage(targetPage)
-      setHasMore(res.hasMore)
-      setTotalPages(res.totalPages ?? Math.max(1, targetPage))
-      return res
+      setHasMore(treeResponse.hasMore)
+      setTotalPages(treeResponse.totalPages ?? Math.max(1, targetPage))
+      return treeResponse
     },
     [nodePath, onLoadChildren]
   )
@@ -66,11 +66,11 @@ export function useTreePagination({ nodePath, onLoadChildren }: UseTreePaginatio
       if (page <= 1 || loading) return
       setLoading(true)
       try {
-        const res = await onLoadChildren(nodePath, page - 1)
-        setLoadedChildren(res.nodes)
+        const treeResponse = await onLoadChildren(nodePath, page - 1)
+        setLoadedChildren(treeResponse.nodes)
         setPage(page - 1)
         setHasMore(true)
-        setTotalPages(res.totalPages ?? 1)
+        setTotalPages(treeResponse.totalPages ?? 1)
       } finally {
         setLoading(false)
       }

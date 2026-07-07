@@ -51,8 +51,8 @@ export function TreeNode({
     handleSearchSubmit
   } = useTreeNode({ node, onLoadChildren, autoExpandMap, onAutoExpand, scrollToPath, onScrolled })
 
-  const isExcluded = excluded.has(node.path)
-  const isExplicitlyChecked = selected.has(node.path)
+  const isExcluded = excluded.has(node.absolutePath)
+  const isExplicitlyChecked = selected.has(node.absolutePath)
   const checked = isExplicitlyChecked || (inheritedCheck && !isExcluded)
 
   const showChildren = node.isDirectory && expanded && loadedChildren && loadedChildren.length > 0
@@ -78,7 +78,7 @@ export function TreeNode({
       {showChildren && (
         <TreeNodeChildren
           children={loadedChildren!}
-          parentPath={node.path}
+          parentPath={node.absolutePath}
           selected={selected}
           excluded={excluded}
           parentChecked={checked}

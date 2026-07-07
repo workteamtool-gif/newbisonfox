@@ -8,7 +8,7 @@ function resolveMailLogDir(): string | null {
   let envPath = ''
   try {
     envPath = config.mailLogDir
-  } catch { }
+  } catch {}
   if (!envPath || envPath.trim() === '') {
     logger.warn('MailLogger', 'MAIL_LOG_DIR is not configured')
     return null

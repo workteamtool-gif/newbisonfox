@@ -26,15 +26,13 @@ export function useDriveMonitor(): void {
           setStep(SetupPage)
           return
         }
-      } catch {
-        // Silently ignore network errors and try again next loop
-      }
+      } catch {}
       if (isMounted) {
         timeoutId = setTimeout(pollDrive, 2500)
       }
     }
 
-    pollDrive() // Start the loop
+    pollDrive()
 
     return () => {
       isMounted = false

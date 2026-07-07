@@ -44,7 +44,7 @@ export function TreeNodeRow({
         className="tree-checkbox-hit-area"
         onClick={(e) => {
           e.stopPropagation()
-          onToggleSelect(node.path, node.isDirectory, isExcluded, inheritedCheck)
+          onToggleSelect(node.absolutePath, node.isDirectory, isExcluded, inheritedCheck)
         }}
       >
         <div className={`tree-checkbox ${checked ? 'checked' : ''}`} />
@@ -68,7 +68,7 @@ export function TreeNodeRow({
       <span className="tree-name" title={node.name}>
         {node.name}
       </span>
-      {!node.isDirectory && <span className="tree-size">{formatSize(node.size)}</span>}
+      {!node.isDirectory && <span className="tree-size">{formatSize(node.sizeInBytes)}</span>}
     </div>
   )
 }

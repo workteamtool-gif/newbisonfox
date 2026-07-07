@@ -1,13 +1,8 @@
-/**
- * Represents a single file or directory node in a tree listing.
- */
 export interface ItemNode {
   name: string
-  /** Absolute path on disk */
-  path: string
+  absolutePath: string
   isDirectory: boolean
   children?: ItemNode[]
   hasChildren?: boolean
-  /** Item size in bytes (only for files) */
-  size?: number
+  sizeInBytes?: number
 }

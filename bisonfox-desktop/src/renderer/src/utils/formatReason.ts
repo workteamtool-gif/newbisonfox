@@ -64,6 +64,5 @@ export function translateErrorReason(reason: string): string {
     return 'חיבור הרשת אל היעד פקע או נותק באופן פתאומי באמצע ההעברה.'
   }
 
-  // Fallback
   return `אירעה שגיאה לא מוכרת (פרטים טכניים: ${reason})`
 }

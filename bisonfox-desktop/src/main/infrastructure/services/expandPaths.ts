@@ -61,13 +61,10 @@ export async function expandPaths(
       const item = queue.shift()
 
       if (!item) {
-        // Nothing in the queue — check if all other workers are also idle
         if (activeWorkers === 0 && queue.length === 0) {
-          // Signal completion
           if (resolveAllIdle) resolveAllIdle()
           break
         }
-        // Yield and let other workers finish their current items
         await new Promise((r) => setTimeout(r, 10))
         continue
       }
@@ -108,7 +105,6 @@ export async function expandPaths(
             if (entry.isDirectory()) {
               queue.push({ path: fullChildPath, isDir: true })
             } else {
-              // If backpressure is enabled, wait before pushing more files
               if (backpressureGate) {
                 await backpressureGate.waitIfNeeded(queue.length)
               }
@@ -130,7 +126,6 @@ export async function expandPaths(
     }
   }
 
-  // Wait for all workers to finish
   const donePromise = new Promise<void>((resolve) => {
     resolveAllIdle = resolve
   })

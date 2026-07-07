@@ -13,9 +13,7 @@ function resolveKeepAliveDir(): string | null {
   let envPath = ''
   try {
     envPath = config.keepAliveLogDir
-  } catch {
-    //
-  }
+  } catch {}
   if (!envPath || envPath.trim() === '') {
     logger.warn('KeepAlive', 'keepAliveLogDir is not configured')
     return null
@@ -81,9 +79,7 @@ async function getSystemSerialNumber(): Promise<string> {
         })
       })
     }
-  } catch {
-    // ignore and fallback to unknown
-  }
+  } catch {}
 
   return 'unknown'
 }
@@ -131,7 +127,6 @@ export function startKeepAliveLogger(): NodeJS.Timeout | null {
 
   ensureKeepAliveDir(dir)
 
-  // Write immediately on startup
   void logKeepAliveHeartbeat()
 
   return setInterval(() => {

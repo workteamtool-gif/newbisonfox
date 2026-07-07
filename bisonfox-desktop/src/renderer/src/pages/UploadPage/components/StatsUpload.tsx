@@ -13,12 +13,13 @@ export interface StatsUploadProps {
 
 function formatEta(seconds: number): string {
   if (!isFinite(seconds) || seconds <= 0) return '—'
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = Math.floor(seconds % 60)
-  if (h > 0) return `${h}H ${String(m).padStart(2, '0')}M`
-  if (m > 0) return `${m}M ${String(s).padStart(2, '0')}S`
-  return `${s}S`
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secondsRem = Math.floor(seconds % 60)
+  if (hours > 0) return `${hours}H ${String(minutes).padStart(2, '0')}M`
+  if (minutes > 0) return `${minutes}M ${String(secondsRem).padStart(2, '0')}S`
+
+  return `${secondsRem}S`
 }
 
 export function StatsUpload({
@@ -31,18 +32,16 @@ export function StatsUpload({
   totalBytes,
   showTotalReview
 }: StatsUploadProps): React.JSX.Element {
-  // Track when bytes first started flowing so we can derive a stable speed
   const startedAtRef = useRef<number | null>(null)
   const startCompletedCountRef = useRef<number>(0)
   const prevPercentageRef = useRef(overallPercentage)
   const [now, setNow] = useState(() => Date.now())
 
-  // Enterprise ETA Algorithm References
   const historyRef = useRef<{ time: number; bytes: number }[]>([])
   const emaRef = useRef<number | null>(null)
 
-  const ETA_WINDOW_MS = 3000 // 3 seconds sliding window
-  const ETA_ALPHA = 0.2 // Smoothing factor for EMA
+  const ETA_WINDOW_MS = 3000
+  const ETA_ALPHA = 0.2
 
   useEffect(() => {
     if (overallPercentage === 0 && prevPercentageRef.current > 0) {
@@ -63,23 +62,19 @@ export function StatsUpload({
     }
   }, [completedBytes, completedCount])
 
-  // Pass 2 (Execution): Track byte progression events
   useEffect(() => {
     const time = Date.now()
     const history = historyRef.current
-    
-    // Sample transfer state to prevent array flooding (e.g. every 250ms)
+
     if (history.length === 0 || time - history[history.length - 1].time >= 250) {
       history.push({ time, bytes: completedBytes })
-      
-      // Keep memory clean: drop anything older than our window + buffer
+
       while (history.length > 0 && time - history[0].time > ETA_WINDOW_MS + 1000) {
         history.shift()
       }
     }
   }, [completedBytes])
 
-  // Tick every second so the ETA display stays live
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(id)
@@ -88,22 +83,19 @@ export function StatsUpload({
   const etaLabel = (() => {
     if (overallPercentage >= 100) return '✓'
     if (startedAtRef.current === null) return '—'
-    
+
     const elapsedTotal = (now - startedAtRef.current) / 1000
     if (elapsedTotal < 2) return '—' // wait for initialization
 
     let rollingSpeed = 0
-    
-    // 1. Sliding Window (Speed Measurement)
-    // Filter strictly against 'now' so if the transfer stalls (bytes stop updating), 
-    // the window empties and speed mathematically drops exactly to zero.
-    const validHistory = historyRef.current.filter(h => now - h.time <= ETA_WINDOW_MS)
-    
+
+    const validHistory = historyRef.current.filter((h) => now - h.time <= ETA_WINDOW_MS)
+
     if (validHistory.length >= 2) {
       const oldest = validHistory[0]
       const newest = validHistory[validHistory.length - 1]
       const windowElapsed = (newest.time - oldest.time) / 1000
-      
+
       if (windowElapsed > 0) {
         rollingSpeed = (newest.bytes - oldest.bytes) / windowElapsed
       }
@@ -135,10 +127,10 @@ export function StatsUpload({
 
   const formatSize = (bytes: number) => {
     if (!bytes || bytes === 0) return '0 B'
-    const k = 1024
+    const kiloBytes = 1024
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+    const unitIndex = Math.floor(Math.log(bytes) / Math.log(kiloBytes))
+    return parseFloat((bytes / Math.pow(kiloBytes, unitIndex)).toFixed(2)) + ' ' + sizes[unitIndex]
   }
 
   return (

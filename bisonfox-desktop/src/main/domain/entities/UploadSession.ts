@@ -1,4 +1,5 @@
 import { DiskSession } from '@shared/entities/DiskSession'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export interface UploadSession {
   id: string
@@ -9,7 +10,7 @@ export interface UploadSession {
   status: 'pending' | 'uploading' | 'complete' | 'cancelled' | 'error'
   completedCount: number
   failedCount: number
-  failedFiles: { path: string; reason: string }[]
+  failedFiles: FailedFile[]
   totalCount: number
   createdAt: Date
   lastUpdate: Date

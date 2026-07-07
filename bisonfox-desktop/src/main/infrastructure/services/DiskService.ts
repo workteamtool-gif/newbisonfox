@@ -8,9 +8,6 @@ import { config } from '@main/appConfig'
 
 const execAsync = promisify(exec)
 
-/**
- * Service responsible for listing and analyzing physical and logical disk drives
- */
 export class DiskService implements IDiskService {
   async listDrives(): Promise<DriveInfo[]> {
     if (process.platform !== 'win32') {
@@ -29,7 +26,6 @@ export class DiskService implements IDiskService {
    */
   private async listWindowsDrives(): Promise<DriveInfo[]> {
     try {
-      // Use fsutil fsinfo drives to get list of available drives
       const { stdout } = await execAsync('fsutil fsinfo drives')
 
       if (!stdout.trim()) return []
@@ -59,7 +55,6 @@ export class DiskService implements IDiskService {
             let selectable = true
             let disabledReason: string | undefined
 
-            // Ensure trailing slash for Node.js fs compatibility
             const letter = upperDeviceId.endsWith('\\') ? upperDeviceId : upperDeviceId + '\\'
             try {
               await fs.promises.access(letter, fs.constants.R_OK)

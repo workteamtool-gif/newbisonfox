@@ -1,5 +1,6 @@
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 /** Options for configuring the high-speed copy engine */
 export interface CopyOptions {
@@ -16,7 +17,7 @@ export interface CopyOptions {
     completedFiles: number,
     completedBytes: number,
     failedCount: number,
-    failedFiles: { path: string; reason: string }[],
+    failedFiles: FailedFile[],
     totalFiles: number,
     totalBytes: number
   ) => void
@@ -27,7 +28,7 @@ export interface CopySummary {
   completedFiles: number
   completedBytes: number
   failedCount: number
-  failedFiles: { path: string; reason: string }[]
+  failedFiles: FailedFile[]
   totalFiles: number
   totalBytes: number
 }

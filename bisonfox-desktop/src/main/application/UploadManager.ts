@@ -25,7 +25,6 @@ export class UploadManager {
     }
 
     this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
-    // We intentionally don't send an 'error' notification here because the app is restarting
   }
 
   public cancelAllUploads(): void {
@@ -40,7 +39,6 @@ export class UploadManager {
       controller.abort()
 
       this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
-      // No need to notify the UI of an error since the application is literally closing
     }
 
     this.activeUploads.clear()
@@ -48,7 +46,6 @@ export class UploadManager {
   }
 
   public async startUpload(sessionId: string, body: any): Promise<void> {
-    // Abort any previous active upload for this session (e.g. during retry)
     const oldController = this.activeUploads.get(sessionId)
     if (oldController) {
       logger.info('UploadManager', `Aborting previous upload attempt for session ${sessionId}`)
@@ -88,7 +85,6 @@ export class UploadManager {
     )
 
     try {
-      // ── Phase 1: Copy and immediately move all files ──────────────────────────
       const summary = await this.fileService.copyFiles(filesToUpload, stagingDest, {
         basePath,
         finalDest,
@@ -101,15 +97,13 @@ export class UploadManager {
       })
 
       this.activeUploads.delete(session.id)
-      
-      // Best-effort cleanup of the now-empty staging folder
+
       await this.fileService.deleteDir(stagingDest).catch(() => {})
 
       progressHandler.notifyDone(summary)
     } catch (err: any) {
       this.activeUploads.delete(session.id)
 
-      // Best-effort cleanup of any partially-written staging data
       await this.fileService.deleteDir(stagingDest).catch(() => {})
 
       if (err.message && err.message.includes('Aborted')) {

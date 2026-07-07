@@ -54,7 +54,7 @@ export function TreeNodeChildren({
     <div className="tree-children">
       {children.map((child) => (
         <TreeNode
-          key={child.path}
+          key={child.absolutePath}
           node={child}
           selected={selected}
           excluded={excluded}

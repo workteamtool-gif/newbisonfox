@@ -16,7 +16,6 @@ export class sessionSingleton {
   }
 
   create(userName: string): UploadSession {
-    // Safety check: Log if they are abandoning a session that was actively uploading
     if (this.activeSession && this.activeSession.status === 'uploading') {
       logger.warn(
         'sessionSingleton',

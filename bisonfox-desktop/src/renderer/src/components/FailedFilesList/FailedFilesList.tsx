@@ -1,8 +1,9 @@
 import React from 'react'
 import { translateErrorReason } from '@renderer/utils/formatReason'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export interface FailedFilesListProps {
-  failedFiles: { path: string; reason: string }[]
+  failedFiles: FailedFile[]
   totalFailedCount: number
   maxToShow: number
   className?: string
@@ -17,9 +18,9 @@ export function FailedFilesList({
   return (
     <div className={`failed-files-list-container ${className || ''}`}>
       <ul style={{ margin: 0, paddingLeft: '1.2rem', textAlign: 'center' }}>
-        {failedFiles.slice(0, maxToShow).map((f, i) => (
-          <li key={i} style={{ marginBottom: '2em', wordBreak: 'break-all' }}>
-            <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{f.path}</div>
+        {failedFiles.slice(0, maxToShow).map((failedFile, index) => (
+          <li key={index} style={{ marginBottom: '2em', wordBreak: 'break-all' }}>
+            <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{failedFile.path}</div>
             <div
               style={{
                 color: 'var(--accent-red)',
@@ -27,7 +28,7 @@ export function FailedFilesList({
                 fontSize: '0.85em'
               }}
             >
-              סיבה: {translateErrorReason(f.reason)}
+              סיבה: {translateErrorReason(failedFile.reason)}
             </div>
           </li>
         ))}

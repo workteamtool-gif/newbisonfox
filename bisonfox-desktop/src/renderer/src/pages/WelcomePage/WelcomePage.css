@@ -22,7 +22,6 @@
     overflow-y: auto;
 }
 
-/* Override glass-card fixed height so welcome content isn't clipped on smaller screens */
 .welcome-content.glass-card {
     height: auto;
     max-height: 90vh;

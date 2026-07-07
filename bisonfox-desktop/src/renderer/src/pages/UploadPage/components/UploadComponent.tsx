@@ -2,6 +2,7 @@ import React, { JSX } from 'react'
 import { FailedItemsUpload } from './FailedItemsUpload'
 import { StatsUpload } from './StatsUpload'
 import { VideoUpload } from './VideoUpload'
+import { FailedFile } from '@shared/entities/FailedFile'
 export interface UploadComponentProps {
   showFailedReview: boolean
   uploadDone: boolean
@@ -11,7 +12,7 @@ export interface UploadComponentProps {
   completedCount: number
   failedCount: number
   overallPercentage: number
-  failedFilesList: { path: string; reason: string }[]
+  failedFilesList: FailedFile[]
   MAX_FAILED_FILES_TO_SHOW: number
   skipFailed: () => void
   retryFailed: () => void

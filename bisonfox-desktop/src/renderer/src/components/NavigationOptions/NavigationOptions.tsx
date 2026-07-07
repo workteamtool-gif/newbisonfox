@@ -30,7 +30,6 @@ export function NavigationOptions({
           {backLabel}
         </button>
       ) : (
-        // placeholder to keep forward button on the right
         <span />
       )}
 

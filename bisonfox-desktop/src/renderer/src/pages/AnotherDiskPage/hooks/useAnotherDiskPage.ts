@@ -57,10 +57,7 @@ export function useAnotherDiskPage() {
   }
 
   function handleNo(): void {
-    clientLogger.info(
-      'AnotherDiskPage',
-      `Finishing session and moving to SuccessPage`
-    )
+    clientLogger.info('AnotherDiskPage', `Finishing session and moving to SuccessPage`)
     setStep(SuccessPage)
   }
 

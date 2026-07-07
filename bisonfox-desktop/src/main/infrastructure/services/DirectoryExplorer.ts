@@ -9,9 +9,6 @@ const EXCLUDED = new Set<string>([])
 const DEEP_SEARCH_CONCURRENCY = config.deepSearchConcurrency
 const ITEMS_IN_ONE_PAGE = config.itemsInOnePage
 
-/**
- * Lists the directory contents at the specified path with support for pagination
- */
 export async function listDir(
   dirPath: string,
   page: number = 1,
@@ -26,11 +23,11 @@ export async function listDir(
     let hasMore = false
 
     const dir = await fs.promises.opendir(dirPath)
-    for await (const e of dir) {
-      if (EXCLUDED.has(e.name)) continue
+    for await (const entry of dir) {
+      if (EXCLUDED.has(entry.name)) continue
 
       if (currentIndex >= startIndex && currentIndex < endIndex) {
-        pageEntries.push({ name: e.name, isDirectory: e.isDirectory() })
+        pageEntries.push({ name: entry.name, isDirectory: entry.isDirectory() })
       } else if (currentIndex >= endIndex) {
         hasMore = true
         break
@@ -40,10 +37,10 @@ export async function listDir(
 
     const enriched = await Promise.all(
       pageEntries.map(async (entry): Promise<ItemNode> => {
-        const fullPath = path.join(dirPath, entry.name)
+        const absolutePath = path.join(dirPath, entry.name)
         const node: ItemNode = {
           name: entry.name,
-          path: fullPath,
+          absolutePath: absolutePath,
           isDirectory: entry.isDirectory
         }
 
@@ -51,10 +48,10 @@ export async function listDir(
           node.hasChildren = true
         } else {
           try {
-            const st = await fs.promises.stat(fullPath)
-            node.size = st.size
+            const st = await fs.promises.stat(absolutePath)
+            node.sizeInBytes = st.size
           } catch {
-            node.size = 0
+            node.sizeInBytes = 0
           }
         }
         return node
@@ -71,16 +68,12 @@ export async function listDir(
   }
 }
 
-/**
- * Counts the total number of non-excluded entries directly inside the directory.
- * Does not recursively traverse subdirectories
- */
 export async function getDirCount(dirPath: string): Promise<number> {
   try {
     let count = 0
     const dir = await fs.promises.opendir(dirPath)
-    for await (const e of dir) {
-      if (!EXCLUDED.has(e.name)) count++
+    for await (const entry of dir) {
+      if (!EXCLUDED.has(entry.name)) count++
     }
     return count
   } catch {
@@ -88,9 +81,6 @@ export async function getDirCount(dirPath: string): Promise<number> {
   }
 }
 
-/**
- * Finds the page index where an item resides inside a directory's paginated list
- */
 export async function findItemPage(
   dirPath: string,
   query: string,
@@ -101,10 +91,10 @@ export async function findItemPage(
     let index = 0
 
     const dir = await fs.promises.opendir(dirPath)
-    for await (const e of dir) {
-      if (EXCLUDED.has(e.name)) continue
+    for await (const entry of dir) {
+      if (EXCLUDED.has(entry.name)) continue
 
-      if (e.name.toLowerCase().includes(lowerQuery)) {
+      if (entry.name.toLowerCase().includes(lowerQuery)) {
         return Math.floor(index / limit) + 1
       }
       index++
@@ -156,16 +146,16 @@ export async function deepFindItem(
       }
       try {
         const dir = await fs.promises.opendir(dirPath)
-        for await (const e of dir) {
+        for await (const entry of dir) {
           if (isDone) break
-          if (EXCLUDED.has(e.name)) continue
+          if (EXCLUDED.has(entry.name)) continue
 
-          if (e.name.toLowerCase().includes(lowerQuery)) {
+          if (entry.name.toLowerCase().includes(lowerQuery)) {
             isDone = true
-            resolve(path.join(dirPath, e.name))
+            resolve(path.join(dirPath, entry.name))
             return
           }
-          if (e.isDirectory()) queued.push(path.join(dirPath, e.name))
+          if (entry.isDirectory()) queued.push(path.join(dirPath, entry.name))
         }
       } catch {}
       running--
