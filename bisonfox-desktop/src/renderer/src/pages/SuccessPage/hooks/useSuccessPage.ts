@@ -21,7 +21,7 @@ export function useSuccessPage() {
     })
   }, [])
 
-  const handleReturnHome = () => {
+  const handleReturnHome = (): void => {
     window.api.invoke('system:close')
   }
 

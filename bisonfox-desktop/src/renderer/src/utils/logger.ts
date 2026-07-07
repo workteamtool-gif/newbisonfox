@@ -60,7 +60,7 @@ async function sendToMainProcess(
       if (parts.length > 0) {
         enrichedMessage = `[${parts.join(' | ')}] ${message}`
       }
-    } catch (err) {}
+    } catch {}
 
     const sanitizedData =
       data instanceof Error ? { message: data.message, stack: data.stack } : data
