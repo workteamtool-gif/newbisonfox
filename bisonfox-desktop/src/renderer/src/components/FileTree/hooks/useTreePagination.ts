@@ -11,7 +11,7 @@ export function useTreePagination({ nodePath, onLoadChildren }: UseTreePaginatio
   const [expanded, setExpanded] = useState(false)
   const [loadedChildren, setLoadedChildren] = useState<ItemNode[] | null>(null)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+  const [totalPages, setTotalPages] = useState(-1)
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
   const lastAutoExpandRef = useRef<Record<string, number> | null>(null)
@@ -22,7 +22,11 @@ export function useTreePagination({ nodePath, onLoadChildren }: UseTreePaginatio
       setLoadedChildren(treeResponse.nodes)
       setPage(targetPage)
       setHasMore(treeResponse.hasMore)
-      setTotalPages(treeResponse.totalPages ?? Math.max(1, targetPage))
+      setTotalPages((prev) =>
+        treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+          ? treeResponse.totalPages
+          : prev
+      )
       return treeResponse
     },
     [nodePath, onLoadChildren]
@@ -70,7 +74,11 @@ export function useTreePagination({ nodePath, onLoadChildren }: UseTreePaginatio
         setLoadedChildren(treeResponse.nodes)
         setPage(page - 1)
         setHasMore(true)
-        setTotalPages(treeResponse.totalPages ?? 1)
+        setTotalPages((prev) =>
+          treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+            ? treeResponse.totalPages
+            : prev
+        )
       } finally {
         setLoading(false)
       }
