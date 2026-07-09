@@ -2,12 +2,12 @@ import { JSX } from 'react'
 
 interface AnotherDiskStatsProps {
   diskSessionsLength: number
-  totalFiles: number
+  totalFilesAmount: number
 }
 
 export function AnotherDiskStats({
   diskSessionsLength,
-  totalFiles
+  totalFilesAmount
 }: AnotherDiskStatsProps): JSX.Element {
   return (
     <div className="another-disk-stats full-width">
@@ -19,7 +19,7 @@ export function AnotherDiskStats({
       <div className="stat-card">
         <div className="stat-icon">📄</div>
         <div className="stat-val another-disk-stat-val accent-green">
-          {totalFiles.toLocaleString()}
+          {totalFilesAmount.toLocaleString()}
         </div>
         <div className="stat-lbl">סה"כ קבצים שהועלו</div>
       </div>

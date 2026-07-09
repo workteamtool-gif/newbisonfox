@@ -40,7 +40,7 @@ export type WizardStep =
 
 export interface WizardData {
   step: React.LazyExoticComponent<() => React.JSX.Element | null>
-  userName: string
+  username: string
   sessionId: string
   diskSessions: DiskSession[]
   currentDisk: DiskSession | null

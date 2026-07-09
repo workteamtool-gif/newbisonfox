@@ -50,10 +50,10 @@ async function sendToMainProcess(
     let enrichedMessage = message
     try {
       const store = await import('@renderer/store/useWizardStore')
-      const { userName, sessionId, currentSubfolder } = store.useWizardStore.getState()
+      const { username, sessionId, currentSubfolder } = store.useWizardStore.getState()
 
       const parts: string[] = []
-      if (userName) parts.push(`User: ${userName}`)
+      if (username) parts.push(`User: ${username}`)
       if (sessionId) parts.push(`Session: ${sessionId}`)
       if (currentSubfolder) parts.push(`Subfolder: ${currentSubfolder}`)
 

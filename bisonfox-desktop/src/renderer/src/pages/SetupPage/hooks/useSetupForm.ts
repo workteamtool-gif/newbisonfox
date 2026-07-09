@@ -10,7 +10,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const {
     setStep,
     setUserName,
-    userName,
+    username,
     reset,
     setCurrentDisk,
     diskSessions,
@@ -19,7 +19,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     setCurrentSubfolder
   } = useWizardStore()
 
-  const [name, setName] = useState(userName || '')
+  const [name, setName] = useState(username || '')
   const [nameError, setNameError] = useState('')
 
   const [subfolder, setSubfolder] = useState(currentSubfolder || '')
@@ -167,7 +167,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
 
   const handleBack = () => {
     if (diskSessions.length > 0) {
-      clientLogger.info('SetupPage', `User ${userName} clicked Finish Session.`)
+      clientLogger.info('SetupPage', `User ${username} clicked Finish Session.`)
       setStep(SuccessPage)
     } else {
       clientLogger.info('SetupPage', 'User clicked back, resetting data')
@@ -200,6 +200,6 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     handleBack,
     isFormValid,
     diskSessionsLength: diskSessions.length,
-    userName
+    username
   }
 }

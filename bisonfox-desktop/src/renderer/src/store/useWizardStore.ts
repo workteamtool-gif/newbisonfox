@@ -5,7 +5,7 @@ import { WizardData, WizardActions, WelcomePage } from '@renderer/entites/Wizard
 
 const INITIAL_DATA: WizardData = {
   step: WelcomePage,
-  userName: '',
+  username: '',
   sessionId: '',
   diskSessions: [],
   currentDisk: null,
@@ -23,8 +23,8 @@ export const useWizardStore = create<WizardData & WizardActions>()(
 
     setStep: (step: React.LazyExoticComponent<() => React.JSX.Element | null>) => set({ step }),
 
-    setUserName: (userName) => {
-      set({ userName })
+    setUserName: (username) => {
+      set({ username })
     },
 
     setSessionId: (sessionId) => set({ sessionId }),

@@ -34,7 +34,7 @@ export function useUploadManager(): {
     setUploadDone,
     setCompletedFiles,
     uploadDone,
-    userName
+    username
   } = useWizardStore()
 
   const [phase, setPhase] = useState<UploadPhase>('ready')
@@ -107,7 +107,7 @@ export function useUploadManager(): {
       clearTimeout(timeoutId)
       controller.abort()
     }
-  }, [currentDisk, phase, sessionId, userName])
+  }, [currentDisk, phase, sessionId, username])
 
   // Effect to log copy progress every minute
   useEffect(() => {

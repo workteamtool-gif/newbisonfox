@@ -15,7 +15,7 @@ export class sessionSingleton {
     return sessionSingleton.instance
   }
 
-  create(userName: string): UploadSession {
+  create(username: string): UploadSession {
     if (this.activeSession && this.activeSession.status === 'uploading') {
       logger.warn(
         'sessionSingleton',
@@ -28,7 +28,7 @@ export class sessionSingleton {
     // Instantly overwrites the old session, freeing up RAM
     this.activeSession = {
       id: uuidv4(),
-      userName,
+      username,
       diskSessions: [],
       destination: '',
       progress: {},

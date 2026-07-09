@@ -7,7 +7,7 @@ export function useAnotherDiskPage() {
   const {
     setStep,
     diskSessions,
-    userName,
+    username,
     reset,
     setCurrentDisk,
     setCurrentSubfolder,
@@ -20,15 +20,15 @@ export function useAnotherDiskPage() {
     if (!mailLogged.current) {
       mailLogged.current = true
       const lastSession = diskSessions[diskSessions.length - 1]
-      const filesSucceeded = lastSession?.copiedCount ?? 0
+      const succeededFilesAmount = lastSession?.copiedCount ?? 0
       const failedFilesAmount = lastSession?.failedCount ?? 0
-      const totalFiles = filesSucceeded + failedFilesAmount
+      const totalFilesAmount = succeededFilesAmount + failedFilesAmount
 
       window.api.invoke('log-mail', {
-        userName,
+        username,
         subfolder: currentSubfolder,
-        filesSucceeded,
-        totalFiles,
+        succeededFilesAmount,
+        totalFilesAmount,
         failedFilesAmount
       })
     }
@@ -43,7 +43,7 @@ export function useAnotherDiskPage() {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [reset, userName, diskSessions, currentSubfolder])
+  }, [reset, username, diskSessions, currentSubfolder])
 
   function handleYes(): void {
     clientLogger.info(
@@ -61,7 +61,7 @@ export function useAnotherDiskPage() {
     setStep(SuccessPage)
   }
 
-  const totalFiles = diskSessions.reduce(
+  const totalFilesAmount = diskSessions.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
     0
   )
@@ -71,7 +71,7 @@ export function useAnotherDiskPage() {
   return {
     countdown,
     diskSessions,
-    totalFiles,
+    totalFilesAmount,
     failedCountTotal,
     failedFiles,
     handleYes,

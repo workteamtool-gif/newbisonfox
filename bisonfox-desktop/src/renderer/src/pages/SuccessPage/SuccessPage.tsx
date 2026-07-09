@@ -11,11 +11,11 @@ export function SuccessPage(): JSX.Element {
   const {
     diskSessions,
     countdown,
-    totalFiles,
+    totalFilesAmount,
     failedCountTotal,
     failedFiles,
     destinationUserEndpoint,
-    userName,
+    username,
     handleReturnHome
   } = useSuccessPage()
 
@@ -27,7 +27,7 @@ export function SuccessPage(): JSX.Element {
           <p className="page-subtitle">
             ניתן לראות את הקבצים ברשת היחידה בעזרת הנתיב: <br />
             <div className="destination-path">
-              {destinationUserEndpoint}\{userName}
+              {destinationUserEndpoint}\{username}
             </div>
             <br />
             אם אינכם רואים את הנתיב - ניתן לפנות לצוותי התמיכה הטכנית
@@ -35,7 +35,7 @@ export function SuccessPage(): JSX.Element {
         )}
       </p>
 
-      <SuccessStats diskSessionsLength={diskSessions.length} totalFiles={totalFiles} />
+      <SuccessStats diskSessionsLength={diskSessions.length} totalFilesAmount={totalFilesAmount} />
 
       {failedCountTotal > 0 && (
         <div className="info-box failed-files-box">

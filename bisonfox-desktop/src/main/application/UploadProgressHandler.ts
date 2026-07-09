@@ -24,7 +24,7 @@ export class UploadProgressHandler {
     completedBytes: number,
     failedCount: number,
     failedFiles: FailedFile[],
-    totalFiles: number,
+    totalFilesAmount: number,
     totalBytes: number
   ): void => {
     if (file === '__done__') {
@@ -33,7 +33,7 @@ export class UploadProgressHandler {
         completedBytes,
         failedCount,
         failedFiles,
-        totalFiles,
+        totalFilesAmount,
         totalBytes
       )
       return
@@ -53,7 +53,7 @@ export class UploadProgressHandler {
           completedCount: completedFiles,
           failedCount: failedCount,
           failedFiles: failedFiles,
-          totalCount: totalFiles
+          totalCount: totalFilesAmount
         })
       }
       this.notifier.notifyProgress(this.sessionId, {
@@ -63,7 +63,7 @@ export class UploadProgressHandler {
         completed: completedFiles,
         completedBytes: completedBytes,
         failed: failedCount,
-        total: totalFiles,
+        total: totalFilesAmount,
         totalBytes: totalBytes
       })
     }
@@ -79,14 +79,14 @@ export class UploadProgressHandler {
     _completedBytes: number,
     failedCount: number,
     failedFiles: FailedFile[],
-    totalFiles: number,
+    totalFilesAmount: number,
     _totalBytes: number
   ): void {
     this.sessionSingletonInstance.update(this.sessionId, {
       completedCount: completedFiles,
       failedCount: failedCount,
       failedFiles: failedFiles,
-      totalCount: totalFiles,
+      totalCount: totalFilesAmount,
       status: 'complete'
     })
   }
@@ -103,7 +103,7 @@ export class UploadProgressHandler {
       completedBytes: summary.completedBytes,
       failed: summary.failedCount,
       failedFiles: summary.failedFiles,
-      total: summary.totalFiles,
+      total: summary.totalFilesAmount,
       totalBytes: summary.totalBytes
     })
   }

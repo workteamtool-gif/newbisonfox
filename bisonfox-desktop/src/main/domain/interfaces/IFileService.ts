@@ -18,7 +18,7 @@ export interface CopyOptions {
     completedBytes: number,
     failedCount: number,
     failedFiles: FailedFile[],
-    totalFiles: number,
+    totalFilesAmount: number,
     totalBytes: number
   ) => void
 }
@@ -29,7 +29,7 @@ export interface CopySummary {
   completedBytes: number
   failedCount: number
   failedFiles: FailedFile[]
-  totalFiles: number
+  totalFilesAmount: number
   totalBytes: number
 }
 

@@ -136,7 +136,7 @@ export async function copyFiles(
         completedBytes: 0,
         failedCount: 0,
         failedFiles: [],
-        totalFiles: 0,
+        totalFilesAmount: 0,
         totalBytes: 0
       }
     }
@@ -164,7 +164,7 @@ export async function copyFiles(
       completedBytes: 0,
       failedCount: 0,
       failedFiles: [],
-      totalFiles: 0,
+      totalFilesAmount: 0,
       totalBytes: 0
     }
   }
@@ -235,7 +235,7 @@ export async function copyFiles(
         reportTimer = null
       }
       lastBroadcastTime = now
-      const totalFiles = expectedTotal ?? totalDiscovered
+      const totalFilesAmount = expectedTotal ?? totalDiscovered
       const totalBytes = resolvedTotalBytes
       onProgress(
         file,
@@ -244,7 +244,7 @@ export async function copyFiles(
         completedBytes,
         failedCount,
         failedFiles,
-        totalFiles,
+        totalFilesAmount,
         totalBytes
       )
     } else if (!reportTimer) {
@@ -252,7 +252,7 @@ export async function copyFiles(
         () => {
           reportTimer = null
           lastBroadcastTime = Date.now()
-          const totalFiles = expectedTotal ?? totalDiscovered
+          const totalFilesAmount = expectedTotal ?? totalDiscovered
           const totalBytes = resolvedTotalBytes
           onProgress(
             lastReportFile,
@@ -261,7 +261,7 @@ export async function copyFiles(
             completedBytes,
             failedCount,
             failedFiles,
-            totalFiles,
+            totalFilesAmount,
             totalBytes
           )
         },
@@ -371,7 +371,7 @@ export async function copyFiles(
     completedBytes,
     failedCount,
     failedFiles,
-    totalFiles: finalTotalFiles,
+    totalFilesAmount: finalTotalFiles,
     totalBytes: finalTotalBytes
   }
 }

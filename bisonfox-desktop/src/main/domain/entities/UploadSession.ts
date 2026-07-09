@@ -3,7 +3,7 @@ import { FailedFile } from '@shared/entities/FailedFile'
 
 export interface UploadSession {
   id: string
-  userName: string
+  username: string
   diskSessions: DiskSession[]
   destination: string
   progress: Record<string, number>

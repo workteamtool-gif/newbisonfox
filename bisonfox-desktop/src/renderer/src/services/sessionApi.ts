@@ -9,7 +9,7 @@ export const sessionApi = {
     return await window.api.invoke(IPC_CHANNELS.SESSION.VALIDATE_SUBFOLDER, { name })
   },
 
-  createSession: async (userName: string) => {
-    return await window.api.invoke(IPC_CHANNELS.SESSION.CREATE, { userName })
+  createSession: async (username: string) => {
+    return await window.api.invoke(IPC_CHANNELS.SESSION.CREATE, { username })
   }
 }

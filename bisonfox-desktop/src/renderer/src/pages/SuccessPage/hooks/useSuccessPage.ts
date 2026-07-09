@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 
 export function useSuccessPage() {
-  const { reset, userName } = useWizardStore()
+  const { reset, username } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions)
   const [countdown, setCountdown] = useState(150)
 
-  const totalFiles = snapshot.reduce(
+  const totalFilesAmount = snapshot.reduce(
     (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
     0
   )
@@ -36,16 +36,16 @@ export function useSuccessPage() {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [reset, userName])
+  }, [reset, username])
 
   return {
     diskSessions,
     countdown,
-    totalFiles,
+    totalFilesAmount,
     failedCountTotal,
     failedFiles,
     destinationUserEndpoint,
-    userName,
+    username,
     handleReturnHome
   }
 }

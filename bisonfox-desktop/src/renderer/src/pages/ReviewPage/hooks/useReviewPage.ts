@@ -8,7 +8,7 @@ import { UploadPage, SetupPage, SelectFilesPage } from '@renderer/entites/Wizard
 import { clientLogger } from '@renderer/utils/logger'
 
 export function useReviewPage() {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, userName } =
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username } =
     useWizardStore()
 
   useDriveMonitor()
@@ -129,14 +129,14 @@ export function useReviewPage() {
       })
     }
     setStep(SelectFilesPage)
-  }, [currentDisk, selected, excluded, setCurrentDisk, setStep, userName, sessionId])
+  }, [currentDisk, selected, excluded, setCurrentDisk, setStep, username, sessionId])
 
   useEffect(() => {
     if (!currentDisk) {
       clientLogger.warn('ReviewPage', `No current disk found, navigating back to SetupPage`)
       setStep(SetupPage)
     }
-  }, [currentDisk, setStep, userName, sessionId])
+  }, [currentDisk, setStep, username, sessionId])
 
   return {
     nodes,

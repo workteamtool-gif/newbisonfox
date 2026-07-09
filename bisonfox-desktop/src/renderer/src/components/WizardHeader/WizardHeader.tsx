@@ -12,7 +12,7 @@ interface WizardHeaderProps {
 
 export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.Element | null {
   const step = useWizardStore((s) => s.step)
-  const userName = useWizardStore((s) => s.userName)
+  const username = useWizardStore((s) => s.username)
 
   if (step === WelcomePage || step === SuccessPage) return null
 
@@ -40,7 +40,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1vh', direction: 'ltr' }}>
-          {userName && <div className="user-name">{userName}</div>}
+          {username && <div className="user-name">{username}</div>}
           <button
             className="btn btn-secondary"
             style={{

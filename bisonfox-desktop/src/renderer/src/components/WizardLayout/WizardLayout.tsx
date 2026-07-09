@@ -14,7 +14,7 @@ interface Props {
 export function WizardLayout({ children }: Props): React.JSX.Element {
   const step = useWizardStore((s) => s.step)
   const sessionId = useWizardStore((s) => s.sessionId)
-  const userName = useWizardStore((s) => s.userName)
+  const username = useWizardStore((s) => s.username)
   const isCancelModalOpen = useWizardStore((s) => s.isCancelModalOpen)
   const setCancelModalOpen = useWizardStore((s) => s.setCancelModalOpen)
   const isKeyboardVisible = useWizardStore((s) => s.isKeyboardVisible)
@@ -30,7 +30,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     }
     window.addEventListener('beforeunload', handleUnload)
     return () => window.removeEventListener('beforeunload', handleUnload)
-  }, [sessionId, userName])
+  }, [sessionId, username])
 
   const handleConfirmCancel = async (): Promise<void> => {
     clientLogger.info('WizardLayout', `User cancelled the session.`)

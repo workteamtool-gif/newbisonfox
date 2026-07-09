@@ -93,8 +93,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
     return { success: true }
   })
-  ipcMain.handle('create-session', (_, { userName }) => {
-    const session = sessionSingletonInstance.create(userName)
+  ipcMain.handle('create-session', (_, { username }) => {
+    const session = sessionSingletonInstance.create(username)
     return { success: true, sessionId: session.id }
   })
 
@@ -148,8 +148,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle(
     'log-mail',
-    (_, { userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount }) => {
-      logMail(userName, subfolder, filesSucceeded, totalFiles, failedFilesAmount)
+    (_, { username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount }) => {
+      logMail(username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount)
       return { success: true }
     }
   )

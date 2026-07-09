@@ -28,10 +28,10 @@ function getMailLogFilePath(dir: string, timestamp: string): string {
 }
 
 export function logMail(
-  userName: string,
+  username: string,
   subfolder: string,
-  filesSucceeded: number,
-  totalFiles: number,
+  succeededFilesAmount: number,
+  totalFilesAmount: number,
   failedFilesAmount: number
 ): void {
   const dir = resolveMailLogDir()
@@ -42,10 +42,10 @@ export function logMail(
   const timestamp = new Date().toISOString()
   const entry = {
     timestamp,
-    userName,
+    username,
     subfolder,
-    filesSucceeded,
-    totalFiles,
+    succeededFilesAmount,
+    totalFilesAmount,
     failedFilesAmount
   }
 

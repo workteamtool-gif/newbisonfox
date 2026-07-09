@@ -37,13 +37,13 @@ export class UploadValidator {
     }
 
     const baseDir = path.resolve(rawBaseDir)
-    const finalDest = path.resolve(baseDir, session.userName, subfolder || '')
+    const finalDest = path.resolve(baseDir, session.username, subfolder || '')
 
     // SECURITY: Case-insensitive Path Traversal Check for Network Drives
     if (!finalDest.toLowerCase().startsWith(baseDir.toLowerCase())) {
       logger.error('UploadValidator', 'SECURITY: Path traversal attempt blocked!', {
         sessionId: session.id,
-        user: session.userName,
+        user: session.username,
         attemptedPath: finalDest
       })
       return {
@@ -53,7 +53,7 @@ export class UploadValidator {
     }
 
     const macFolder = getFirstMacAddress()
-    const stagingDest = path.resolve(rawTempDir, macFolder, session.userName, subfolder || '')
+    const stagingDest = path.resolve(rawTempDir, macFolder, session.username, subfolder || '')
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
