@@ -53,7 +53,7 @@ export class UploadValidator {
     }
 
     const macFolder = getFirstMacAddress()
-    const stagingDest = path.resolve(rawTempDir, macFolder, session.id)
+    const stagingDest = path.resolve(rawTempDir, macFolder, session.userName, subfolder || '')
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
