@@ -90,13 +90,75 @@ async function copyOneFast(
       if (signal?.aborted) return 0
       await doCopy()
     } finally {
-      heavyLock.release()
+////////////////////////
     }
     return st.size
   }
 
   await doCopy()
   return st.size
+}
+
+/**
+ * Moves a staged file to its final destination while holding open OS-level handles
+ * on both the source file and every directory segment from uploadBaseDir down to
+ * the file's immediate parent directory.
+ *
+ * Holding those handles means:
+ *   - The staging file cannot be deleted by another process during the move.
+ *   - The newly-created destination directories cannot be rmdir'd between mkdir and rename.
+ *
+ * All handles are released only after the rename succeeds or throws.
+ *
+ * @param srcPath      Absolute path of the staged file (in tempBaseDir).
+ * @param destPath     Absolute path of the final file (in uploadBaseDir).
+ * @param uploadBaseDir Root of the upload destination tree — handles are opened from here down.
+ */
+async function atomicMoveWithHandles(
+  srcPath: string,
+  destPath: string,
+  uploadBaseDir: string
+): Promise<void> {
+  const destDir = path.dirname(destPath)
+  const dirHandles: fs.promises.FileHandle[] = []
+
+  // 1. Acquire handle on the staging file. Held open through the rename so
+  //    no external process can delete it while we are working.
+  const fileHandle = await fs.promises.open(srcPath, 'r')
+
+  try {
+    // 2. Create all missing destination directory segments.
+    await fs.promises.mkdir(destDir, { recursive: true }).catch(() => {})
+
+    // 3. Open a handle on every directory segment from uploadBaseDir → destDir.
+    //    On Windows, fs.promises.open on a dir uses FILE_FLAG_BACKUP_SEMANTICS
+    //    and returns a real directory handle. Holding it blocks rmdir on that dir.
+    const baseNorm = path.resolve(uploadBaseDir)
+    const destDirNorm = path.resolve(destDir)
+
+    if (destDirNorm.toLowerCase().startsWith(baseNorm.toLowerCase())) {
+      let cursor = baseNorm
+      try { dirHandles.push(await fs.promises.open(cursor, 'r')) } catch {}
+
+      const relative = path.relative(baseNorm, destDirNorm)
+      for (const part of relative.split(path.sep).filter(Boolean)) {
+        cursor = path.join(cursor, part)
+        try { dirHandles.push(await fs.promises.open(cursor, 'r')) } catch {}
+      }
+    }
+
+    // 4. Atomic rename — the file handle survives this on NTFS because handles
+    //    are bound to the file object (file ID), not to the path.
+    await fs.promises.rename(srcPath, destPath)
+
+  } finally {
+    // 5. Release all handles. If rename succeeded the file now lives at destPath;
+    //    if it failed nothing was moved.
+    await fileHandle.close().catch(() => {})
+    for (const dh of dirHandles) {
+      await dh.close().catch(() => {})
+    }
+  }
 }
 
 /**
@@ -313,10 +375,10 @@ export async function copyFiles(
             const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
             throttledReport(src, pct)
           })
-          // Rename the file to its final destination immediately after copying
+          // Atomically move to final destination while holding handles on the
+          // staging file and all destination directory segments — hermetic move.
           if (finalDest) {
-            await fs.promises.mkdir(path.dirname(finalPath), { recursive: true }).catch(() => {})
-            await fs.promises.rename(destPath, finalPath)
+            await atomicMoveWithHandles(destPath, finalPath, config.uploadBaseDir)
           }
 
           success = true
