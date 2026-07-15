@@ -129,7 +129,9 @@ async function atomicMoveWithHandles(
 
   try {
     // 2. Create all missing destination directory segments.
-    await fs.promises.mkdir(destDir, { recursive: true }).catch(() => {})
+    await fs.promises.mkdir(destDir, { recursive: true }).catch((err) => {
+      logger.error('FileCopyEngine', `Failed to make directory in destination directory: ${destDir}`, { error: err.message })
+    })
 
     // 3. Open a handle on every directory segment from uploadBaseDir → destDir.
     //    On Windows, fs.promises.open on a dir uses FILE_FLAG_BACKUP_SEMANTICS
@@ -139,12 +141,20 @@ async function atomicMoveWithHandles(
 
     if (destDirNorm.toLowerCase().startsWith(baseNorm.toLowerCase())) {
       let cursor = baseNorm
-      try { dirHandles.push(await fs.promises.open(cursor, 'r')) } catch {}
+      try { 
+        dirHandles.push(await fs.promises.open(cursor, 'r')) 
+      } catch (err: any) {
+        logger.error('FileCopyEngine', `Failed to acquire handle for directory: ${cursor}`, { error: err.message })
+      }
 
       const relative = path.relative(baseNorm, destDirNorm)
       for (const part of relative.split(path.sep).filter(Boolean)) {
         cursor = path.join(cursor, part)
-        try { dirHandles.push(await fs.promises.open(cursor, 'r')) } catch {}
+        try { 
+          dirHandles.push(await fs.promises.open(cursor, 'r')) 
+        } catch (err: any) {
+          logger.error('FileCopyEngine', `Failed to acquire handle for directory: ${cursor}`, { error: err.message })
+        }
       }
     }
 
@@ -152,10 +162,15 @@ async function atomicMoveWithHandles(
     //    are bound to the file object (file ID), not to the path.
     await fs.promises.rename(srcPath, destPath)
 
+  } catch (err: any) {
+    logger.error('FileCopyEngine', `Failed to atomically move staged file: ${srcPath} -> ${destPath}`, { error: err.message })
+    throw err
   } finally {
     // 5. Release all handles. If rename succeeded the file now lives at destPath;
     //    if it failed nothing was moved.
-    await fileHandle.close().catch(() => {})
+    if (fileHandle) {
+      await fileHandle.close().catch(() => {})
+    }
     for (const dh of dirHandles) {
       await dh.close().catch(() => {})
     }
