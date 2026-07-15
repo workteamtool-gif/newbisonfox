@@ -130,7 +130,7 @@ export function StatsUpload({
     const kiloBytes = 1024
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
     const unitIndex = Math.floor(Math.log(bytes) / Math.log(kiloBytes))
-    return parseFloat((bytes / Math.pow(kiloBytes, unitIndex)).toFixed(2)) + ' ' + sizes[unitIndex]
+    return (bytes / Math.pow(kiloBytes, unitIndex)).toFixed(2) + ' ' + sizes[unitIndex]
   }
 
   return (

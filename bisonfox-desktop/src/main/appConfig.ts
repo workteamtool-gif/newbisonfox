@@ -19,6 +19,7 @@ const configSchema = z.object({
   maxReportedFailures: z.number().int().positive().default(10),
   failIntervalMs: z.number().int().positive().default(500),
   failRetries: z.number().int().nonnegative().default(5),
+  moveRetries: z.number().int().nonnegative().default(100),
   blacklistDrives: z.string().default('Z:'),
   subfolderLength: z.number().int().positive().default(20),
   usernameLength: z.number().int().positive().default(30)

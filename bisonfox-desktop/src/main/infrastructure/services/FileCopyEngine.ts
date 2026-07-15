@@ -13,6 +13,7 @@ const COPY_CONCURRENCY = config.copyConcurrency
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
 const FAIL_INTERVAL_MS = config.failIntervalMs
 const FAIL_RETRIES = config.failRetries
+const MOVE_RETRIES = config.moveRetries
 const REPORT_COPIED_FILES_INTERVAL_MS = config.reportCopiedFilesIntervalMs
 const MAX_REPORTED_FAILURES = config.maxReportedFailures
 
@@ -346,7 +347,6 @@ export async function copyFiles(
       gate.notify(queue.length)
 
       const { src, destPath, finalPath } = item
-      let attempt = 0
       let success = false
       let fileSize = 0
 
@@ -354,12 +354,17 @@ export async function copyFiles(
       if (statForSize?.isFile()) fileSize = statForSize.size
 
       let lastError: string | undefined
-      while (attempt < FAIL_RETRIES && !success) {
+
+      // ── Stage 1: Copy to staging (retries up to FAIL_RETRIES) ──────────────
+      let copyAttempt = 0
+      let copiedToStaging = false
+      let partialBytes = 0
+      while (copyAttempt < FAIL_RETRIES && !copiedToStaging) {
         if (activeSignal.aborted) break
 
-        let partialBytes = 0
+        partialBytes = 0
         try {
-          if (attempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * attempt))
+          if (copyAttempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * copyAttempt))
 
           const expectedFileSize = fileSize > 0 ? fileSize : 1
 
@@ -375,18 +380,47 @@ export async function copyFiles(
             const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
             throttledReport(src, pct)
           })
-          // Atomically move to final destination while holding handles on the
-          // staging file and all destination directory segments — hermetic move.
-          if (finalDest) {
-            await atomicMoveWithHandles(destPath, finalPath, config.uploadBaseDir)
-          }
 
-          success = true
+          copiedToStaging = true
         } catch (err: any) {
           completedBytes -= partialBytes // Rollback partial progress
+          partialBytes = 0
           lastError = err.message || 'Unknown copy error'
-          attempt++
+          copyAttempt++
         }
+      }
+
+      // ── Stage 2: Move staging → final (retries up to MOVE_RETRIES) ─────────
+      if (copiedToStaging && finalDest) {
+        let moveAttempt = 0
+        while (moveAttempt < MOVE_RETRIES) {
+          if (activeSignal.aborted) break
+          try {
+            if (moveAttempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * moveAttempt))
+            await atomicMoveWithHandles(destPath, finalPath, config.uploadBaseDir)
+            success = true
+            if (moveAttempt > 0) {
+              logger.warn('FileCopyEngine', `Move succeeded after ${moveAttempt + 1} attempts`, {
+                src,
+                dest: finalPath
+              })
+            }
+            break
+          } catch (err: any) {
+            lastError = err.message || 'Unknown move error'
+            moveAttempt++
+          }
+        }
+        if (!success && !activeSignal.aborted) {
+          logger.error('FileCopyEngine', `Move gave up after ${MOVE_RETRIES} retries`, {
+            src,
+            dest: finalPath,
+            lastError
+          })
+        }
+      } else if (copiedToStaging && !finalDest) {
+        // No move needed — copy to destination was the final step.
+        success = true
       }
 
       if (activeSignal.aborted) break
