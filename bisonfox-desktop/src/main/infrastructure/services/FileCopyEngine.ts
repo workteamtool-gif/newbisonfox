@@ -91,7 +91,7 @@ async function copyOneFast(
       if (signal?.aborted) return 0
       await doCopy()
     } finally {
-////////////////////////
+      heavyLock.release()
     }
     return st.size
   }
