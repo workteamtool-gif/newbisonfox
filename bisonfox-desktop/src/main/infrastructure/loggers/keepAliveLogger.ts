@@ -90,11 +90,22 @@ function getKeepAliveFilePath(dir: string, timestamp: string): string {
 }
 
 function writeKeepAliveEntry(dir: string, entry: Record<string, unknown>, timestamp: string): void {
-  try {
-    const filePath = getKeepAliveFilePath(dir, timestamp)
-    fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
-  } catch (err) {
-    logger.warn('KeepAlive', 'Failed to write keep-alive log', { error: (err as Error).message })
+  const retries = config.failRetries
+  const delayMs = config.failIntervalMs
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs * attempt)
+      }
+      const filePath = getKeepAliveFilePath(dir, timestamp)
+      fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
+      return
+    } catch (err: any) {
+      if (attempt === retries - 1) {
+        logger.warn('KeepAlive', `Failed to write keep-alive log after ${retries} retries`, { error: (err as Error).message })
+      }
+    }
   }
 }
 

@@ -49,11 +49,26 @@ export function logMail(
     failedFilesAmount
   }
 
-  try {
-    const filePath = getMailLogFilePath(dir, timestamp)
-    fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
-    logger.info('MailLogger', 'Mail log written', entry)
-  } catch (err) {
-    logger.warn('MailLogger', 'Failed to write mail log', { error: (err as Error).message })
+  const retries = config.failRetries
+  const delayMs = config.failIntervalMs
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs * attempt)
+      }
+      const filePath = getMailLogFilePath(dir, timestamp)
+      fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
+      if (attempt > 0) {
+        logger.warn('MailLogger', `Mail log written after ${attempt + 1} attempts`, entry)
+      } else {
+        logger.info('MailLogger', 'Mail log written', entry)
+      }
+      return
+    } catch (err: any) {
+      if (attempt === retries - 1) {
+        logger.warn('MailLogger', `Failed to write mail log after ${retries} retries`, { error: (err as Error).message })
+      }
+    }
   }
 }

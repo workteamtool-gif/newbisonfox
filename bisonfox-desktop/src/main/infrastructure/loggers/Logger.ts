@@ -32,14 +32,19 @@ export function getFirstMacAddress(): string {
 function safeMoveFileSync(src: string, dest: string, retries = 25, delayMs = 200): void {
   for (let i = 0; i <= retries; i++) {
     try {
-      fs.copyFileSync(src, dest)
-      fs.unlinkSync(src)
+      // Prefer atomic rename; fall back to copy+delete only on cross-device (EXDEV)
+      try {
+        fs.renameSync(src, dest)
+      } catch (renameErr: any) {
+        if (renameErr.code !== 'EXDEV') throw renameErr
+        fs.copyFileSync(src, dest)
+        fs.unlinkSync(src)
+      }
       return
     } catch (err: any) {
       if (i === retries) throw err
       if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
-        const start = Date.now()
-        while (Date.now() - start < delayMs) {}
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs)
       } else {
         throw err
       }
@@ -47,21 +52,41 @@ function safeMoveFileSync(src: string, dest: string, retries = 25, delayMs = 200
   }
 }
 
-async function safeMoveFile(src: string, dest: string, retries = 25, delayMs = 200): Promise<void> {
-  for (let i = 0; i <= retries; i++) {
+async function safeMoveFile(src: string, dest: string): Promise<void> {
+  const retries = config.moveRetries
+  const delayMs = config.failIntervalMs
+
+  let lastError: string | undefined
+  let moveAttempt = 0
+
+  while (moveAttempt < retries) {
     try {
-      await fs.promises.copyFile(src, dest)
-      await fs.promises.unlink(src)
+      if (moveAttempt > 0) await new Promise<void>((res) => setTimeout(res, delayMs * moveAttempt))
+
+      try {
+        await fs.promises.rename(src, dest)
+      } catch (renameErr: any) {
+        if (renameErr.code !== 'EXDEV') throw renameErr
+        await fs.promises.copyFile(src, dest)
+        await fs.promises.unlink(src)
+      }
+
+      if (moveAttempt > 0) {
+        console.warn(
+          `[Logger] Log file move succeeded after ${moveAttempt + 1} attempts: ${path.basename(src)}`
+        )
+      }
       return
     } catch (err: any) {
-      if (i === retries) throw err
-      if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
-        await new Promise((res) => setTimeout(res, delayMs))
-      } else {
-        throw err
-      }
+      lastError = err.message || 'Unknown move error'
+      moveAttempt++
     }
   }
+
+  console.error(
+    `[Logger] Log file move gave up after ${retries} retries: ${path.basename(src)} -> ${path.basename(dest)}`,
+    { lastError }
+  )
 }
 
 // ─── Logger ──────────────────────────────────────────────────────────────────
