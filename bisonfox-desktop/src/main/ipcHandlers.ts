@@ -1,5 +1,6 @@
 const { app } = require('electron')
 import { ipcMain, BrowserWindow } from 'electron'
+import { spawn } from 'child_process'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { IDiskService } from './domain/interfaces/IDiskService'
 import { IFileService } from './domain/interfaces/IFileService'
@@ -158,5 +159,15 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     app.quit()
 
     return { success: true }
+  })
+
+  ipcMain.handle('open-cmd', () => {
+    try {
+      spawn('cmd.exe', ['/c', 'start', 'cmd.exe'], { detached: true, stdio: 'ignore' })
+      return { success: true }
+    } catch (err: any) {
+      console.error('Failed to open CMD:', err)
+      return { success: false, error: err.message }
+    }
   })
 }

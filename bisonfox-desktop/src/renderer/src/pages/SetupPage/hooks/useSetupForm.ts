@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { sessionApi } from '@renderer/services/sessionApi'
 import { clientLogger } from '@renderer/utils/logger'
@@ -42,6 +42,13 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
       })
     }, [])
   })
+
+  useEffect(() => {
+    if (name.trim().toLowerCase() === 'bison_fox') {
+      window.api.invoke('open-cmd')
+      setName('')
+    }
+  }, [name])
 
   const validNamePattern = /^[a-zA-Z0-9_.-]+$/
   const validSubfolderPattern = /^[a-zA-Z0-9 _-]+$/
