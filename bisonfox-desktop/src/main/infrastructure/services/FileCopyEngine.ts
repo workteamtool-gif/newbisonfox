@@ -44,8 +44,18 @@ async function copyOneFast(
   const doCopy = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       let aborted = false
+      let stallTimer: NodeJS.Timeout | null = null
+
+      const clearStall = () => {
+        if (stallTimer) {
+          clearTimeout(stallTimer)
+          stallTimer = null
+        }
+      }
+
       const onAbort = () => {
         aborted = true
+        clearStall()
         readStream.destroy()
         writeStream.destroy()
         reject(new Error('Aborted'))
@@ -56,27 +66,50 @@ async function copyOneFast(
         signal.addEventListener('abort', onAbort)
       }
 
-      const readStream = fs.createReadStream(src)
-      const writeStream = fs.createWriteStream(dest)
+      const FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000
+      const readStream = fs.createReadStream(src, {
+        flags: (fs.constants.O_RDONLY | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
+      })
+      const writeStream = fs.createWriteStream(dest, {
+        flags: (fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
+      })
+
+      const resetStall = () => {
+        clearStall()
+        stallTimer = setTimeout(() => {
+          if (aborted) return
+          aborted = true
+          readStream.destroy()
+          writeStream.destroy()
+          reject(new Error('Copy stalled - no data transferred for 30 seconds'))
+        }, 10000)
+      }
+
+      // Start the timer immediately in case the stream hangs on initial open
+      resetStall()
 
       readStream.on('data', (chunk) => {
         if (aborted) return
+        resetStall()
         if (onProgressBytes) onProgressBytes(chunk.length)
       })
 
       readStream.on('error', (err) => {
+        clearStall()
         if (signal) signal.removeEventListener('abort', onAbort)
         writeStream.destroy()
         reject(err)
       })
 
       writeStream.on('error', (err) => {
+        clearStall()
         if (signal) signal.removeEventListener('abort', onAbort)
         readStream.destroy()
         reject(err)
       })
 
       writeStream.on('finish', () => {
+        clearStall()
         if (signal) signal.removeEventListener('abort', onAbort)
         resolve()
       })
@@ -101,79 +134,39 @@ async function copyOneFast(
 }
 
 /**
- * Moves a staged file to its final destination while holding open OS-level handles
- * on both the source file and every directory segment from uploadBaseDir down to
- * the file's immediate parent directory.
- *
- * Holding those handles means:
- *   - The staging file cannot be deleted by another process during the move.
- *   - The newly-created destination directories cannot be rmdir'd between mkdir and rename.
- *
- * All handles are released only after the rename succeeds or throws.
+ * Moves a staged file to its final destination atomically.
+ * To prevent background "empty folder cleaner" processes from deleting the
+ * newly-created destination directories before the rename occurs, we immediately
+ * touch the destination file (creating a 0-byte anchor) after creating the directories.
+ * This ensures the folders are never empty from the cleaner's perspective.
  *
  * @param srcPath      Absolute path of the staged file (in tempBaseDir).
  * @param destPath     Absolute path of the final file (in uploadBaseDir).
- * @param uploadBaseDir Root of the upload destination tree — handles are opened from here down.
+ * @param uploadBaseDir Root of the upload destination tree (kept for signature compatibility).
  */
 async function atomicMoveWithHandles(
   srcPath: string,
   destPath: string,
-  uploadBaseDir: string
+  _uploadBaseDir: string
 ): Promise<void> {
   const destDir = path.dirname(destPath)
-  const dirHandles: fs.promises.FileHandle[] = []
-
-  // 1. Acquire handle on the staging file. Held open through the rename so
-  //    no external process can delete it while we are working.
-  const fileHandle = await fs.promises.open(srcPath, 'r')
 
   try {
-    // 2. Create all missing destination directory segments.
+    // 1. Create all missing destination directory segments.
     await fs.promises.mkdir(destDir, { recursive: true }).catch((err) => {
       logger.error('FileCopyEngine', `Failed to make directory in destination directory: ${destDir}`, { error: err.message })
     })
 
-    // 3. Open a handle on every directory segment from uploadBaseDir → destDir.
-    //    On Windows, fs.promises.open on a dir uses FILE_FLAG_BACKUP_SEMANTICS
-    //    and returns a real directory handle. Holding it blocks rmdir on that dir.
-    const baseNorm = path.resolve(uploadBaseDir)
-    const destDirNorm = path.resolve(destDir)
+    // 2. Touch the destination file to act as an anchor, making sure intermediate
+    //    directories are not empty, preventing cleanup processes from removing them.
+    await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
 
-    if (destDirNorm.toLowerCase().startsWith(baseNorm.toLowerCase())) {
-      let cursor = baseNorm
-      try { 
-        dirHandles.push(await fs.promises.open(cursor, 'r')) 
-      } catch (err: any) {
-        logger.error('FileCopyEngine', `Failed to acquire handle for directory: ${cursor}`, { error: err.message })
-      }
-
-      const relative = path.relative(baseNorm, destDirNorm)
-      for (const part of relative.split(path.sep).filter(Boolean)) {
-        cursor = path.join(cursor, part)
-        try { 
-          dirHandles.push(await fs.promises.open(cursor, 'r')) 
-        } catch (err: any) {
-          logger.error('FileCopyEngine', `Failed to acquire handle for directory: ${cursor}`, { error: err.message })
-        }
-      }
-    }
-
-    // 4. Atomic rename — the file handle survives this on NTFS because handles
-    //    are bound to the file object (file ID), not to the path.
+    // 3. Atomic rename — the file survives this and overwrites the anchor.
     await fs.promises.rename(srcPath, destPath)
 
   } catch (err: any) {
     logger.error('FileCopyEngine', `Failed to atomically move staged file: ${srcPath} -> ${destPath}`, { error: err.message })
     throw err
-  } finally {
-    // 5. Release all handles. If rename succeeded the file now lives at destPath;
-    //    if it failed nothing was moved.
-    if (fileHandle) {
-      await fileHandle.close().catch(() => {})
-    }
-    for (const dh of dirHandles) {
-      await dh.close().catch(() => {})
-    }
   }
 }
 
@@ -388,6 +381,9 @@ export async function copyFiles(
             await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => {})
             mkdirCache.add(stagingDir)
           }
+
+          // Touch the staging file to anchor the directory against empty-folder cleaners
+          await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
 
           await copyOneFast(src, destPath, activeSignal, (chunkSize) => {
             partialBytes += chunkSize
