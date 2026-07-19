@@ -1,6 +1,7 @@
 import React from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
 import { FailedFile } from '@shared/entities/FailedFile'
+import { getConfig } from '@renderer/services/configService'
 
 export interface FailedItemsUploadProps {
   failedCount: number
@@ -21,9 +22,16 @@ export function FailedItemsUpload({
   const [maxTrackedFailures, setMaxTrackedFailures] = React.useState(100_000)
 
   React.useEffect(() => {
-    import('@renderer/services/configService').then(({ getConfig }) => {
-      getConfig().then((config) => setMaxTrackedFailures(config.maxReportedFailures || 100_000))
-    })
+    let mounted = true
+    getConfig()
+      .then((config) => {
+        if (mounted) setMaxTrackedFailures(config.maxReportedFailures || 10)
+      })
+      .catch((err) => console.error('Failed to load config for FailedItemsUpload', err))
+      
+    return () => {
+      mounted = false
+    }
   }, [])
 
   const exceedsTrackingLimit = failedCount > maxTrackedFailures

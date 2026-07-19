@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
+import { getConfig } from '@renderer/services/configService'
 
 export function useSuccessPage() {
   const { reset, username } = useWizardStore()
@@ -16,9 +17,16 @@ export function useSuccessPage() {
   const [destinationUserEndpoint, setDestinationUserEndpoint] = useState('')
 
   useEffect(() => {
-    import('@renderer/services/configService').then(({ getConfig }) => {
-      getConfig().then((config) => setDestinationUserEndpoint(config.endpointDestinationFolder))
-    })
+    let mounted = true
+    getConfig()
+      .then((config) => {
+        if (mounted) setDestinationUserEndpoint(config.endpointDestinationFolder)
+      })
+      .catch((err) => console.error('Failed to load config for success page', err))
+      
+    return () => {
+      mounted = false
+    }
   }, [])
 
   const handleReturnHome = (): void => {

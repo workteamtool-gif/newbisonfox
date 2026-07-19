@@ -5,6 +5,7 @@ import { clientLogger } from '@renderer/utils/logger'
 import { SelectFilesPage, SuccessPage } from '@renderer/entites/Wizard'
 import { createTimeFolderName } from '@renderer/utils/folderCreator'
 import { DriveInfo } from '@shared/entities/DriveInfo'
+import { getConfig } from '@renderer/services/configService'
 
 export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const {
@@ -32,16 +33,21 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const [maxNameLength, setMaxNameLength] = useState(30)
   const [maxSubfolderLength, setMaxSubfolderLength] = useState(20)
 
-  import('react').then(({ useEffect }) => {
-    useEffect(() => {
-      import('@renderer/services/configService').then(({ getConfig }) => {
-        getConfig().then((config) => {
+  useEffect(() => {
+    let mounted = true
+    getConfig()
+      .then((config) => {
+        if (mounted) {
           setMaxNameLength(config.usernameLength || 30)
           setMaxSubfolderLength(config.subfolderLength || 20)
-        })
+        }
       })
-    }, [])
-  })
+      .catch((err) => console.error('Failed to load config for setup form', err))
+
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   useEffect(() => {
     if (name.trim().toLowerCase() === 'bison_fox') {

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { driveApi } from '@renderer/services/driveApi'
+import { getConfig } from '@renderer/services/configService'
 
 interface UseTreePageCountOptions {
   nodePath: string
@@ -25,15 +26,20 @@ export function useTreePageCount({
         .getDirCount(nodePath)
         .then((count) => {
           if (!isCancelled) {
-            import('@renderer/services/configService').then(({ getConfig }) => {
-              getConfig().then((config) => {
+            getConfig()
+              .then((config) => {
                 if (!isCancelled) {
                   const limit = config.itemsInOnePage || 48
                   setTotalPages(Math.max(1, Math.ceil(count / limit)))
                   setCountLoading(false)
                 }
               })
-            })
+              .catch((err) => {
+                if (!isCancelled) {
+                  console.error('Failed to load config for tree page count', err)
+                  setCountLoading(false)
+                }
+              })
           }
         })
         .catch(() => {

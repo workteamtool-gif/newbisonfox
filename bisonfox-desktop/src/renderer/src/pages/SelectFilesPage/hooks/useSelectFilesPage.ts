@@ -6,6 +6,7 @@ import { isSubPath } from '@renderer/utils/paths'
 import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
+import { getConfig } from '@renderer/services/configService'
 
 export function useSelectFilesPage() {
   const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
@@ -57,14 +58,18 @@ export function useSelectFilesPage() {
               .getDirCount(currentDisk.driveLetter!)
               .then((count) => {
                 if (!isMounted) return
-                import('@renderer/services/configService').then(({ getConfig }) => {
-                  getConfig().then((config) => {
+                getConfig()
+                  .then((config) => {
                     if (!isMounted) return
                     const limit = config.itemsInOnePage || 48
                     setRootTotalPages(Math.max(1, Math.ceil(count / limit)))
                     setRootCountLoading(false)
                   })
-                })
+                  .catch((err) => {
+                    if (!isMounted) return
+                    console.error('Failed to load config for tree pages', err)
+                    setRootCountLoading(false)
+                  })
               })
               .catch(() => {
                 if (!isMounted) return
