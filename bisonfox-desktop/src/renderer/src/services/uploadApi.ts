@@ -87,7 +87,8 @@ export const uploadApi = {
   ): { close: () => void } => {
     const channel = `${IPC_CHANNELS.UPLOAD.PROGRESS_PREFIX}${sessionId}`
 
-    const unsubscribe = window.api.on(channel, (data: ProgressMessage) => {
+    const unsubscribe = window.api.on(channel, (rawData: unknown) => {
+      const data = rawData as ProgressMessage
       if (data.type === 'error') {
         onMessage({ type: 'error', message: data.message || 'Server error' })
       } else if (data.type === 'done') {

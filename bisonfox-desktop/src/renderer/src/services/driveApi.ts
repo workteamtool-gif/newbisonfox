@@ -7,7 +7,7 @@ import { getConfig } from '@renderer/services/configService'
 
 export const driveApi = {
   listDrives: async (): Promise<DriveInfo[]> => {
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.LIST)
+    const result = (await window.api.invoke(IPC_CHANNELS.DRIVE.LIST)) as DriveInfo[] | undefined
     return result ?? []
   },
 
@@ -18,12 +18,12 @@ export const driveApi = {
   ): Promise<PaginatedResult<ItemNode[]>> => {
     const config = await getConfig()
     const actualLimit = limit ?? config.itemsInOnePage
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, {
+    const result = (await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, {
       drive,
       page,
       limit: actualLimit
-    })
-    return result ?? { nodes: [], hasMore: false }
+    })) as PaginatedResult<ItemNode[]> | undefined
+    return result ?? { nodes: [], hasMore: false, totalPages: 0 }
   },
 
   getDir: async (
@@ -33,17 +33,17 @@ export const driveApi = {
   ): Promise<PaginatedResult<ItemNode[]>> => {
     const config = await getConfig()
     const actualLimit = limit ?? config.itemsInOnePage
-    const result = await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, {
+    const result = (await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR, {
       dirPath,
       page,
       limit: actualLimit
-    })
+    })) as PaginatedResult<ItemNode[]> | undefined
     return result ?? { nodes: [], hasMore: false, totalPages: 1 }
   },
 
   getDirCount: async (dirPath: string): Promise<number> => {
     try {
-      return await window.api.invoke('get-dir-count', { dirPath })
+      return (await window.api.invoke('get-dir-count', { dirPath })) as number
     } catch {
       return 0
     }
@@ -51,7 +51,7 @@ export const driveApi = {
 
   findItemPage: async (dirPath: string, query: string): Promise<number | null> => {
     try {
-      return await window.api.invoke(IPC_CHANNELS.DRIVE.FIND_PAGE, { dirPath, query })
+      return (await window.api.invoke(IPC_CHANNELS.DRIVE.FIND_PAGE, { dirPath, query })) as number | null
     } catch {
       return null
     }
@@ -62,7 +62,10 @@ export const driveApi = {
     query: string
   ): Promise<{ path: string; pages: Record<string, number> } | null> => {
     try {
-      return await window.api.invoke(IPC_CHANNELS.DRIVE.DEEP_FIND, { dirPath, query })
+      return (await window.api.invoke(IPC_CHANNELS.DRIVE.DEEP_FIND, {
+        dirPath,
+        query
+      })) as { path: string; pages: Record<string, number> } | null
     } catch {
       return null
     }

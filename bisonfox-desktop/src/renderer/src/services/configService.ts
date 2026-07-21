@@ -29,10 +29,10 @@ export async function getConfig(): Promise<AppConfig> {
     return configPromise
   }
 
-  configPromise = window.api.invoke('get-config')
+  configPromise = window.api.invoke('get-config') as Promise<AppConfig>
   try {
     cachedConfig = await configPromise
-    return cachedConfig
+    return cachedConfig!
   } catch (error) {
     console.error('Failed to load configuration via IPC', error)
     throw error

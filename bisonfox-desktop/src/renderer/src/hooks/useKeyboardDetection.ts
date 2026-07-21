@@ -8,7 +8,9 @@ export function useKeyboardDetection(): boolean {
 
     async function checkKeyboard(): Promise<void> {
       try {
-        const result = await window.api.invoke('detect-keyboard')
+        const result = (await window.api.invoke('detect-keyboard')) as {
+          hasKeyboard: boolean
+        }
         if (isMounted) {
           setHasKeyboard(result.hasKeyboard)
         }
