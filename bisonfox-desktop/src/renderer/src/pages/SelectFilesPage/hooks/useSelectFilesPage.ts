@@ -29,6 +29,7 @@ export function useSelectFilesPage() {
   )
 
   const [loading, setLoading] = useState(true)
+  const [pageLoading, setPageLoading] = useState(false)
   const [searching, setSearching] = useState(false)
   const searchGenRef = useRef(0)
   const [saving, setSaving] = useState(false)
@@ -92,7 +93,7 @@ export function useSelectFilesPage() {
   const handleLoadNextRoot = useCallback(async () => {
     if (!currentDisk || !rootHasMore) return
     const nextPage = rootPage + 1
-    setLoading(true)
+    setPageLoading(true)
     try {
       const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage)
       setTree(treeResponse.nodes)
@@ -100,14 +101,14 @@ export function useSelectFilesPage() {
       setRootHasMore(treeResponse.hasMore)
       setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
     } finally {
-      setLoading(false)
+      setPageLoading(false)
     }
   }, [currentDisk, rootPage, rootHasMore])
 
   const handleLoadPrevRoot = useCallback(async () => {
     if (!currentDisk || rootPage <= 1) return
     const prevPage = rootPage - 1
-    setLoading(true)
+    setPageLoading(true)
     try {
       const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage)
       setTree(treeResponse.nodes)
@@ -115,7 +116,7 @@ export function useSelectFilesPage() {
       setRootHasMore(true)
       setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
     } finally {
-      setLoading(false)
+      setPageLoading(false)
     }
   }, [currentDisk, rootPage])
 
@@ -123,7 +124,7 @@ export function useSelectFilesPage() {
     async (targetPage: number) => {
       if (!currentDisk || targetPage < 1 || targetPage > rootTotalPages || targetPage === rootPage)
         return
-      setLoading(true)
+      setPageLoading(true)
       try {
         const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
         setTree(treeResponse.nodes)
@@ -131,7 +132,7 @@ export function useSelectFilesPage() {
         setRootHasMore(treeResponse.hasMore)
         setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
       } finally {
-        setLoading(false)
+        setPageLoading(false)
       }
     },
     [currentDisk, rootPage, rootTotalPages]
@@ -295,6 +296,7 @@ export function useSelectFilesPage() {
     selected,
     excluded,
     loading,
+    pageLoading,
     searching,
     saving,
     currentDisk,

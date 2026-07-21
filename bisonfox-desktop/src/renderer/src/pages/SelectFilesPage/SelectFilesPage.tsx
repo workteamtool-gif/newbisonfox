@@ -19,6 +19,7 @@ export function SelectFilesPage(): JSX.Element {
     selected,
     excluded,
     loading,
+    pageLoading,
     searching,
     saving,
     currentDisk,
@@ -63,27 +64,33 @@ export function SelectFilesPage(): JSX.Element {
             rootTotalPages={rootTotalPages}
             rootCountLoading={rootCountLoading}
             rootHasMore={rootHasMore}
-            loading={loading}
+            loading={pageLoading}
             searching={searching}
             onLoadPrevRoot={handleLoadPrevRoot}
             onLoadNextRoot={handleLoadNextRoot}
             onJumpToPage={handleJumpToPage}
             onSearch={handleSearchRootSubmit}
           />
-          <FileTree
-            nodes={tree}
-            selected={selected}
-            excluded={excluded}
-            onToggleSelect={handleToggleSelect}
-            onLoadChildren={handleLoadChildren}
-            autoExpandMap={autoExpandMap}
-            onAutoExpand={(map, targetPath) => {
-              setAutoExpandMap(map)
-              if (targetPath) setScrollToPath(targetPath)
-            }}
-            scrollToPath={scrollToPath}
-            onScrolled={() => setScrollToPath(undefined)}
-          />
+          {pageLoading ? (
+            <div className="loading-container">
+              <p><span className="spin">⟳</span> קורא כונן...</p>
+            </div>
+          ) : (
+            <FileTree
+              nodes={tree}
+              selected={selected}
+              excluded={excluded}
+              onToggleSelect={handleToggleSelect}
+              onLoadChildren={handleLoadChildren}
+              autoExpandMap={autoExpandMap}
+              onAutoExpand={(map, targetPath) => {
+                setAutoExpandMap(map)
+                if (targetPath) setScrollToPath(targetPath)
+              }}
+              scrollToPath={scrollToPath}
+              onScrolled={() => setScrollToPath(undefined)}
+            />
+          )}
         </>
       )}
 

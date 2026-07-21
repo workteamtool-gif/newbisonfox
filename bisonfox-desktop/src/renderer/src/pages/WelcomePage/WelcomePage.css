@@ -30,7 +30,7 @@
 }
 
 .welcome-title {
-    font-family: var(--font-display);
+    font-family: 'Rubik', sans-serif;
     font-size: clamp(2.8rem, 5vw, 5.6rem);
     font-weight: 800;
     margin-bottom: clamp(0.4rem, 1vh, 1.1rem);
