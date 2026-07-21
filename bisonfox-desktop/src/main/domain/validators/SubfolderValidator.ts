@@ -1,4 +1,4 @@
-import { ISubfolderValidator } from '../interfaces/IValidators/ISubfolderValidator'
+import type { SubfolderValidator as ISubfolderValidator } from '../interfaces/Validators/SubfolderValidator'
 import { ValidationResult } from '../entities/ValidationInfo'
 import { config } from '@main/appConfig'
 

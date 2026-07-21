@@ -117,9 +117,12 @@ export async function expandPaths(
           }
           processFile(currentPath)
         }
-      } catch (err: any) {
-        logger.warn('FileScanner', `Skipping ${currentPath}: ${err.message}`)
-        onScanError(currentPath, err.message)
+      } catch (err: unknown) {
+        logger.warn(
+          'FileScanner',
+          `Skipping ${currentPath}: ${err instanceof Error ? err.message : String(err)}`
+        )
+        onScanError(currentPath, err instanceof Error ? err.message : String(err))
       } finally {
         activeWorkers--
       }

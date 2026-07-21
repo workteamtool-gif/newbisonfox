@@ -1,5 +1,5 @@
 import { ValidationResult } from '@main/domain/entities/ValidationInfo'
 
-export interface ISubfolderValidator {
+export interface SubfolderValidator {
   validate(subfolder: string): ValidationResult
 }

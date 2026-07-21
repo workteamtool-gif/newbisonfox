@@ -35,15 +35,16 @@ function safeMoveFileSync(src: string, dest: string, retries = 25, delayMs = 200
       // Prefer atomic rename; fall back to copy+delete only on cross-device (EXDEV)
       try {
         fs.renameSync(src, dest)
-      } catch (renameErr: any) {
-        if (renameErr.code !== 'EXDEV') throw renameErr
+      } catch (renameErr: unknown) {
+        if ((renameErr as NodeJS.ErrnoException).code !== 'EXDEV') throw renameErr
         fs.copyFileSync(src, dest)
         fs.unlinkSync(src)
       }
       return
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (i === retries) throw err
-      if (err.code === 'EBUSY' || err.code === 'EPERM' || err.code === 'EACCES') {
+      const code = (err as NodeJS.ErrnoException).code
+      if (code === 'EBUSY' || code === 'EPERM' || code === 'EACCES') {
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs)
       } else {
         throw err
@@ -65,8 +66,8 @@ async function safeMoveFile(src: string, dest: string): Promise<void> {
 
       try {
         await fs.promises.rename(src, dest)
-      } catch (renameErr: any) {
-        if (renameErr.code !== 'EXDEV') throw renameErr
+      } catch (renameErr: unknown) {
+        if ((renameErr as NodeJS.ErrnoException).code !== 'EXDEV') throw renameErr
         await fs.promises.copyFile(src, dest)
         await fs.promises.unlink(src)
       }
@@ -77,8 +78,8 @@ async function safeMoveFile(src: string, dest: string): Promise<void> {
         )
       }
       return
-    } catch (err: any) {
-      lastError = err.message || 'Unknown move error'
+    } catch (err: unknown) {
+      lastError = (err instanceof Error ? err.message : String(err)) || 'Unknown move error'
       moveAttempt++
     }
   }

@@ -2,7 +2,11 @@ import * as fs from 'original-fs'
 import * as path from 'path'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { IFileService, CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
+import type {
+  FileService as IFileService,
+  CopyOptions,
+  CopySummary
+} from '@main/domain/interfaces/FileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
 import { listDir, getDirCount, findItemPage, deepFindItem } from './DirectoryExplorer'
 import { copyFiles } from './FileCopyEngine'
@@ -11,7 +15,7 @@ const EXCLUDED = new Set<string>([])
 
 /**
  * Service that acts as the coordinator and entry point for all high-level file operations.
- * Implements IFileService to interface tree browsing, size counting, and copying modules.
+ * Implements FileService to interface tree browsing, size counting, and copying modules.
  */
 export class FileService implements IFileService {
   private readonly scanner = new FileScanner()
@@ -127,14 +131,15 @@ export class FileService implements IFileService {
     await fs.promises.mkdir(path.dirname(dest), { recursive: true })
     try {
       await fs.promises.rename(src, dest)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const nodeErr = err as NodeJS.ErrnoException
       if (
-        err.code === 'EXDEV' ||
-        err.code === 'EPERM' ||
-        err.code === 'EEXIST' ||
-        err.code === 'ENOTEMPTY' ||
-        err.code === 'EBUSY' ||
-        err.code === 'EACCES'
+        nodeErr.code === 'EXDEV' ||
+        nodeErr.code === 'EPERM' ||
+        nodeErr.code === 'EEXIST' ||
+        nodeErr.code === 'ENOTEMPTY' ||
+        nodeErr.code === 'EBUSY' ||
+        nodeErr.code === 'EACCES'
       ) {
         // Cross-device, destination exists, or Windows locked the folder — copy every file then delete source
         await this.recursiveCopy(src, dest)

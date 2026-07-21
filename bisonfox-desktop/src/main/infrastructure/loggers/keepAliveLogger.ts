@@ -101,9 +101,11 @@ function writeKeepAliveEntry(dir: string, entry: Record<string, unknown>, timest
       const filePath = getKeepAliveFilePath(dir, timestamp)
       fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
       return
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (attempt === retries - 1) {
-        logger.warn('KeepAlive', `Failed to write keep-alive log after ${retries} retries`, { error: (err as Error).message })
+        logger.warn('KeepAlive', `Failed to write keep-alive log after ${retries} retries`, {
+          error: (err as Error).message
+        })
       }
     }
   }

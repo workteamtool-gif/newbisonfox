@@ -23,7 +23,7 @@ export function useSuccessPage() {
         if (mounted) setDestinationUserEndpoint(config.endpointDestinationFolder)
       })
       .catch((err) => console.error('Failed to load config for success page', err))
-      
+
     return () => {
       mounted = false
     }

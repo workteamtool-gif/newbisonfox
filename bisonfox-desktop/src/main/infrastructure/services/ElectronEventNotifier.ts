@@ -1,11 +1,11 @@
 import { BrowserWindow } from 'electron'
-import { IEventNotifier } from '../../domain/interfaces/IEventNotifier'
+import { EventNotifier } from '../../domain/interfaces/EventNotifier'
 
 /**
  * Service that handles dispatching copy/upload status and progress events
  * from the Electron main process to the React renderer UI windows.
  */
-export class ElectronEventNotifier implements IEventNotifier {
+export class ElectronEventNotifier implements EventNotifier {
   /**
    * Sends progress updates to the active Electron renderer process webcontents.
    *

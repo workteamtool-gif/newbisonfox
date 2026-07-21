@@ -1,6 +1,6 @@
 import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
 
-export interface IFileScanner {
+export interface FileScanner {
   /**
    * Recursively scans directories to build a list of all files to copy.
    */

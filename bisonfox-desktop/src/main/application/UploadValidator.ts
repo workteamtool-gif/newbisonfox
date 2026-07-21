@@ -4,11 +4,15 @@ import type { UploadSession } from '../domain/entities/UploadSession'
 
 import { ValidationResult } from '../domain/entities/ValidationInfo'
 import type { UploadValidationData } from '../domain/entities/UploadValidationData'
+import type { UploadPayload } from '@shared/entities/UploadPayload'
 import { config } from '@main/appConfig'
 
 export class UploadValidator {
-  public validate(session: UploadSession, body: any): ValidationResult<UploadValidationData> {
-    const { files, subfolder } = body
+  public validate(
+    session: UploadSession,
+    payload: UploadPayload
+  ): ValidationResult<UploadValidationData> {
+    const { files, subfolder } = payload
 
     const rawBaseDir = config.uploadBaseDir
     if (!rawBaseDir || rawBaseDir.trim() === '') {
@@ -67,9 +71,9 @@ export class UploadValidator {
 
     let basePath: string | undefined
     const firstFile = filesToUpload[0]
-    if (firstFile && firstFile.includes(':')) {
-      const driveMatch = firstFile.match(/^[a-zA-Z]:\\/)
-      if (driveMatch) basePath = driveMatch[0]
+    if (firstFile) {
+      const parsedRoot = path.parse(firstFile).root
+      if (parsedRoot) basePath = parsedRoot
     }
 
     return {

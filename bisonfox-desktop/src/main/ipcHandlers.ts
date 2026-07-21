@@ -2,8 +2,8 @@ const { app } = require('electron')
 import { ipcMain, BrowserWindow } from 'electron'
 import { spawn } from 'child_process'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { IDiskService } from './domain/interfaces/IDiskService'
-import { IFileService } from './domain/interfaces/IFileService'
+import { DiskService } from './domain/interfaces/DiskService'
+import { FileService } from './domain/interfaces/FileService'
 import { UploadManager } from './application/UploadManager'
 import { sessionSingleton } from './application/UploadSession'
 import { NameValidator } from './domain/validators/NameValidator'
@@ -11,8 +11,8 @@ import { SubfolderValidator } from './domain/validators/SubfolderValidator'
 import { logMail } from './infrastructure/loggers/MailLogger'
 
 export interface AppDependencies {
-  diskService: IDiskService
-  fileService: IFileService
+  diskService: DiskService
+  fileService: FileService
   uploadManager: UploadManager
 }
 
@@ -78,8 +78,10 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
         controller.signal
       )
       pushToFrontend(`count-files-${scanId}`, { done: true, count, size })
-    } catch (err: any) {
-      pushToFrontend(`count-files-${scanId}`, { error: err.message })
+    } catch (err: unknown) {
+      pushToFrontend(`count-files-${scanId}`, {
+        error: err instanceof Error ? err.message : String(err)
+      })
     } finally {
       countFileControllers.delete(scanId)
     }
@@ -131,11 +133,11 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle(
     'start-upload',
-    async (_, { sessionId, files, subfolder, expectedTotalFiles, expectedTotalBytes }) => {
+    async (_, { sessionId, files, subfolder, expectedTotal, expectedTotalBytes }) => {
       uploadManager.startUpload(sessionId, {
         files,
         subfolder,
-        expectedTotalFiles,
+        expectedTotal,
         expectedTotalBytes
       })
       return { success: true, message: 'Upload started' }
@@ -165,9 +167,9 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
     try {
       spawn('cmd.exe', ['/c', 'start', 'cmd.exe'], { detached: true, stdio: 'ignore' })
       return { success: true }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to open CMD:', err)
-      return { success: false, error: err.message }
+      return { success: false, error: err instanceof Error ? err.message : String(err) }
     }
   })
 }

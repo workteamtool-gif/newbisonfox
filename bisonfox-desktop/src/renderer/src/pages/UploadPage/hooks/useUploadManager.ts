@@ -249,9 +249,11 @@ export function useUploadManager(): {
     const subfolder = currentDisk.subfolder || ''
     uploadApi
       .startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0)
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         clientLogger.error('UploadManager', `Failed to upload.`, err)
-        setUploadError(err.message || 'Failed to start upload.')
+        setUploadError(
+          (err instanceof Error ? err.message : String(err)) || 'Failed to start upload.'
+        )
       })
   }
 
@@ -288,10 +290,12 @@ export function useUploadManager(): {
     setPhase('copying')
 
     const subfolder = currentDisk.subfolder || ''
-    uploadApi.startUpload(sessionId, filesToRetry, subfolder, retryTotalBytes).catch((err: any) => {
-      clientLogger.error('UploadManager', `Retry failed.`, err)
-      setUploadError(err.message || 'Retry failed.')
-    })
+    uploadApi
+      .startUpload(sessionId, filesToRetry, subfolder, retryTotalBytes)
+      .catch((err: unknown) => {
+        clientLogger.error('UploadManager', `Retry failed.`, err)
+        setUploadError((err instanceof Error ? err.message : String(err)) || 'Retry failed.')
+      })
   }
 
   const skipFailed = (): void => {
@@ -328,9 +332,9 @@ export function useUploadManager(): {
     const subfolder = currentDisk.subfolder || ''
     uploadApi
       .startUpload(sessionId, currentDisk.selectedItemPaths, subfolder, preCalcTotalBytes || 0)
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         clientLogger.error('UploadManager', `Retry-all failed.`, err)
-        setUploadError(err.message || 'Retry all failed.')
+        setUploadError((err instanceof Error ? err.message : String(err)) || 'Retry all failed.')
       })
   }
 

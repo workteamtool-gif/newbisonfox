@@ -1,9 +1,10 @@
 import { sessionSingleton } from './UploadSession'
-import { IFileService } from '@main/domain/interfaces/IFileService'
-import { IEventNotifier } from '@main/domain/interfaces/IEventNotifier'
+import { FileService } from '@main/domain/interfaces/FileService'
+import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { UploadValidator } from './UploadValidator'
 import { UploadProgressHandler } from './UploadProgressHandler'
+import type { UploadPayload } from '@shared/entities/UploadPayload'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()
@@ -11,8 +12,8 @@ export class UploadManager {
   private validator = new UploadValidator()
 
   constructor(
-    private fileService: IFileService,
-    private notifier: IEventNotifier
+    private fileService: FileService,
+    private notifier: EventNotifier
   ) {}
 
   public cancelUpload(sessionId: string): void {
@@ -45,7 +46,7 @@ export class UploadManager {
     logger.info('UploadManager', 'All uploads successfully aborted.')
   }
 
-  public async startUpload(sessionId: string, body: any): Promise<void> {
+  public async startUpload(sessionId: string, payload: UploadPayload): Promise<void> {
     const oldController = this.activeUploads.get(sessionId)
     if (oldController) {
       logger.info('UploadManager', `Aborting previous upload attempt for session ${sessionId}`)
@@ -56,7 +57,7 @@ export class UploadManager {
     const session = this.sessionSingletonInstance.get(sessionId)
     if (!session) return
 
-    const validationResult = this.validator.validate(session, body)
+    const validationResult = this.validator.validate(session, payload)
 
     if (!validationResult.valid) {
       this.sessionSingletonInstance.update(session.id, { status: 'error' })
@@ -89,8 +90,8 @@ export class UploadManager {
         basePath,
         finalDest,
         excludedFiles: allExcluded,
-        expectedTotal: body.expectedTotal,
-        expectedTotalBytes: body.expectedTotalBytes,
+        expectedTotal: payload.expectedTotal,
+        expectedTotalBytes: payload.expectedTotalBytes,
         signal: controller.signal,
         onScan: progressHandler.onScan,
         onProgress: progressHandler.onProgress
@@ -101,16 +102,21 @@ export class UploadManager {
       await this.fileService.deleteDir(stagingDest).catch(() => {})
 
       progressHandler.notifyDone(summary)
-    } catch (err: any) {
+    } catch (err: unknown) {
       this.activeUploads.delete(session.id)
 
       await this.fileService.deleteDir(stagingDest).catch(() => {})
 
-      if (err.message && err.message.includes('Aborted')) {
+      if (
+        (err instanceof Error ? err.message : String(err)) &&
+        (err instanceof Error ? err.message : String(err)).includes('Aborted')
+      ) {
         logger.info('UploadManager', 'Upload aborted successfully. Staging folder cleaned up.')
       } else {
-        logger.error('UploadManager', 'Upload failed', { error: err.message })
-        progressHandler.onError(err.message)
+        logger.error('UploadManager', 'Upload failed', {
+          error: err instanceof Error ? err.message : String(err)
+        })
+        progressHandler.onError(err instanceof Error ? err.message : String(err))
       }
     }
   }

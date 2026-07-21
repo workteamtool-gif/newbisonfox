@@ -1,5 +1,5 @@
 import { ValidationResult } from '@main/domain/entities/ValidationInfo'
 
-export interface INameValidator {
+export interface NameValidator {
   validate(name: string): ValidationResult
 }

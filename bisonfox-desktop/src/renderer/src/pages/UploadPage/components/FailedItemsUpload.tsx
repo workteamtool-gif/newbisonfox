@@ -28,7 +28,7 @@ export function FailedItemsUpload({
         if (mounted) setMaxTrackedFailures(config.maxReportedFailures || 10)
       })
       .catch((err) => console.error('Failed to load config for FailedItemsUpload', err))
-      
+
     return () => {
       mounted = false
     }

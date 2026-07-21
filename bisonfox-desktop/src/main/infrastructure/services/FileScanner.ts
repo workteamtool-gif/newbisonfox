@@ -1,4 +1,4 @@
-import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
+import type { FileScanner as IFileScanner } from '@main/domain/interfaces/FileScanner'
 import { PathResult } from '@main/domain/entities/PathResult'
 import { BackpressureGate } from './BackpressureGate'
 import { expandPaths } from './expandPaths'

@@ -1,6 +1,6 @@
-import { IEventNotifier } from '@main/domain/interfaces/IEventNotifier'
+import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
 import { sessionSingleton } from './UploadSession'
-import { CopySummary } from '@main/domain/interfaces/IFileService'
+import { CopySummary } from '@main/domain/interfaces/FileService'
 import { FailedFile } from '@shared/entities/FailedFile'
 
 export class UploadProgressHandler {
@@ -9,7 +9,7 @@ export class UploadProgressHandler {
 
   constructor(
     private sessionId: string,
-    private notifier: IEventNotifier,
+    private notifier: EventNotifier,
     private sessionSingletonInstance: ReturnType<typeof sessionSingleton.getInstance>
   ) {}
 

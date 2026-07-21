@@ -73,7 +73,9 @@ export function SelectFilesPage(): JSX.Element {
           />
           {pageLoading ? (
             <div className="loading-container">
-              <p><span className="spin">⟳</span> קורא כונן...</p>
+              <p>
+                <span className="spin">⟳</span> קורא כונן...
+              </p>
             </div>
           ) : (
             <FileTree

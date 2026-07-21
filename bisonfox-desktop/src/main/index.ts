@@ -142,6 +142,8 @@ process.on('uncaughtException', (err) => {
   logger.error('Process', 'Uncaught Exception', { error: err.message, stack: err.stack })
 })
 
-process.on('unhandledRejection', (reason: any) => {
-  logger.error('Process', 'Unhandled Rejection', { reason: reason?.message || reason })
+process.on('unhandledRejection', (reason: unknown) => {
+  logger.error('Process', 'Unhandled Rejection', {
+    reason: reason instanceof Error ? reason.message : String(reason)
+  })
 })

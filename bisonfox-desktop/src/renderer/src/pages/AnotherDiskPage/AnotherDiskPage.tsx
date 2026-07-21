@@ -25,7 +25,10 @@ export function AnotherDiskPage(): React.JSX.Element {
       <p className="page-subtitle">לא לשכוח לנתק את הכונן החיצוני!</p>
 
       <div className="another-disk-content">
-        <AnotherDiskStats diskSessionsLength={diskSessions.length} totalFilesAmount={totalFilesAmount} />
+        <AnotherDiskStats
+          diskSessionsLength={diskSessions.length}
+          totalFilesAmount={totalFilesAmount}
+        />
 
         {failedCountTotal > 0 && (
           <div className="info-box failed-files-box">

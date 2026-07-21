@@ -112,8 +112,8 @@ export function useReviewPage() {
       clientLogger.info('ReviewPage', `Starting upload of ${finalDisk.selectedItemPaths} files`)
 
       setStep(UploadPage)
-    } catch (err: any) {
-      setSyncError(err.message || 'אבד החיבור לשרת')
+    } catch (err: unknown) {
+      setSyncError((err instanceof Error ? err.message : String(err)) || 'אבד החיבור לשרת')
     } finally {
       setSaving(false)
     }

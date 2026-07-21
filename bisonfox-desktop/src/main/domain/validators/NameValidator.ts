@@ -1,4 +1,4 @@
-import { INameValidator } from '../interfaces/IValidators/INameValidator'
+import type { NameValidator as INameValidator } from '../interfaces/Validators/NameValidator'
 import { ValidationResult } from '../entities/ValidationInfo'
 import { config } from '@main/appConfig'
 

@@ -1,12 +1,13 @@
 import * as fs from 'original-fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { CopyOptions, CopySummary } from '@main/domain/interfaces/IFileService'
-import { IFileScanner } from '@main/domain/interfaces/IFileScanner'
+import { CopyOptions, CopySummary } from '@main/domain/interfaces/FileService'
+import { FileScanner } from '@main/domain/interfaces/FileScanner'
 import { BackpressureGate } from './BackpressureGate'
 import { AsyncSemaphore } from './AsyncSemaphore'
 import { config } from '@main/appConfig'
 import { FailedFile } from '@shared/entities/FailedFile'
+import { atomicMoveWithHandles } from '../utils/fsUtils'
 
 const EXCLUDED = new Set<string>([])
 const COPY_CONCURRENCY = config.copyConcurrency
@@ -71,7 +72,10 @@ async function copyOneFast(
         flags: (fs.constants.O_RDONLY | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
       })
       const writeStream = fs.createWriteStream(dest, {
-        flags: (fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
+        flags: (fs.constants.O_WRONLY |
+          fs.constants.O_CREAT |
+          fs.constants.O_TRUNC |
+          FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
       })
 
       const resetStall = () => {
@@ -134,45 +138,8 @@ async function copyOneFast(
 }
 
 /**
- * Moves a staged file to its final destination atomically.
- * To prevent background "empty folder cleaner" processes from deleting the
- * newly-created destination directories before the rename occurs, we immediately
- * touch the destination file (creating a 0-byte anchor) after creating the directories.
- * This ensures the folders are never empty from the cleaner's perspective.
- *
- * @param srcPath      Absolute path of the staged file (in tempBaseDir).
- * @param destPath     Absolute path of the final file (in uploadBaseDir).
- * @param uploadBaseDir Root of the upload destination tree (kept for signature compatibility).
- */
-async function atomicMoveWithHandles(
-  srcPath: string,
-  destPath: string,
-  _uploadBaseDir: string
-): Promise<void> {
-  const destDir = path.dirname(destPath)
-
-  try {
-    // 1. Create all missing destination directory segments.
-    await fs.promises.mkdir(destDir, { recursive: true }).catch((err) => {
-      logger.error('FileCopyEngine', `Failed to make directory in destination directory: ${destDir}`, { error: err.message })
-    })
-
-    // 2. Touch the destination file to act as an anchor, making sure intermediate
-    //    directories are not empty, preventing cleanup processes from removing them.
-    await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
-
-    // 3. Atomic rename — the file survives this and overwrites the anchor.
-    await fs.promises.rename(srcPath, destPath)
-
-  } catch (err: any) {
-    logger.error('FileCopyEngine', `Failed to atomically move staged file: ${srcPath} -> ${destPath}`, { error: err.message })
-    throw err
-  }
-}
-
-/**
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.
- * Utilizes `IFileScanner` to continuously discover paths in the background while workers process the queue.
+ * Utilizes `FileScanner` to continuously discover paths in the background while workers process the queue.
  * Integrates `BackpressureGate` to limit memory growth and applies automatic retries on worker failures.
  *
  * @param scanner The scanner implementation used to walk directories in parallel.
@@ -181,7 +148,7 @@ async function atomicMoveWithHandles(
  * @param options Copy options and progress/scanning callback configuration.
  */
 export async function copyFiles(
-  scanner: IFileScanner,
+  scanner: FileScanner,
   initialPaths: string[],
   destination: string,
   options: CopyOptions
@@ -220,9 +187,9 @@ export async function copyFiles(
     basePath ??
     (() => {
       const first = initialPaths[0]
-      if (first?.includes(':')) {
-        const driveMatch = first.match(/^[a-zA-Z]:\\/)
-        if (driveMatch) return driveMatch[0]
+      if (first) {
+        const parsedRoot = path.parse(first).root
+        if (parsedRoot) return parsedRoot
       }
       return path.dirname(initialPaths[0] ?? destination)
     })()
@@ -372,7 +339,8 @@ export async function copyFiles(
 
         partialBytes = 0
         try {
-          if (copyAttempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * copyAttempt))
+          if (copyAttempt > 0)
+            await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * copyAttempt))
 
           const expectedFileSize = fileSize > 0 ? fileSize : 1
 
@@ -393,10 +361,10 @@ export async function copyFiles(
           })
 
           copiedToStaging = true
-        } catch (err: any) {
+        } catch (err: unknown) {
           completedBytes -= partialBytes // Rollback partial progress
           partialBytes = 0
-          lastError = err.message || 'Unknown copy error'
+          lastError = (err instanceof Error ? err.message : String(err)) || 'Unknown copy error'
           copyAttempt++
         }
       }
@@ -407,8 +375,9 @@ export async function copyFiles(
         while (moveAttempt < MOVE_RETRIES) {
           if (activeSignal.aborted) break
           try {
-            if (moveAttempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * moveAttempt))
-            await atomicMoveWithHandles(destPath, finalPath, config.uploadBaseDir)
+            if (moveAttempt > 0)
+              await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * moveAttempt))
+            await atomicMoveWithHandles(destPath, finalPath)
             success = true
             if (moveAttempt > 0) {
               logger.warn('FileCopyEngine', `Move succeeded after ${moveAttempt + 1} attempts`, {
@@ -417,8 +386,8 @@ export async function copyFiles(
               })
             }
             break
-          } catch (err: any) {
-            lastError = err.message || 'Unknown move error'
+          } catch (err: unknown) {
+            lastError = (err instanceof Error ? err.message : String(err)) || 'Unknown move error'
             moveAttempt++
           }
         }

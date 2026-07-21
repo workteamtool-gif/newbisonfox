@@ -33,7 +33,7 @@ export interface CopySummary {
   totalBytes: number
 }
 
-export interface IFileService {
+export interface FileService {
   /** Paginated shallow directory listing. */
   listDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<ItemNode[]>>
 

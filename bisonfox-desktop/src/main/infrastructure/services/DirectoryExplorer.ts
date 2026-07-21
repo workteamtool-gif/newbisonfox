@@ -60,9 +60,9 @@ export async function listDir(
 
     // -1 indicates that totalPages is still loading
     return { nodes: enriched, hasMore, totalPages: -1 }
-  } catch (err: any) {
+  } catch (err: unknown) {
     logger.warn('FileService', `Access denied or failed to read dir: ${dirPath}`, {
-      error: err.message
+      error: err instanceof Error ? err.message : String(err)
     })
     return { nodes: [], hasMore: false, totalPages: 1 }
   }

@@ -1,7 +1,7 @@
 import { exec } from 'child_process'
 import { promisify } from 'util'
 import * as fs from 'original-fs'
-import { IDiskService } from '@main/domain/interfaces/IDiskService'
+import type { DiskService as IDiskService } from '@main/domain/interfaces/DiskService'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { config } from '@main/appConfig'
@@ -72,8 +72,10 @@ export class DiskService implements IDiskService {
       }
 
       return drives
-    } catch (err: any) {
-      logger.error('DiskService', 'Failed to list Windows drives', { error: err.message })
+    } catch (err: unknown) {
+      logger.error('DiskService', 'Failed to list Windows drives', {
+        error: err instanceof Error ? err.message : String(err)
+      })
       return []
     }
   }

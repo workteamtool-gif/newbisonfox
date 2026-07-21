@@ -65,9 +65,11 @@ export function logMail(
         logger.info('MailLogger', 'Mail log written', entry)
       }
       return
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (attempt === retries - 1) {
-        logger.warn('MailLogger', `Failed to write mail log after ${retries} retries`, { error: (err as Error).message })
+        logger.warn('MailLogger', `Failed to write mail log after ${retries} retries`, {
+          error: (err as Error).message
+        })
       }
     }
   }

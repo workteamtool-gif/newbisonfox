@@ -99,7 +99,11 @@ export function useSelectFilesPage() {
       setTree(treeResponse.nodes)
       setRootPage(nextPage)
       setRootHasMore(treeResponse.hasMore)
-      setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
+      setRootTotalPages((prev) =>
+        treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+          ? treeResponse.totalPages
+          : prev
+      )
     } finally {
       setPageLoading(false)
     }
@@ -114,7 +118,11 @@ export function useSelectFilesPage() {
       setTree(treeResponse.nodes)
       setRootPage(prevPage)
       setRootHasMore(true)
-      setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
+      setRootTotalPages((prev) =>
+        treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+          ? treeResponse.totalPages
+          : prev
+      )
     } finally {
       setPageLoading(false)
     }
@@ -130,7 +138,11 @@ export function useSelectFilesPage() {
         setTree(treeResponse.nodes)
         setRootPage(targetPage)
         setRootHasMore(treeResponse.hasMore)
-        setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : prev)
+        setRootTotalPages((prev) =>
+          treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+            ? treeResponse.totalPages
+            : prev
+        )
       } finally {
         setPageLoading(false)
       }
@@ -208,7 +220,13 @@ export function useSelectFilesPage() {
         setTree(treeResponse.nodes)
         setRootPage(targetPage)
         setRootHasMore(treeResponse.hasMore)
-        setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : (prev !== -1 ? prev : Math.max(1, targetPage)))
+        setRootTotalPages((prev) =>
+          treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+            ? treeResponse.totalPages
+            : prev !== -1
+              ? prev
+              : Math.max(1, targetPage)
+        )
 
         const match = treeResponse.nodes.find((node) =>
           node.name.toLowerCase().includes(query.toLowerCase())
@@ -235,7 +253,13 @@ export function useSelectFilesPage() {
           setTree(treeResponse.nodes)
           setRootPage(rootTargetPage)
           setRootHasMore(treeResponse.hasMore)
-          setRootTotalPages(prev => treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1 ? treeResponse.totalPages : (prev !== -1 ? prev : Math.max(1, rootTargetPage)))
+          setRootTotalPages((prev) =>
+            treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
+              ? treeResponse.totalPages
+              : prev !== -1
+                ? prev
+                : Math.max(1, rootTargetPage)
+          )
 
           setAutoExpandMap(expandedPages)
           setScrollToPath(deepMatch.path)
