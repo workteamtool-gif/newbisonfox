@@ -49,13 +49,6 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     }
   }, [])
 
-  useEffect(() => {
-    if (name.trim().toLowerCase() === 'bison_fox') {
-      window.api.invoke('open-cmd')
-      setName('')
-    }
-  }, [name])
-
   const validNamePattern = /^[a-zA-Z0-9_.-]+$/
   const validSubfolderPattern = /^[a-zA-Z0-9 _-]+$/
   const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
