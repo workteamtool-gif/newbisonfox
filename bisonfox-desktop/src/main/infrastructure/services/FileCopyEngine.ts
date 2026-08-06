@@ -12,6 +12,7 @@ import { atomicMoveWithHandles } from '../utils/fsUtils'
 const EXCLUDED = new Set<string>([])
 const COPY_CONCURRENCY = config.copyConcurrency
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
+const TOTAL_BUFFER_BUDGET = config.chunkSizeMB * 1024 * 1024
 const FAIL_INTERVAL_MS = config.failIntervalMs
 const FAIL_RETRIES = config.failRetries
 const MOVE_RETRIES = config.moveRetries
@@ -34,6 +35,7 @@ const heavyLock = new AsyncSemaphore(4)
 async function copyOneFast(
   src: string,
   dest: string,
+  bufferSize: number,
   signal?: AbortSignal,
   onProgressBytes?: (chunkSize: number) => void
 ): Promise<number> {
@@ -69,13 +71,15 @@ async function copyOneFast(
 
       const FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000
       const readStream = fs.createReadStream(src, {
-        flags: (fs.constants.O_RDONLY | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
+        flags: (fs.constants.O_RDONLY | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string,
+        highWaterMark: bufferSize
       })
       const writeStream = fs.createWriteStream(dest, {
         flags: (fs.constants.O_WRONLY |
           fs.constants.O_CREAT |
           fs.constants.O_TRUNC |
-          FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string
+          FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string,
+        highWaterMark: bufferSize
       })
 
       const resetStall = () => {
@@ -308,6 +312,8 @@ export async function copyFiles(
     }
   }
 
+  let activeCopies = 0
+
   const worker = async (): Promise<void> => {
     while (true) {
       if (activeSignal.aborted) break
@@ -353,12 +359,21 @@ export async function copyFiles(
           // Touch the staging file to anchor the directory against empty-folder cleaners
           await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
 
-          await copyOneFast(src, destPath, activeSignal, (chunkSize) => {
-            partialBytes += chunkSize
-            completedBytes += chunkSize
-            const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
-            throttledReport(src, pct)
-          })
+          activeCopies++
+          const workerBuffer = Math.max(
+            64 * 1024,
+            Math.floor(TOTAL_BUFFER_BUDGET / activeCopies)
+          )
+          try {
+            await copyOneFast(src, destPath, workerBuffer, activeSignal, (chunkSize) => {
+              partialBytes += chunkSize
+              completedBytes += chunkSize
+              const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
+              throttledReport(src, pct)
+            })
+          } finally {
+            activeCopies--
+          }
 
           copiedToStaging = true
         } catch (err: unknown) {
