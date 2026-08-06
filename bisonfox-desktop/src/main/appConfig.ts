@@ -15,7 +15,7 @@ const configSchema = z.object({
   copyConcurrency: z.number().int().positive().default(6),
   deepSearchConcurrency: z.number().int().positive().default(12),
   heavyFileThresholdMb: z.number().int().positive().default(100),
-  chunkSizeMB: z.number().positive().default(2),
+  totalChunksSizeMB: z.number().positive().default(2),
   reportCopiedFilesIntervalMs: z.number().int().positive().default(500),
   maxReportedFailures: z.number().int().positive().default(10),
   failIntervalMs: z.number().int().positive().default(500),

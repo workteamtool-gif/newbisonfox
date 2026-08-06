@@ -9,7 +9,7 @@
   "copyConcurrency": 6,
   "deepSearchConcurrency": 12,
   "heavyFileThresholdMb": 100,
-  "chunkSizeMB": 12,
+  "totalChunksSizeMB": 12,
   "reportCopiedFilesIntervalMs": 500,
   "maxReportedFailures": 10,
   "failIntervalMs": 500,

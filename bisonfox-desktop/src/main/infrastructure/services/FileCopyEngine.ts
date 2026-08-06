@@ -12,7 +12,7 @@ import { atomicMoveWithHandles } from '../utils/fsUtils'
 const EXCLUDED = new Set<string>([])
 const COPY_CONCURRENCY = config.copyConcurrency
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
-const TOTAL_BUFFER_BUDGET = config.chunkSizeMB * 1024 * 1024
+const TOTAL_BUFFER_BUDGET = config.totalChunksSizeMB * 1024 * 1024
 const FAIL_INTERVAL_MS = config.failIntervalMs
 const FAIL_RETRIES = config.failRetries
 const MOVE_RETRIES = config.moveRetries
@@ -384,14 +384,14 @@ export async function copyFiles(
         }
       }
 
-      // ── Stage 2: Move staging → final (retries up to MOVE_RETRIES) ─────────
+      // ── Stage 2: Move staging → final
       if (copiedToStaging && finalDest) {
         let moveAttempt = 0
         while (moveAttempt < MOVE_RETRIES) {
           if (activeSignal.aborted) break
           try {
             if (moveAttempt > 0)
-              await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * moveAttempt))
+              await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS))
             await atomicMoveWithHandles(destPath, finalPath)
             success = true
             if (moveAttempt > 0) {
