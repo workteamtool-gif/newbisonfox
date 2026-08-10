@@ -1,10 +1,10 @@
 import { JSX } from 'react'
 import { FileTree } from '@renderer/components/FileTree/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
-import { useReviewPage } from './hooks/useReviewPage'
-import './ReviewPage.css'
+import { useReviewSelectedItemsPage } from './hooks/useReviewSelectedItemsPage'
+import './ReviewSelectedItemsPage.css'
 
-export function ReviewPage(): JSX.Element | null {
+export function ReviewSelectedItemsPage(): JSX.Element | null {
   const {
     nodes,
     selected,
@@ -20,7 +20,7 @@ export function ReviewPage(): JSX.Element | null {
     handleToggleSelect,
     handleStartUpload,
     handleBack
-  } = useReviewPage()
+  } = useReviewSelectedItemsPage()
 
   if (!currentDisk) {
     return null

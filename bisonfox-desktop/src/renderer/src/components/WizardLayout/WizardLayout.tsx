@@ -4,7 +4,7 @@ import { uploadApi } from '../../services/uploadApi'
 import { CancelModal } from '../CancelModal/CancelModal'
 import { WizardHeader } from '../WizardHeader/WizardHeader'
 import { clientLogger } from '../../utils/logger'
-import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
+import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
 import './WizardLayout.css'
 import { WizardBody } from '../WizardBody/WizardBody'
 interface Props {
@@ -44,7 +44,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     window.api.invoke('system:close')
   }
 
-  const showSteppersAndHeader = step !== WelcomePage && step !== SuccessPage
+  const showSteppersAndHeader = step !== WelcomePage && step !== FinalPage
 
   const layoutClass = `wizard-layout${isKeyboardVisible ? ' wizard-layout--with-keyboard' : ''}${!showSteppersAndHeader ? ' wizard-layout--no-header' : ''}`
 

@@ -4,10 +4,10 @@ import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
 import { uploadApi } from '@renderer/services/uploadApi'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
-import { UploadPage, SetupPage, SelectFilesPage } from '@renderer/entites/Wizard'
+import { UploadPage, SetupPage, SelectItemsPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
-export function useReviewPage() {
+export function useReviewSelectedItemsPage() {
   const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username } =
     useWizardStore()
 
@@ -109,7 +109,7 @@ export function useReviewPage() {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info('ReviewPage', `Starting upload of ${finalDisk.selectedItemPaths} files`)
+      clientLogger.info('ReviewSelectedItemsPage', `Starting upload of ${finalDisk.selectedItemPaths} files`)
 
       setStep(UploadPage)
     } catch (err: unknown) {
@@ -120,7 +120,7 @@ export function useReviewPage() {
   }
 
   const handleBack = useCallback(() => {
-    clientLogger.info('ReviewPage', `Returning to file selection`)
+    clientLogger.info('ReviewSelectedItemsPage', `Returning to file selection`)
     if (currentDisk) {
       setCurrentDisk({
         ...currentDisk,
@@ -128,12 +128,12 @@ export function useReviewPage() {
         excludedItemPaths: Array.from(excluded)
       })
     }
-    setStep(SelectFilesPage)
+    setStep(SelectItemsPage)
   }, [currentDisk, selected, excluded, setCurrentDisk, setStep, username, sessionId])
 
   useEffect(() => {
     if (!currentDisk) {
-      clientLogger.warn('ReviewPage', `No current disk found, navigating back to SetupPage`)
+      clientLogger.warn('ReviewSelectedItemsPage', `No current disk found, navigating back to SetupPage`)
       setStep(SetupPage)
     }
   }, [currentDisk, setStep, username, sessionId])

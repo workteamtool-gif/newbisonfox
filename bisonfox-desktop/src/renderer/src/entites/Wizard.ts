@@ -9,13 +9,13 @@ export const SetupPage = React.lazy(() =>
     default: m.SetupPage
   }))
 )
-export const SelectFilesPage = React.lazy(() =>
-  import('@renderer/pages/SelectFilesPage/SelectFilesPage').then((m) => ({
-    default: m.SelectFilesPage
+export const SelectItemsPage = React.lazy(() =>
+  import('@renderer/pages/SelectItemsPage/SelectItemsPage').then((m) => ({
+    default: m.SelectItemsPage
   }))
 )
-export const ReviewPage = React.lazy(() =>
-  import('@renderer/pages/ReviewPage/ReviewPage').then((m) => ({ default: m.ReviewPage }))
+export const ReviewSelectedItemsPage = React.lazy(() =>
+  import('@renderer/pages/ReviewSelectedItemsPage/ReviewSelectedItemsPage').then((m) => ({ default: m.ReviewSelectedItemsPage }))
 )
 export const UploadPage = React.lazy(() =>
   import('@renderer/pages/UploadPage/UploadPage').then((m) => ({ default: m.UploadPage }))
@@ -25,18 +25,18 @@ export const AnotherDiskPage = React.lazy(() =>
     default: m.AnotherDiskPage
   }))
 )
-export const SuccessPage = React.lazy(() =>
-  import('@renderer/pages/SuccessPage/SuccessPage').then((m) => ({ default: m.SuccessPage }))
+export const FinalPage = React.lazy(() =>
+  import('@renderer/pages/FinalPage/FinalPage').then((m) => ({ default: m.FinalPage }))
 )
 
 export type WizardStep =
   | typeof WelcomePage
   | typeof SetupPage
-  | typeof SelectFilesPage
-  | typeof ReviewPage
+  | typeof SelectItemsPage
+  | typeof ReviewSelectedItemsPage
   | typeof UploadPage
   | typeof AnotherDiskPage
-  | typeof SuccessPage
+  | typeof FinalPage
 
 export interface WizardData {
   step: React.LazyExoticComponent<() => React.JSX.Element | null>

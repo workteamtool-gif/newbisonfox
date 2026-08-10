@@ -4,13 +4,13 @@ import React, { JSX, LazyExoticComponent } from 'react'
 export interface ErrorUploadProps {
   setStep: (step: WizardStep) => void
   uploadError: string
-  ReviewPage: LazyExoticComponent<() => JSX.Element | null>
+  ReviewSelectedItemsPage: LazyExoticComponent<() => JSX.Element | null>
 }
 
 export function ErrorUpload({
   uploadError,
   setStep,
-  ReviewPage
+  ReviewSelectedItemsPage
 }: ErrorUploadProps): React.JSX.Element {
   return (
     <>
@@ -24,7 +24,7 @@ export function ErrorUpload({
         {uploadError}
       </div>
       <div className="action-row">
-        <button className="btn btn-secondary" onClick={() => setStep(ReviewPage)}>
+        <button className="btn btn-secondary" onClick={() => setStep(ReviewSelectedItemsPage)}>
           חזרה לבדיקה ←
         </button>
       </div>

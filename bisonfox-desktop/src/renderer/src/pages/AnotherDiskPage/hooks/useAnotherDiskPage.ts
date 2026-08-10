@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import { SetupPage, SuccessPage } from '@renderer/entites/Wizard'
+import { SetupPage, FinalPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 
 export function useAnotherDiskPage() {
@@ -57,8 +57,8 @@ export function useAnotherDiskPage() {
   }
 
   function handleNo(): void {
-    clientLogger.info('AnotherDiskPage', `Finishing session and moving to SuccessPage`)
-    setStep(SuccessPage)
+    clientLogger.info('AnotherDiskPage', `Finishing session and moving to FinalPage`)
+    setStep(FinalPage)
   }
 
   const totalFilesAmount = diskSessions.reduce(

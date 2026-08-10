@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { getConfig } from '@renderer/services/configService'
 
-export function useSuccessPage() {
+export function useFinalPage() {
   const { reset, username } = useWizardStore()
   const diskSessions = useWizardStore((s) => s.diskSessions)
   const [snapshot] = useState(diskSessions)

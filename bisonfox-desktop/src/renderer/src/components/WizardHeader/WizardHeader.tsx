@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import './WizardHeader.css'
-import { WelcomePage, SuccessPage } from '@renderer/entites/Wizard'
+import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
 import iconImg from '@renderer/images/appLogo.png'
 import teamLogoImg from '@renderer/images/teamLogo.png'
 import departmentLogoImg from '@renderer/images/departmentLogo.png'
@@ -14,7 +14,7 @@ export function WizardHeader({ onCancelClick }: WizardHeaderProps): React.JSX.El
   const step = useWizardStore((s) => s.step)
   const username = useWizardStore((s) => s.username)
 
-  if (step === WelcomePage || step === SuccessPage) return null
+  if (step === WelcomePage || step === FinalPage) return null
 
   return (
     <header className="wizard-header">

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { sessionApi } from '@renderer/services/sessionApi'
 import { clientLogger } from '@renderer/utils/logger'
-import { SelectFilesPage, SuccessPage } from '@renderer/entites/Wizard'
+import { SelectItemsPage, FinalPage } from '@renderer/entites/Wizard'
 import { createTimeFolderName } from '@renderer/utils/folderCreator'
 import { DriveInfo } from '@shared/entities/DriveInfo'
 import { getConfig } from '@renderer/services/configService'
@@ -153,7 +153,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
 
       clientLogger.info('SetupPage', `Login successful. Drive: ${drive?.letter || 'None'}`)
 
-      setStep(SelectFilesPage)
+      setStep(SelectItemsPage)
     } catch {
       clientLogger.error('SetupPage', 'Failed to create session')
       setNameError('שגיאה ביצירת סשן, אנא נסה שוב.')
@@ -174,7 +174,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const handleBack = () => {
     if (diskSessions.length > 0) {
       clientLogger.info('SetupPage', `User ${username} clicked Finish Session.`)
-      setStep(SuccessPage)
+      setStep(FinalPage)
     } else {
       clientLogger.info('SetupPage', 'User clicked back, resetting data')
       reset()

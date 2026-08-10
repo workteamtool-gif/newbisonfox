@@ -1,11 +1,11 @@
 import { JSX } from 'react'
 import { FileTree } from '@renderer/components/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
-import { useSelectFilesPage } from './hooks/useSelectFilesPage'
+import { useSelectItemsPage } from './hooks/useSelectItemsPage'
 import { TreePaginationBar } from './components/TreePaginationBar'
-import './SelectFilesPage.css'
+import './SelectItemsPage.css'
 
-export function SelectFilesPage(): JSX.Element {
+export function SelectItemsPage(): JSX.Element {
   const {
     tree,
     rootPage,
@@ -32,7 +32,7 @@ export function SelectFilesPage(): JSX.Element {
     handleSearchRootSubmit,
     handleContinue,
     handleBack
-  } = useSelectFilesPage()
+  } = useSelectItemsPage()
 
   const selectedCount = selected.size
 

@@ -1,13 +1,13 @@
 import { JSX } from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
-import { useSuccessPage } from './hooks/useSuccessPage'
+import { useFinalPage } from './hooks/useFinalPage'
 import { SuccessStats } from './components/SuccessStats'
 import { SuccessFooter } from './components/SuccessFooter'
-import './SuccessPage.css'
+import './FinalPage.css'
 
 const MAX_FAILED_FILES_TO_SHOW = 10
 
-export function SuccessPage(): JSX.Element {
+export function FinalPage(): JSX.Element {
   const {
     diskSessions,
     countdown,
@@ -17,7 +17,7 @@ export function SuccessPage(): JSX.Element {
     destinationUserEndpoint,
     username,
     handleReturnHome
-  } = useSuccessPage()
+  } = useFinalPage()
 
   return (
     <div className="glass-card success-card">

@@ -3,12 +3,12 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
 import { isSubPath } from '@renderer/utils/paths'
-import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
+import { SetupPage, ReviewSelectedItemsPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { getConfig } from '@renderer/services/configService'
 
-export function useSelectFilesPage() {
+export function useSelectItemsPage() {
   const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
 
   useDriveMonitor()
@@ -291,12 +291,12 @@ export function useSelectFilesPage() {
       selectedItemPaths: Array.from(selected),
       excludedItemPaths: Array.from(excluded)
     })
-    setStep(ReviewPage)
+    setStep(ReviewSelectedItemsPage)
     setSaving(false)
   }
 
   const handleBack = useCallback(() => {
-    clientLogger.info('SelectFilesPage', 'User navigating back to SetupPage')
+    clientLogger.info('SelectItemsPage', 'User navigating back to SetupPage')
     if (currentDisk) {
       setCurrentDisk({
         ...currentDisk,

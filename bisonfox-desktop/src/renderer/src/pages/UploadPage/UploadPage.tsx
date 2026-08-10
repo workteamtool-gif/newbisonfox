@@ -3,7 +3,7 @@ import { useUploadManager } from '@renderer/pages/UploadPage/hooks/useUploadMana
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
-import { SetupPage, ReviewPage } from '@renderer/entites/Wizard'
+import { SetupPage, ReviewSelectedItemsPage } from '@renderer/entites/Wizard'
 import { ErrorUpload } from './components/ErrorUpload'
 import { CountingUpload } from './components/CountingUpload'
 import { UploadComponent } from './components/UploadComponent'
@@ -60,7 +60,7 @@ export function UploadPage(): JSX.Element | null {
     <div className="glass-card">
       {/* === SCENARIO 1: ERROR === */}
       {uploadError && (
-        <ErrorUpload uploadError={uploadError} setStep={setStep} ReviewPage={ReviewPage} />
+        <ErrorUpload uploadError={uploadError} setStep={setStep} ReviewSelectedItemsPage={ReviewSelectedItemsPage} />
       )}
 
       {/* === SCENARIO 2: COUNTING === */}
