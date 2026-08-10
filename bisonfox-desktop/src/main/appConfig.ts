@@ -5,8 +5,8 @@ import { z } from 'zod'
 import { is } from '@electron-toolkit/utils'
 
 const configSchema = z.object({
-  uploadBaseDir: z.string().min(1, 'Upload base directory must be provided'),
-  tempBaseDir: z.string().min(1, 'Temp staging directory must be provided'),
+  uploadFinalDir: z.string().min(1, 'Upload final directory must be provided'),
+  uploadingStagingDir: z.string().min(1, 'Upload staging directory must be provided'),
   endpointDestinationFolder: z.string().min(1, 'Endpoint destination folder must be provided'),
   logDir: z.string().min(1, 'Log directory must be provided'),
   keepAliveLogDir: z.string().min(1, 'Keep-alive log directory must be provided'),

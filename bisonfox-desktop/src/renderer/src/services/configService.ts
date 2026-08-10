@@ -1,5 +1,5 @@
 export interface AppConfig {
-  uploadBaseDir: string
+  rawUploadFinalDir: string
   endpointDestinationFolder: string
   logDir: string
   keepAliveLogDir: string

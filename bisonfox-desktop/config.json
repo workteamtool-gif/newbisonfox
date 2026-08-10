@@ -1,6 +1,6 @@
 {
-  "uploadBaseDir": "C:\\Users\\azor\\bisonfoxdata\\copiedData",
-  "tempBaseDir": "C:\\Users\\azor\\bisonfoxdata\\temp",
+  "uploadFinalDir": "C:\\Users\\azor\\bisonfoxdata\\copiedData",
+  "uploadingStagingDir": "C:\\Users\\azor\\bisonfoxdata\\temp",
   "endpointDestinationFolder": "C:\\Users\\azor\\bisonfoxdata\\copiedData",
   "logDir": "C:\\Users\\azor\\bisonfoxdata\\logs\\logs",
   "keepAliveLogDir": "C:\\Users\\azor\\bisonfoxdata\\logs\\keepAliveLogs",

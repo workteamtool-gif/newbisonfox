@@ -14,8 +14,8 @@ export class UploadValidator {
   ): ValidationResult<UploadValidationData> {
     const { files, subfolder } = payload
 
-    const rawBaseDir = config.uploadBaseDir
-    if (!rawBaseDir || rawBaseDir.trim() === '') {
+    const rawUploadFinalDir = config.uploadFinalDir
+    if (!rawUploadFinalDir || rawUploadFinalDir.trim() === '') {
       logger.error(
         'UploadValidator',
         'Upload aborted: UPLOAD_BASE_DIR is missing or empty in the .env file.'
@@ -27,8 +27,8 @@ export class UploadValidator {
       }
     }
 
-    const rawTempDir = config.tempBaseDir
-    if (!rawTempDir || rawTempDir.trim() === '') {
+    const rawUploadingStagingDir = config.uploadingStagingDir
+    if (!rawUploadingStagingDir || rawUploadingStagingDir.trim() === '') {
       logger.error(
         'UploadValidator',
         'Upload aborted: TEMP_BASE_DIR is missing or empty in the config file.'
@@ -40,7 +40,7 @@ export class UploadValidator {
       }
     }
 
-    const baseDir = path.resolve(rawBaseDir)
+    const baseDir = path.resolve(rawUploadFinalDir)
     const finalDest = path.resolve(baseDir, session.username, subfolder || '')
 
     // SECURITY: Case-insensitive Path Traversal Check for Network Drives
@@ -57,7 +57,7 @@ export class UploadValidator {
     }
 
     const macFolder = getFirstMacAddress()
-    const stagingDest = path.resolve(rawTempDir, macFolder, session.username, subfolder || '')
+    const stagingDest = path.resolve(rawUploadingStagingDir, macFolder, session.username, subfolder || '')
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])

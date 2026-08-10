@@ -101,21 +101,21 @@ class Logger {
     this.minLevel = minLevel
 
     let envLogDir = ''
-    let tempBaseDir = ''
+    let uploadingStagingDir = ''
     try {
       envLogDir = config.logDir
-      tempBaseDir = config.tempBaseDir
+      uploadingStagingDir = config.uploadingStagingDir
     } catch {}
 
-    if (!envLogDir || envLogDir.trim() === '' || !tempBaseDir || tempBaseDir.trim() === '') {
-      process.stderr.write('\n[SYSTEM WARNING] logDir or tempBaseDir is missing or empty!\n')
+    if (!envLogDir || envLogDir.trim() === '' || !uploadingStagingDir || uploadingStagingDir.trim() === '') {
+      process.stderr.write('\n[SYSTEM WARNING] logDir or uploadingStagingDir is missing or empty!\n')
       process.stderr.write(
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
     } else {
       const macFolder = getFirstMacAddress()
       this.finalLogDir = path.resolve(envLogDir, macFolder)
-      this.stagingLogDir = path.resolve(tempBaseDir, 'app_logs_staging', macFolder)
+      this.stagingLogDir = path.resolve(uploadingStagingDir, 'app_logs_staging', macFolder)
 
       if (!fs.existsSync(this.finalLogDir)) fs.mkdirSync(this.finalLogDir, { recursive: true })
       if (!fs.existsSync(this.stagingLogDir)) fs.mkdirSync(this.stagingLogDir, { recursive: true })

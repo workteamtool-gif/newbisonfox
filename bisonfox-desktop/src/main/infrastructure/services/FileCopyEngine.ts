@@ -337,6 +337,13 @@ export async function copyFiles(
       let lastError: string | undefined
 
       // ── Stage 1: Copy to staging (retries up to FAIL_RETRIES) ──────────────
+      // Compute buffer once for this file — stays the same across retries
+      activeCopies++
+      const workerBuffer = Math.max(
+        64 * 1024,
+        Math.floor(TOTAL_BUFFER_BUDGET / activeCopies)
+      )
+
       let copyAttempt = 0
       let copiedToStaging = false
       let partialBytes = 0
@@ -359,21 +366,12 @@ export async function copyFiles(
           // Touch the staging file to anchor the directory against empty-folder cleaners
           await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
 
-          activeCopies++
-          const workerBuffer = Math.max(
-            64 * 1024,
-            Math.floor(TOTAL_BUFFER_BUDGET / activeCopies)
-          )
-          try {
-            await copyOneFast(src, destPath, workerBuffer, activeSignal, (chunkSize) => {
-              partialBytes += chunkSize
-              completedBytes += chunkSize
-              const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
-              throttledReport(src, pct)
-            })
-          } finally {
-            activeCopies--
-          }
+          await copyOneFast(src, destPath, workerBuffer, activeSignal, (chunkSize) => {
+            partialBytes += chunkSize
+            completedBytes += chunkSize
+            const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
+            throttledReport(src, pct)
+          })
 
           copiedToStaging = true
         } catch (err: unknown) {
@@ -383,6 +381,8 @@ export async function copyFiles(
           copyAttempt++
         }
       }
+
+      activeCopies--
 
       // ── Stage 2: Move staging → final
       if (copiedToStaging && finalDest) {
