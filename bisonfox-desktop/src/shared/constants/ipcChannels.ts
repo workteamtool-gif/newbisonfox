@@ -8,6 +8,7 @@ export const IPC_CHANNELS = {
   SESSION: {
     VALIDATE_NAME: 'validate-name',
     VALIDATE_SUBFOLDER: 'validate-subfolder',
+    VALIDATE_SPECIAL_CODE: 'validate-special-code',
     CREATE: 'create-session'
   },
   DRIVE: {

@@ -14,7 +14,7 @@ export class UploadValidator {
   ): ValidationResult<UploadValidationData> {
     const { files, subfolder } = payload
 
-    const rawUploadFinalDir = config.uploadFinalDir
+    const rawUploadFinalDir = session.isRestricted ? config.uploadFinalRestrictedDir : config.uploadFinalDir
     if (!rawUploadFinalDir || rawUploadFinalDir.trim() === '') {
       logger.error(
         'UploadValidator',

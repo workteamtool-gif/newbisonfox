@@ -10,7 +10,7 @@ import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 import { useDrives } from './hooks/useDrives'
 import { useSetupForm } from './hooks/useSetupForm'
 import { DriveList } from './components/DriveList'
-import { UserNameInput, SubfolderInput } from './components/SetupInputs'
+import { UserNameInput, SubfolderInput, SpecialCodeInput } from './components/SetupInputs'
 
 import { EasterEgg } from '@renderer/components/EasterEggs/EasterEgg/EasterEgg'
 import { useEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg/useEasterEggTrigger'
@@ -31,6 +31,9 @@ export function SetupPage(): JSX.Element {
     subfolder,
     setSubfolder,
     subfolderError,
+    specialCode,
+    setSpecialCode,
+    specialCodeError,
     loading,
     isConfirmOpen,
     setIsConfirmOpen,
@@ -38,6 +41,7 @@ export function SetupPage(): JSX.Element {
     setActiveInput,
     maxNameLength,
     maxSubfolderLength,
+    maxSpecialCodeLength,
     validateName,
     validateSubfolder,
     handleSubmit,
@@ -79,6 +83,14 @@ export function SetupPage(): JSX.Element {
                 nameError={nameError}
                 maxNameLength={maxNameLength}
                 validateName={validateName}
+                setActiveInput={setActiveInput}
+              />
+
+              <SpecialCodeInput
+                specialCode={specialCode}
+                setSpecialCode={setSpecialCode}
+                specialCodeError={specialCodeError}
+                maxSpecialCodeLength={maxSpecialCodeLength}
                 setActiveInput={setActiveInput}
               />
             </div>
@@ -129,7 +141,9 @@ export function SetupPage(): JSX.Element {
 
       {showKeyboard && (
         <VirtualKeyboard
-          currentValue={activeInput === 'name' ? name : subfolder}
+          currentValue={
+            activeInput === 'name' ? name : activeInput === 'subfolder' ? subfolder : specialCode
+          }
           onChange={handleVirtualKeyboardChange}
         />
       )}

@@ -12,9 +12,15 @@ export interface AppConfig {
   maxReportedFailures: number
   failIntervalMs: number
   failRetries: number
+  moveRetries: number
   blacklistDrives: string
   subfolderLength: number
   usernameLength: number
+  specialCodeLength: number
+  reusableCodesDir: string
+  disposableCodesDir: string
+  usedCodesDir: string
+  uploadFinalRestrictedDir: string
 }
 
 let cachedConfig: AppConfig | null = null

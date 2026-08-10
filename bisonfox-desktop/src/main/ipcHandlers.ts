@@ -1,6 +1,8 @@
 const { app } = require('electron')
 import { ipcMain, BrowserWindow } from 'electron'
 import { spawn } from 'child_process'
+import fs from 'original-fs'
+import path from 'path'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { DiskService } from './domain/interfaces/DiskService'
 import { FileService } from './domain/interfaces/FileService'
@@ -9,6 +11,7 @@ import { sessionSingleton } from './application/UploadSession'
 import { NameValidator } from './domain/validators/NameValidator'
 import { SubfolderValidator } from './domain/validators/SubfolderValidator'
 import { logMail } from './infrastructure/loggers/MailLogger'
+import { config } from './appConfig'
 
 export interface AppDependencies {
   diskService: DiskService
@@ -37,6 +40,69 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SUBFOLDER, (_, { name }) => {
     return subfolderValidator.validate(name)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SPECIAL_CODE, async (_, { sessionId, code }) => {
+    if (!code || code.trim() === '') {
+      return { valid: true }
+    }
+
+    const trimmedCode = code.trim()
+    
+    const checkDirForCode = async (dirPath: string): Promise<string | null> => {
+      try {
+        if (!fs.existsSync(dirPath)) return null;
+        const files = await fs.promises.readdir(dirPath);
+        for (const file of files) {
+          const filePath = path.join(dirPath, file);
+          const stat = await fs.promises.stat(filePath);
+          if (stat.isFile()) {
+            const content = (await fs.promises.readFile(filePath, 'utf-8')).trim();
+            if (content === trimmedCode) {
+              return filePath;
+            }
+          }
+        }
+      } catch (err) {
+        console.error(`Error checking codes in ${dirPath}:`, err);
+      }
+      return null;
+    }
+
+    // Check reusable codes
+    const reusableDir = config.reusableCodesDir
+    if (reusableDir) {
+      const matchedPath = await checkDirForCode(reusableDir)
+      if (matchedPath) {
+        sessionSingletonInstance.update(sessionId, { isRestricted: true })
+        return { valid: true }
+      }
+    }
+
+    // Check disposable codes
+    const disposableDir = config.disposableCodesDir
+    if (disposableDir) {
+      const matchedPath = await checkDirForCode(disposableDir)
+      if (matchedPath) {
+        const usedDir = config.usedCodesDir
+        if (usedDir) {
+          try {
+            if (!fs.existsSync(usedDir)) {
+              await fs.promises.mkdir(usedDir, { recursive: true }).catch(() => {})
+            }
+            const usedPath = path.join(usedDir, path.basename(matchedPath))
+            await fs.promises.rename(matchedPath, usedPath)
+          } catch (moveErr) {
+            console.error('Error moving disposable code file:', moveErr)
+          }
+        }
+
+        sessionSingletonInstance.update(sessionId, { isRestricted: true })
+        return { valid: true }
+      }
+    }
+
+    return { valid: false, message: 'קוד שגוי או שכבר נעשה בו שימוש' }
   })
 
   ipcMain.handle(IPC_CHANNELS.DRIVE.LIST, async () => {

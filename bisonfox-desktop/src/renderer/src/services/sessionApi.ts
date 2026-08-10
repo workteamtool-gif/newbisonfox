@@ -22,6 +22,13 @@ export const sessionApi = {
     })) as ValidationResult
   },
 
+  validateSpecialCode: async (sessionId: string, code: string): Promise<ValidationResult> => {
+    return (await window.api.invoke(IPC_CHANNELS.SESSION.VALIDATE_SPECIAL_CODE, {
+      sessionId,
+      code
+    })) as ValidationResult
+  },
+
   createSession: async (username: string): Promise<CreateSessionResult> => {
     return (await window.api.invoke(IPC_CHANNELS.SESSION.CREATE, {
       username

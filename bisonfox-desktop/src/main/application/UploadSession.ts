@@ -37,6 +37,7 @@ export class sessionSingleton {
       failedCount: 0,
       failedFiles: [],
       totalCount: 0,
+      isRestricted: false,
       createdAt: now,
       lastUpdate: now
     }

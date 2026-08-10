@@ -23,7 +23,12 @@ const configSchema = z.object({
   moveRetries: z.number().int().nonnegative().default(100),
   blacklistDrives: z.string().default('X:'),
   subfolderLength: z.number().int().positive().default(20),
-  usernameLength: z.number().int().positive().default(30)
+  usernameLength: z.number().int().positive().default(30),
+  specialCodeLength: z.number().int().positive().default(20),
+  reusableCodesDir: z.string().default(''),
+  disposableCodesDir: z.string().default(''),
+  usedCodesDir: z.string().default(''),
+  uploadFinalRestrictedDir: z.string().default('')
 })
 
 export type AppConfig = z.infer<typeof configSchema>

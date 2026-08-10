@@ -17,5 +17,10 @@
   "moveRetries": 100,
   "blacklistDrives": "X:",
   "subfolderLength": 20,
-  "usernameLength": 30
+  "usernameLength": 30,
+  "specialCodeLength": 20,
+  "reusableCodesDir": "C:\\Users\\azor\\bisonfoxdata\\codes\\reusable",
+  "disposableCodesDir": "C:\\Users\\azor\\bisonfoxdata\\codes\\disposable",
+  "usedCodesDir": "C:\\Users\\azor\\bisonfoxdata\\codes\\used",
+  "uploadFinalRestrictedDir": "C:\\Users\\azor\\bisonfoxdata\\restrictedData"
 }

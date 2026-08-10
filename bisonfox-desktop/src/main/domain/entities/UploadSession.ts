@@ -12,6 +12,7 @@ export interface UploadSession {
   failedCount: number
   failedFiles: FailedFile[]
   totalCount: number
+  isRestricted: boolean
   createdAt: Date
   lastUpdate: Date
 }

@@ -104,3 +104,52 @@ export function SubfolderInput({
     </div>
   )
 }
+
+interface SpecialCodeInputProps {
+  specialCode: string
+  setSpecialCode: (v: string) => void
+  specialCodeError: string
+  maxSpecialCodeLength: number
+  setActiveInput: (input: 'specialCode') => void
+}
+
+export function SpecialCodeInput({
+  specialCode,
+  setSpecialCode,
+  specialCodeError,
+  maxSpecialCodeLength,
+  setActiveInput
+}: SpecialCodeInputProps): JSX.Element {
+  return (
+    <div className="form-group">
+      <label className="form-label" htmlFor="specialCode-input">
+        רשום את הקוד אם אתה משתמש מיוחד  (אם אתה לא יודע מה זה - כנראה זה לא רלוונטי עבורך):
+      </label>
+      <input
+        id="specialCode-input"
+        className={`form-input setup-input-ltr ${specialCodeError ? 'error' : ''}`}
+        type="text"
+        maxLength={maxSpecialCodeLength}
+        value={specialCode}
+        onFocus={() => setActiveInput('specialCode')}
+        onChange={(e) => {
+          setSpecialCode(e.target.value)
+        }}
+      />
+      <span
+        className="form-msg setup-form-msg"
+        style={{
+          visibility:
+            specialCodeError || specialCode.length >= maxSpecialCodeLength ? 'visible' : 'hidden',
+          color: specialCodeError ? 'var(--accent-red)' : 'var(--accent-orange)'
+        }}
+      >
+        ⚠{' '}
+        {specialCodeError ||
+          (specialCode.length >= maxSpecialCodeLength
+            ? `הגעת למגבלת התווים המקסימלית (${maxSpecialCodeLength} תווים).`
+            : '')}
+      </span>
+    </div>
+  )
+}

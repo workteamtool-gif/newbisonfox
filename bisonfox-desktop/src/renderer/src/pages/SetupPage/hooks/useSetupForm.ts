@@ -26,12 +26,16 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const [subfolder, setSubfolder] = useState(currentSubfolder || '')
   const [subfolderError, setSubfolderError] = useState('')
 
+  const [specialCode, setSpecialCode] = useState('')
+  const [specialCodeError, setSpecialCodeError] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
-  const [activeInput, setActiveInput] = useState<'name' | 'subfolder'>('name')
+  const [activeInput, setActiveInput] = useState<'name' | 'subfolder' | 'specialCode'>('name')
 
   const [maxNameLength, setMaxNameLength] = useState(30)
   const [maxSubfolderLength, setMaxSubfolderLength] = useState(20)
+  const [maxSpecialCodeLength, setMaxSpecialCodeLength] = useState(20)
 
   useEffect(() => {
     let mounted = true
@@ -40,6 +44,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
         if (mounted) {
           setMaxNameLength(config.usernameLength || 30)
           setMaxSubfolderLength(config.subfolderLength || 20)
+          setMaxSpecialCodeLength(config.specialCodeLength || 20)
         }
       })
       .catch((err) => console.error('Failed to load config for setup form', err))
@@ -95,6 +100,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     setLoading(true)
     setNameError('')
     setSubfolderError('')
+    setSpecialCodeError('')
 
     try {
       const nameResult = await sessionApi.validateName(trimmedName)
@@ -136,6 +142,15 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
       const { sessionId: newSessionId } = await sessionApi.createSession(trimmedName)
       setSessionId(newSessionId)
 
+      if (specialCode.trim()) {
+        const specialResult = await sessionApi.validateSpecialCode(newSessionId, specialCode.trim())
+        if (!specialResult.valid) {
+          setSpecialCodeError(specialResult.message || 'קוד משתמש לא חוקי')
+          setLoading(false)
+          return
+        }
+      }
+
       if (drive) {
         setCurrentDisk({
           driveLetter: drive.letter,
@@ -165,9 +180,12 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     if (activeInput === 'name') {
       setName(newVal.slice(0, maxNameLength))
       setNameError('')
-    } else {
+    } else if (activeInput === 'subfolder') {
       setSubfolder(newVal.slice(0, maxSubfolderLength))
       setSubfolderError('')
+    } else if (activeInput === 'specialCode') {
+      setSpecialCode(newVal.slice(0, maxSpecialCodeLength))
+      setSpecialCodeError('')
     }
   }
 
@@ -191,6 +209,9 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     subfolder,
     setSubfolder,
     subfolderError,
+    specialCode,
+    setSpecialCode,
+    specialCodeError,
     loading,
     isConfirmOpen,
     setIsConfirmOpen,
@@ -198,6 +219,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     setActiveInput,
     maxNameLength,
     maxSubfolderLength,
+    maxSpecialCodeLength,
     validateName,
     validateSubfolder,
     handleSubmit,
