@@ -12,10 +12,10 @@ const KEEP_ALIVE_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
 function resolveKeepAliveDir(): string | null {
   let envPath = ''
   try {
-    envPath = config.keepAliveLogDir
+    envPath = config.keepAliveDir
   } catch {}
   if (!envPath || envPath.trim() === '') {
-    logger.warn('KeepAlive', 'keepAliveLogDir is not configured')
+    logger.warn('KeepAlive', 'keepAliveDir is not configured')
     return null
   }
 

@@ -18,6 +18,7 @@ export async function atomicMoveWithHandles(srcPath: string, destPath: string): 
   try {
     // 1. Create all missing destination directory segments.
     await fs.promises.mkdir(destDir, { recursive: true }).catch((err: unknown) => {
+      if (fs.existsSync(destDir)) return // Ignore error if directory already exists
       logger.error('fsUtils', `Failed to make directory in destination directory: ${destDir}`, {
         error: err instanceof Error ? err.message : String(err)
       })
@@ -29,8 +30,23 @@ export async function atomicMoveWithHandles(srcPath: string, destPath: string): 
     // 3. Atomic rename — the file survives this and overwrites the anchor.
     await fs.promises.rename(srcPath, destPath)
   } catch (err: unknown) {
+    const nodeErr = err as NodeJS.ErrnoException
+    if (nodeErr.code === 'EXDEV' || nodeErr.code === 'EPERM') {
+      // Cross-device link not permitted, fallback to copy + delete
+      try {
+        await fs.promises.copyFile(srcPath, destPath)
+        await fs.promises.unlink(srcPath).catch(() => {})
+        return
+      } catch (fallbackErr) {
+        logger.error('fsUtils', `EXDEV fallback failed: ${srcPath} -> ${destPath}`, {
+          error: fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr)
+        })
+        throw fallbackErr
+      }
+    }
+
     logger.error('fsUtils', `Failed to atomically move staged file: ${srcPath} -> ${destPath}`, {
-      error: err instanceof Error ? err.message : String(err)
+      error: nodeErr.message || String(err)
     })
     throw err
   }

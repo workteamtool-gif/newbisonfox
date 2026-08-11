@@ -4,10 +4,10 @@ import { logger, getFirstMacAddress } from '@main/infrastructure/loggers/Logger'
 
 import { config } from '@main/appConfig'
 
-function resolveMailLogDir(): string | null {
+function resolveMailDir(): string | null {
   let envPath = ''
   try {
-    envPath = config.mailLogDir
+    envPath = config.mailDir
   } catch {}
   if (!envPath || envPath.trim() === '') {
     logger.warn('MailLogger', 'MAIL_LOG_DIR is not configured')
@@ -16,7 +16,7 @@ function resolveMailLogDir(): string | null {
   return path.resolve(envPath)
 }
 
-function ensureMailLogDir(dir: string): void {
+function ensureMailDir(dir: string): void {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true })
   }
@@ -34,10 +34,10 @@ export function logMail(
   totalFilesAmount: number,
   failedFilesAmount: number
 ): void {
-  const dir = resolveMailLogDir()
+  const dir = resolveMailDir()
   if (!dir) return
 
-  ensureMailLogDir(dir)
+  ensureMailDir(dir)
 
   const timestamp = new Date().toISOString()
   const entry = {

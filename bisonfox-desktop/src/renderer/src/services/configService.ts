@@ -2,8 +2,8 @@ export interface AppConfig {
   rawUploadFinalDir: string
   endpointDestinationFolder: string
   logDir: string
-  keepAliveLogDir: string
-  mailLogDir: string
+  keepAliveDir: string
+  mailDir: string
   itemsInOnePage: number
   copyConcurrency: number
   deepSearchConcurrency: number
