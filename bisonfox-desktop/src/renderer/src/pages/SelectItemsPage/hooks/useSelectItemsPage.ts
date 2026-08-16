@@ -44,7 +44,7 @@ export function useSelectItemsPage() {
 
     const timeoutId = setTimeout(() => {
       driveApi
-        .getDriveTree(currentDisk.driveLetter!, 1)
+        .getDir(currentDisk.driveLetter!, 1)
         .then((treeResponse) => {
           if (!isMounted) return
           setTree(treeResponse.nodes)
@@ -95,7 +95,7 @@ export function useSelectItemsPage() {
     const nextPage = rootPage + 1
     setPageLoading(true)
     try {
-      const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, nextPage)
+      const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, nextPage)
       setTree(treeResponse.nodes)
       setRootPage(nextPage)
       setRootHasMore(treeResponse.hasMore)
@@ -114,7 +114,7 @@ export function useSelectItemsPage() {
     const prevPage = rootPage - 1
     setPageLoading(true)
     try {
-      const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, prevPage)
+      const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, prevPage)
       setTree(treeResponse.nodes)
       setRootPage(prevPage)
       setRootHasMore(true)
@@ -134,7 +134,7 @@ export function useSelectItemsPage() {
         return
       setPageLoading(true)
       try {
-        const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
+        const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, targetPage)
         setTree(treeResponse.nodes)
         setRootPage(targetPage)
         setRootHasMore(treeResponse.hasMore)
@@ -214,7 +214,7 @@ export function useSelectItemsPage() {
       if (gen !== searchGenRef.current) return false
 
       if (targetPage !== null) {
-        const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, targetPage)
+        const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, targetPage)
         if (gen !== searchGenRef.current) return false
 
         setTree(treeResponse.nodes)
@@ -247,7 +247,7 @@ export function useSelectItemsPage() {
           const expandedPages = deepMatch.pages
           const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
 
-          const treeResponse = await driveApi.getDriveTree(currentDisk.driveLetter!, rootTargetPage)
+          const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, rootTargetPage)
           if (gen !== searchGenRef.current) return false
 
           setTree(treeResponse.nodes)

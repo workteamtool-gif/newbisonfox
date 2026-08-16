@@ -8,7 +8,7 @@ import type {
   CopySummary
 } from '@main/domain/interfaces/FileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
-import { listDir, getDirCount, findItemPage, deepFindItem } from './DirectoryExplorer'
+import { listDir, getDirCount, findItemPage as findPageOfItem, deepFindItem } from './DirectoryExplorer'
 import { copyFiles } from './FileCopyEngine'
 
 const EXCLUDED = new Set<string>([])
@@ -31,7 +31,7 @@ export class FileService implements IFileService {
    * @param limit Maximum nodes per page.
    * @returns Paginated result list.
    */
-  async listDir(
+  async paginatedListDir(
     dirPath: string,
     page?: number,
     limit?: number
@@ -52,15 +52,14 @@ export class FileService implements IFileService {
 
   /**
    * Identifies the pagination page index of a specific child entry.
-   * Delegates page index search to `DirectoryExplorer.ts`.
    *
    * @param dirPath Parent folder path.
    * @param query Target name of the child item.
    * @param limit Items per page config.
    * @returns The 1-based page index, or null if not found.
    */
-  async findItemPage(dirPath: string, query: string, limit?: number): Promise<number | null> {
-    return findItemPage(dirPath, query, limit)
+  async findPageOfItem(dirPath: string, query: string, limit?: number): Promise<number | null> {
+    return findPageOfItem(dirPath, query, limit)
   }
 
   /**
@@ -80,16 +79,6 @@ export class FileService implements IFileService {
 
   // ────────────────────────────────── DELEGATED SCANNING ─────────────────────
 
-  /**
-   * Scans paths rapidly to calculate total file counts and sum of bytes.
-   * Delegates size estimation tasks to the underlying `FileScanner` service.
-   *
-   * @param files Root search inputs.
-   * @param excludedFiles File paths or names to skip.
-   * @param onCount Progress updates callback.
-   * @param signal Cancellation signal.
-   * @returns Count and total size results.
-   */
   async countFiles(
     files: string[],
     excludedFiles: string[],
@@ -101,14 +90,6 @@ export class FileService implements IFileService {
 
   // ────────────────────────────────── COPY ENGINE ────────────────────────────
 
-  /**
-   * Copies selected files/folders to the destination, monitoring progress and applying retries.
-   * Delegates copy task worker coordination to `FileCopyEngine.ts`.
-   *
-   * @param initialPaths Array of paths to copy.
-   * @param destination Target directory to copy files to.
-   * @param options Execution settings and callbacks.
-   */
   async copyFiles(
     initialPaths: string[],
     destination: string,
@@ -127,7 +108,6 @@ export class FileService implements IFileService {
    * @param dest Destination directory path.
    */
   async moveDir(src: string, dest: string): Promise<void> {
-    // Ensure the parent of the destination exists before attempting rename
     await fs.promises.mkdir(path.dirname(dest), { recursive: true })
     try {
       await fs.promises.rename(src, dest)

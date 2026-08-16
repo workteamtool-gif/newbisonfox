@@ -106,15 +106,6 @@ export async function findItemPage(
   }
 }
 
-/**
- * Searches the folder structure recursively beginning at `basePath` for an item name
- * matching `query`. Performs deep tree search and resolves the final absolute path
- * along with the paginated parent tree page references to reach the item.
- *
- * @param basePath The absolute starting path for search.
- * @param query The filename or directory name match query.
- * @returns A promise resolving to the path and paginated index map, or null if not found.
- */
 export async function deepFindItem(
   basePath: string,
   query: string

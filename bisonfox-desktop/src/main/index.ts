@@ -11,10 +11,7 @@ import { UploadManager } from './application/UploadManager'
 let appServices: { uploadManager: UploadManager } | null = null
 let isShuttingDown = false
 
-/**
- * Handles graceful termination of the application.
- * Cancels all ongoing uploads, flushes pending logs to disk and quits the electron app
- */
+// Cancels all ongoing uploads, flushes pending logs to disk and quits the electron app
 async function gracefulShutdown(): Promise<void> {
   if (isShuttingDown) return
   isShuttingDown = true
@@ -29,7 +26,7 @@ async function gracefulShutdown(): Promise<void> {
 
   // Ensure all logs are safely written to the final output directory
   await logger.flush()
-  await logger.moveToFinal()
+  await logger.moveToFinalDir()
 
   app.quit()
 }

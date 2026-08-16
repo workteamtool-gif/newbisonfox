@@ -33,5 +33,11 @@ export const sessionApi = {
     return (await window.api.invoke(IPC_CHANNELS.SESSION.CREATE, {
       username
     })) as CreateSessionResult
+  },
+
+  deleteSession: async (sessionId: string): Promise<void> => {
+    await window.api.invoke(IPC_CHANNELS.SESSION.DELETE, {
+      sessionId
+    })
   }
 }

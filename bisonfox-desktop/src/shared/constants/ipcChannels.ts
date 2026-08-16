@@ -11,11 +11,11 @@ export const IPC_CHANNELS = {
     VALIDATE_NAME: 'validate-name',
     VALIDATE_SUBFOLDER: 'validate-subfolder',
     VALIDATE_SPECIAL_CODE: 'validate-special-code',
-    CREATE: 'create-session'
+    CREATE: 'create-session',
+    DELETE: 'delete-session'
   },
   DRIVE: {
     LIST: 'list-drives',
-    GET_TREE: 'get-drive-tree',
     GET_DIR: 'get-dir',
     GET_DIR_COUNT: 'get-dir-count',
     FIND_PAGE: 'find-item-page',

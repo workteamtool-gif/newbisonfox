@@ -65,7 +65,7 @@ export async function countFiles(
       }
     }
 
-    /** Stat files with strict concurrency limits to prevent event loop blocking. */
+    // Stat files with strict concurrency limits to prevent event loop blocking
     const statBatch = async (files: string[]): Promise<void> => {
       activeStatBatches++
       let index = 0

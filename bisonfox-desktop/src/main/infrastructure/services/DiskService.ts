@@ -17,13 +17,6 @@ export class DiskService implements IDiskService {
     return this.listWindowsDrives()
   }
 
-  /**
-   * Internal Windows implementation for drive detection.
-   * Uses `fsutil` to list drive letters and checks read accessibility for each.
-   * Filters out any blacklisted drive letters configured in the application config.
-   *
-   * @returns A promise resolving to an array of Windows drive details.
-   */
   private async listWindowsDrives(): Promise<DriveInfo[]> {
     try {
       const { stdout } = await execAsync('fsutil fsinfo drives')

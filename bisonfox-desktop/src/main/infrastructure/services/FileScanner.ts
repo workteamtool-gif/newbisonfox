@@ -11,7 +11,6 @@ import { countFiles } from './countFiles'
 export class FileScanner implements IFileScanner {
   /**
    * Converts a list of folder paths into a flat list of every nested file path.
-   * Employs parallel worker queues to bypass typical stack limits and optimize speed.
    * Can pause crawling via a `BackpressureGate` parameter when consumers are overwhelmed.
    *
    * @param inputs Array of files/folders to search.

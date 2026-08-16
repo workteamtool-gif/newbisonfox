@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
+// Return true if keyboard is detected
 export function useKeyboardDetection(): boolean {
   const [, setHasKeyboard] = useState(true)
 

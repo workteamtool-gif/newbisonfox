@@ -2,7 +2,6 @@ import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
 import { FailedFile } from '@shared/entities/FailedFile'
 
-/** Options for configuring the high-speed copy engine */
 export interface CopyOptions {
   basePath?: string
   finalDest?: string
@@ -22,8 +21,6 @@ export interface CopyOptions {
     totalBytes: number
   ) => void
 }
-
-/** Final result returned once the copy engine finishes all workers */
 export interface CopySummary {
   completedFiles: number
   completedBytes: number
@@ -34,25 +31,19 @@ export interface CopySummary {
 }
 
 export interface FileService {
-  /** Paginated shallow directory listing. */
-  listDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<ItemNode[]>>
+  paginatedListDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<ItemNode[]>>
 
-  /** Gets the total count of items in a directory without retrieving them. */
   getDirCount(dirPath: string): Promise<number>
 
-  /** Finds which page an item appears on within a directory listing. */
-  findItemPage(dirPath: string, query: string, limit?: number): Promise<number | null>
+  findPageOfItem(dirPath: string, query: string, limit?: number): Promise<number | null>
 
-  /** Deep-searches all subdirectories for an exact filename match. */
   deepFindItem(
     basePath: string,
     query: string
   ): Promise<{ path: string; pages: Record<string, number> } | null>
 
-  /** Copies files using the CopyOptions configuration object. Returns a summary of results. */
   copyFiles(files: string[], destination: string, options: CopyOptions): Promise<CopySummary>
 
-  /** Counts total files across the given paths without copying. */
   countFiles(
     files: string[],
     excludedFiles?: string[],
@@ -60,13 +51,7 @@ export interface FileService {
     signal?: AbortSignal
   ): Promise<{ count: number; size: number }>
 
-  /**
-   * Moves a directory from src to dest.
-   * Tries fs.rename first (fast, atomic on same drive).
-   * Falls back to recursive copy + delete for cross-device moves.
-   */
   moveDir(src: string, dest: string): Promise<void>
 
-  /** Deletes a directory and all its contents recursively. */
   deleteDir(dirPath: string): Promise<void>
 }

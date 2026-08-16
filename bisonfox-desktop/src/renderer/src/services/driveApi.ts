@@ -11,21 +11,6 @@ export const driveApi = {
     return result ?? []
   },
 
-  getDriveTree: async (
-    drive: string,
-    page: number = 1,
-    limit?: number
-  ): Promise<PaginatedResult<ItemNode[]>> => {
-    const config = await getConfig()
-    const actualLimit = limit ?? config.itemsInOnePage
-    const result = (await window.api.invoke(IPC_CHANNELS.DRIVE.GET_TREE, {
-      drive,
-      page,
-      limit: actualLimit
-    })) as PaginatedResult<ItemNode[]> | undefined
-    return result ?? { nodes: [], hasMore: false, totalPages: 0 }
-  },
-
   getDir: async (
     dirPath: string,
     page: number = 1,

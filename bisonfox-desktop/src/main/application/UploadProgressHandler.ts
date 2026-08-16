@@ -1,5 +1,5 @@
 import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
-import { sessionSingleton } from './UploadSession'
+import { SessionSingleton } from './UploadSession'
 import { CopySummary } from '@main/domain/interfaces/FileService'
 import { FailedFile } from '@shared/entities/FailedFile'
 
@@ -10,7 +10,7 @@ export class UploadProgressHandler {
   constructor(
     private sessionId: string,
     private notifier: EventNotifier,
-    private sessionSingletonInstance: ReturnType<typeof sessionSingleton.getInstance>
+    private sessionSingletonInstance: ReturnType<typeof SessionSingleton.getInstance>
   ) {}
 
   public onScan = (count: number): void => {
@@ -62,11 +62,6 @@ export class UploadProgressHandler {
     }
   }
 
-  /**
-   * Called by the copy engine when all workers finish.
-   * Updates session state only — the done notification to the renderer
-   * is deferred to UploadManager so it fires AFTER the staging move succeeds.
-   */
   private handleCopyComplete(
     completedFiles: number,
     failedCount: number,
@@ -82,11 +77,6 @@ export class UploadProgressHandler {
     })
   }
 
-  /**
-   * Sends the final 'done' event to the renderer.
-   * Called by UploadManager after the staging folder has been successfully moved
-   * to the final destination.
-   */
   public notifyDone(summary: CopySummary): void {
     this.notifier.notifyProgress(this.sessionId, {
       type: 'done',

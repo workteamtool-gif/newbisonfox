@@ -10,14 +10,9 @@ export function registerDriveHandlers(diskService: DiskService, fileService: Fil
     return diskService.listDrives()
   })
 
-  // Returns the paginated root contents of a given drive letter.
-  ipcMain.handle(IPC_CHANNELS.DRIVE.GET_TREE, async (_, { drive, page, limit }) => {
-    return fileService.listDir(drive, page, limit)
-  })
-
   // Returns the paginated contents of a specific directory path.
   ipcMain.handle(IPC_CHANNELS.DRIVE.GET_DIR, async (_, { dirPath, page, limit }) => {
-    return fileService.listDir(dirPath, page, limit)
+    return fileService.paginatedListDir(dirPath, page, limit)
   })
 
   // Returns the total number of items in a directory (used for pagination calculation).
@@ -27,7 +22,7 @@ export function registerDriveHandlers(diskService: DiskService, fileService: Fil
 
   // Performs a shallow search within a directory for items matching the query string.
   ipcMain.handle(IPC_CHANNELS.DRIVE.FIND_PAGE, async (_, { dirPath, query }) => {
-    return fileService.findItemPage(dirPath, query)
+    return fileService.findPageOfItem(dirPath, query)
   })
 
   // Performs a recursive deep search across all subdirectories for items matching the query.

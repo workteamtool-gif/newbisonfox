@@ -1,9 +1,6 @@
 import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
 
 export interface FileScanner {
-  /**
-   * Recursively scans directories to build a list of all files to copy.
-   */
   expandPaths(
     inputs: string[],
     basePath: string,
@@ -18,9 +15,6 @@ export interface FileScanner {
     backpressureGate?: BackpressureGate
   ): Promise<{ fullPath: string; relativePath: string }[]>
 
-  /**
-   * Performs a rapid, read-only scan to get the total number of files.
-   */
   countFiles(
     initialPaths: string[],
     excludedDirectories: Set<string>,

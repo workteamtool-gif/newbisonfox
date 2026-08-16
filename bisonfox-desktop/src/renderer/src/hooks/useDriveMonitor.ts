@@ -3,6 +3,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { driveApi } from '@renderer/services/driveApi'
 import { SetupPage } from '@renderer/entites/Wizard'
 
+// Monitor drive connection and poll every 2.5 seconds
 export function useDriveMonitor(): void {
   const currentDisk = useWizardStore((s) => s.currentDisk)
   const setStep = useWizardStore((s) => s.setStep)

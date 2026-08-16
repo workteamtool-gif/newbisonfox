@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { sessionSingleton } from '@main/application/UploadSession'
+import { SessionSingleton } from '@main/application/UploadSession'
 import { NameValidator } from '@main/domain/validators/NameValidator'
 import { SubfolderValidator } from '@main/domain/validators/SubfolderValidator'
 import { SpecialCodeValidator } from '@main/domain/validators/SpecialCodeValidator'
@@ -8,7 +8,7 @@ import { SpecialCodeValidator } from '@main/domain/validators/SpecialCodeValidat
 const nameValidator = new NameValidator()
 const subfolderValidator = new SubfolderValidator()
 const specialCodeValidator = new SpecialCodeValidator()
-const sessionSingletonInstance = sessionSingleton.getInstance()
+const sessionSingletonInstance = SessionSingleton.getInstance()
 
 // SESSION handlers manage user identity, input validation, and session lifecycle.
 export function registerSessionHandlers(): void {
@@ -28,8 +28,14 @@ export function registerSessionHandlers(): void {
   })
 
   // Creates a new upload session for the given username and returns its ID.
-  ipcMain.handle(IPC_CHANNELS.SESSION.CREATE, (_, { username }) => {
+  ipcMain.handle(IPC_CHANNELS.SESSION.CREATE, async (_, { username }) => {
     const session = sessionSingletonInstance.create(username)
-    return { success: true, sessionId: session.id }
+    return { sessionId: session.id }
+  })
+
+  // Deletes an active session (e.g. when user goes back to welcome page)
+  ipcMain.handle(IPC_CHANNELS.SESSION.DELETE, async (_, { sessionId }) => {
+    sessionSingletonInstance.delete(sessionId)
+    return { success: true }
   })
 }

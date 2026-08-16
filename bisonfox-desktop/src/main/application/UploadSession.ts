@@ -2,23 +2,23 @@ import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import type { UploadSession } from '../domain/entities/UploadSession'
 
-export class sessionSingleton {
-  private static instance: sessionSingleton
+export class SessionSingleton {
+  private static instance: SessionSingleton
 
   private activeSession: UploadSession | null = null
 
-  static getInstance(): sessionSingleton {
-    if (!sessionSingleton.instance) {
-      sessionSingleton.instance = new sessionSingleton()
+  static getInstance(): SessionSingleton {
+    if (!SessionSingleton.instance) {
+      SessionSingleton.instance = new SessionSingleton()
     }
 
-    return sessionSingleton.instance
+    return SessionSingleton.instance
   }
 
   create(username: string): UploadSession {
     if (this.activeSession && this.activeSession.status === 'uploading') {
       logger.warn(
-        'sessionSingleton',
+        'SessionSingleton',
         'A new session was created while an upload was still in progress. Overwriting.'
       )
     }
@@ -50,6 +50,10 @@ export class sessionSingleton {
       return this.activeSession
     }
 
+    logger.warn('SessionSingleton', 'Attempted to get session with invalid ID', {
+      requestedId: id,
+      activeId: this.activeSession?.id
+    })
     return undefined
   }
 

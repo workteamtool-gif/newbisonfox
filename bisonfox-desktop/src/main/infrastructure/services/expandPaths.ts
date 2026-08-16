@@ -7,7 +7,7 @@ import { normalizeDriveCase } from './pathUtils'
 
 /**
  * Converts a list of folders into a flat list of every nested file.
- * Uses a worker-queue pattern to avoid recursion depth limits and maximize I/O.
+ * Uses a worker-queue pattern
  *
  * Supports backpressure: if the onFile callback is provided and the consumer
  * queue grows beyond the high-water mark, the scanner pauses until it drains.

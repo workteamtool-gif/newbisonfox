@@ -58,7 +58,7 @@ export function logMail(
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs * attempt)
       }
       const filePath = getMailLogFilePath(dir, timestamp)
-      fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
+      fs.writeFileSync(filePath, JSON.stringify(entry), 'utf-8')
       if (attempt > 0) {
         logger.warn('MailLogger', `Mail log written after ${attempt + 1} attempts`, entry)
       } else {

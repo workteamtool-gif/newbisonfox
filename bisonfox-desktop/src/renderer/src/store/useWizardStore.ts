@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import { clientLogger } from '@renderer/utils/logger'
 import { WizardData, WizardActions, WelcomePage } from '@renderer/entites/Wizard'
+import { sessionApi } from '@renderer/services/sessionApi'
 
 const INITIAL_DATA: WizardData = {
   step: WelcomePage,
@@ -18,7 +19,7 @@ const INITIAL_DATA: WizardData = {
 }
 
 export const useWizardStore = create<WizardData & WizardActions>()(
-  immer((set) => ({
+  immer((set, get) => ({
     ...INITIAL_DATA,
 
     setStep: (step: React.LazyExoticComponent<() => React.JSX.Element | null>) => set({ step }),
@@ -53,6 +54,10 @@ export const useWizardStore = create<WizardData & WizardActions>()(
 
     reset: () => {
       clientLogger.info('WizardStore', 'Wizard reset triggered.')
+      const currentSessionId = get().sessionId
+      if (currentSessionId) {
+        sessionApi.deleteSession(currentSessionId).catch(() => {})
+      }
       set(INITIAL_DATA)
     },
     setCancelModalOpen: (isCancelModalOpen) => set({ isCancelModalOpen }),

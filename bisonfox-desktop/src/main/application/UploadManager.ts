@@ -1,19 +1,19 @@
-import { sessionSingleton } from './UploadSession'
+import { SessionSingleton } from './UploadSession'
 import { FileService } from '@main/domain/interfaces/FileService'
 import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { UploadValidator } from './UploadValidator'
+import { UploadValidator } from '@main/domain/interfaces/Validators/UploadValidator'
 import { UploadProgressHandler } from './UploadProgressHandler'
 import type { UploadPayload } from '@shared/entities/UploadPayload'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()
-  private sessionSingletonInstance = sessionSingleton.getInstance()
-  private validator = new UploadValidator()
+  private sessionSingletonInstance = SessionSingleton.getInstance()
 
   constructor(
     private fileService: FileService,
-    private notifier: EventNotifier
+    private notifier: EventNotifier,
+    private validator: UploadValidator
   ) {}
 
   public cancelUpload(sessionId: string): void {

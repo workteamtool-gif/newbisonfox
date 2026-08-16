@@ -99,7 +99,7 @@ function writeKeepAliveEntry(dir: string, entry: Record<string, unknown>, timest
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, delayMs * attempt)
       }
       const filePath = getKeepAliveFilePath(dir, timestamp)
-      fs.writeFileSync(filePath, JSON.stringify(entry, null, 2), 'utf-8')
+      fs.writeFileSync(filePath, JSON.stringify(entry), 'utf-8')
       return
     } catch (err: unknown) {
       if (attempt === retries - 1) {

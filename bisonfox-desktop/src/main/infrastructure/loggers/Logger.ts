@@ -96,6 +96,7 @@ class Logger {
   private winstonLogger: winston.Logger
   private stagingLogDir: string | null = null
   private finalLogDir: string | null = null
+  private isEnded = false
 
   constructor(minLevel: LogLevel = LogLevel.DEBUG) {
     this.minLevel = minLevel
@@ -105,7 +106,7 @@ class Logger {
     try {
       envLogDir = config.logDir
       uploadingStagingDir = config.uploadingStagingDir
-    } catch {}
+    } catch { }
 
     if (!envLogDir || envLogDir.trim() === '' || !uploadingStagingDir || uploadingStagingDir.trim() === '') {
       process.stderr.write('\n[SYSTEM WARNING] logDir or uploadingStagingDir is missing or empty!\n')
@@ -129,7 +130,7 @@ class Logger {
             safeMoveFileSync(src, dest)
           }
         }
-      } catch (err) {}
+      } catch (err) { }
     }
 
     const transports: winston.transport[] = []
@@ -193,30 +194,37 @@ class Logger {
   }
 
   debug(context: string, message: string, meta?: Record<string, unknown>): void {
+    if (this.isEnded) return
     if (this.minLevel <= LogLevel.DEBUG) {
       this.winstonLogger.debug(message, { context, ...meta })
     }
   }
 
   info(context: string, message: string, meta?: Record<string, unknown>): void {
+    if (this.isEnded) return
     if (this.minLevel <= LogLevel.INFO) {
       this.winstonLogger.info(message, { context, ...meta })
     }
   }
 
   warn(context: string, message: string, meta?: Record<string, unknown>): void {
+    if (this.isEnded) return
     if (this.minLevel <= LogLevel.WARN) {
       this.winstonLogger.warn(message, { context, ...meta })
     }
   }
 
   error(context: string, message: string, meta?: Record<string, unknown>): void {
+    if (this.isEnded) return
     if (this.minLevel <= LogLevel.ERROR) {
       this.winstonLogger.error(message, { context, ...meta })
     }
   }
 
   async flush(): Promise<void> {
+    if (this.isEnded) return
+    this.isEnded = true
+
     await new Promise<void>((resolve) => {
       this.winstonLogger.once('finish', resolve)
       this.winstonLogger.end()
@@ -238,8 +246,7 @@ class Logger {
     await Promise.all(fileTransportDrains)
   }
 
-  /** Move all logs from the staging directory to the final log directory */
-  async moveToFinal(): Promise<void> {
+  async moveToFinalDir(): Promise<void> {
     if (!this.stagingLogDir || !this.finalLogDir) return
 
     try {
