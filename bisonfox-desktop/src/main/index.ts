@@ -1,14 +1,12 @@
 import './env'
 
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { setupApplication } from './setup'
-import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { UploadManager } from './application/UploadManager'
 import { startKeepAliveLogger } from '@main/infrastructure/loggers/keepAliveLogger'
-import { config } from './appConfig'
+import { UploadManager } from './application/UploadManager'
 
 let appServices: { uploadManager: UploadManager } | null = null
 let isShuttingDown = false
@@ -90,24 +88,9 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // ─── IPC Handlers ────────────────────────────────────────────────────────
-  
-  // Forward client-side (React) logs to the backend file logger
-  ipcMain.handle(IPC_CHANNELS.SYSTEM.LOG, (_event, { level, context, message, data }) => {
-    const fullContext = `CLIENT:${context}`
-    if (level === 'ERROR') logger.error(fullContext, message, data)
-    else if (level === 'WARN') logger.warn(fullContext, message, data)
-    else logger.info(fullContext, message, data)
-  })
-
-  // Provide configuration data to the frontend on request
-  ipcMain.handle(IPC_CHANNELS.SYSTEM.GET_CONFIG, () => {
-    return config
-  })
-
   // ─── App Initialization ──────────────────────────────────────────────────
 
-  // Bootstraps dependency injection and routes backend services
+  // Bootstraps dependency injection, services, and all IPC routes
   appServices = setupApplication()
 
   startKeepAliveLogger()

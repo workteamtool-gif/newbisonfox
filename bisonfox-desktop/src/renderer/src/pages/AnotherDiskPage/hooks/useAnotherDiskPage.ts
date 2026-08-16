@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { SetupPage, FinalPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
 export function useAnotherDiskPage() {
   const {
@@ -24,7 +25,7 @@ export function useAnotherDiskPage() {
       const failedFilesAmount = lastSession?.failedCount ?? 0
       const totalFilesAmount = succeededFilesAmount + failedFilesAmount
 
-      window.api.invoke('log-mail', {
+      window.api.invoke(IPC_CHANNELS.UPLOAD.LOG_MAIL, {
         username,
         subfolder: currentSubfolder,
         succeededFilesAmount,
@@ -37,7 +38,7 @@ export function useAnotherDiskPage() {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
           clearInterval(interval)
-          window.api.invoke('system:close')
+          window.api.invoke(IPC_CHANNELS.SYSTEM.CLOSE)
         }
         return currentCountdown - 1
       })

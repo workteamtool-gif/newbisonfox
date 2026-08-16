@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
 const SECRET = 'bison_fox'
 
@@ -23,7 +24,7 @@ export function useSecretPhrase(): void {
 
       if (bufferRef.current === SECRET) {
         bufferRef.current = ''
-        window.api.invoke('open-cmd')
+        window.api.invoke(IPC_CHANNELS.SYSTEM.OPEN_CMD)
       }
     }
 

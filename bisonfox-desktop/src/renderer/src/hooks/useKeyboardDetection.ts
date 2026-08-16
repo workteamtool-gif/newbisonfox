@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
 export function useKeyboardDetection(): boolean {
   const [, setHasKeyboard] = useState(true)
@@ -8,7 +9,7 @@ export function useKeyboardDetection(): boolean {
 
     async function checkKeyboard(): Promise<void> {
       try {
-        const result = (await window.api.invoke('detect-keyboard')) as {
+        const result = (await window.api.invoke(IPC_CHANNELS.SYSTEM.DETECT_KEYBOARD)) as {
           hasKeyboard: boolean
         }
         if (isMounted) {

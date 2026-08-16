@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { getConfig } from '@renderer/services/configService'
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
 export function useFinalPage() {
   const { reset, username } = useWizardStore()
@@ -30,7 +31,7 @@ export function useFinalPage() {
   }, [])
 
   const handleReturnHome = (): void => {
-    window.api.invoke('system:close')
+    window.api.invoke(IPC_CHANNELS.SYSTEM.CLOSE)
   }
 
   useEffect(() => {

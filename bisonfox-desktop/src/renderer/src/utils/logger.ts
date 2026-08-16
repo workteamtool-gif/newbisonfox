@@ -1,3 +1,5 @@
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
+
 const isDev = import.meta.env.DEV
 
 enum LogLevel {
@@ -64,7 +66,7 @@ async function sendToMainProcess(
 
     const sanitizedData =
       data instanceof Error ? { message: data.message, stack: data.stack } : data
-    await window.api.invoke('log-from-client', {
+    await window.api.invoke(IPC_CHANNELS.SYSTEM.LOG, {
       level,
       context,
       message: enrichedMessage,

@@ -43,7 +43,7 @@ export const driveApi = {
 
   getDirCount: async (dirPath: string): Promise<number> => {
     try {
-      return (await window.api.invoke('get-dir-count', { dirPath })) as number
+      return (await window.api.invoke(IPC_CHANNELS.DRIVE.GET_DIR_COUNT, { dirPath })) as number
     } catch {
       return 0
     }

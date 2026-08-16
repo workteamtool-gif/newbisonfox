@@ -5,6 +5,7 @@ import { CancelModal } from '../CancelModal/CancelModal'
 import { WizardHeader } from '../WizardHeader/WizardHeader'
 import { clientLogger } from '../../utils/logger'
 import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import './WizardLayout.css'
 import { WizardBody } from '../WizardBody/WizardBody'
 interface Props {
@@ -41,7 +42,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
       } catch {}
     }
 
-    window.api.invoke('system:close')
+    window.api.invoke(IPC_CHANNELS.SYSTEM.CLOSE)
   }
 
   const showSteppersAndHeader = step !== WelcomePage && step !== FinalPage

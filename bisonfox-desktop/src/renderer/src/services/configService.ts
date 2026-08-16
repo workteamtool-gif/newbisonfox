@@ -1,3 +1,5 @@
+import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
+
 export interface AppConfig {
   rawUploadFinalDir: string
   endpointDestinationFolder: string
@@ -35,7 +37,7 @@ export async function getConfig(): Promise<AppConfig> {
     return configPromise
   }
 
-  configPromise = window.api.invoke('get-config') as Promise<AppConfig>
+  configPromise = window.api.invoke(IPC_CHANNELS.SYSTEM.GET_CONFIG) as Promise<AppConfig>
   try {
     cachedConfig = await configPromise
     return cachedConfig!
