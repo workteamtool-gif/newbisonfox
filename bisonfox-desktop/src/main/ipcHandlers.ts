@@ -6,6 +6,7 @@ import path from 'path'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { DiskService } from './domain/interfaces/DiskService'
 import { FileService } from './domain/interfaces/FileService'
+import { HardwareService } from './infrastructure/services/HardwareService'
 import { UploadManager } from './application/UploadManager'
 import { sessionSingleton } from './application/UploadSession'
 import { NameValidator } from './domain/validators/NameValidator'
@@ -16,6 +17,7 @@ import { config } from './appConfig'
 export interface AppDependencies {
   diskService: DiskService
   fileService: FileService
+  hardwareService: HardwareService
   uploadManager: UploadManager
 }
 
@@ -25,7 +27,7 @@ const sessionSingletonInstance = sessionSingleton.getInstance()
 const countFileControllers = new Map<string, AbortController>()
 
 export function registerIpcHandlers(dependencies: AppDependencies): void {
-  const { diskService, fileService, uploadManager } = dependencies
+  const { diskService, fileService, hardwareService, uploadManager } = dependencies
 
   const pushToFrontend = (channel: string, payload: any): void => {
     const windows = BrowserWindow.getAllWindows()
@@ -40,6 +42,11 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
 
   ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SUBFOLDER, (_, { name }) => {
     return subfolderValidator.validate(name)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SYSTEM.DETECT_KEYBOARD, async () => {
+    const hasKeyboard = await hardwareService.detectKeyboard()
+    return { hasKeyboard }
   })
 
   ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SPECIAL_CODE, async (_, { sessionId, code }) => {

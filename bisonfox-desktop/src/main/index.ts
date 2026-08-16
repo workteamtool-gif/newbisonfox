@@ -114,8 +114,8 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    logger.info('Electron', 'All windows closed. Triggering shutdown.')
-    gracefulShutdown()
+  logger.info('Electron', 'All windows closed. Triggering shutdown.')
+  gracefulShutdown()
   }
 })
 
