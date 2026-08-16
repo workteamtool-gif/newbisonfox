@@ -2,26 +2,17 @@ import * as fs from 'original-fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
-/**
- * Moves a staged file to its final destination atomically.
- * To prevent background "empty folder cleaner" processes from deleting the
- * newly-created destination directories before the rename occurs, we immediately
- * touch the destination file (creating a 0-byte anchor) after creating the directories.
- * This ensures the folders are never empty from the cleaner's perspective.
- *
- * @param srcPath      Absolute path of the staged file.
- * @param destPath     Absolute path of the final file.
- */
+// Moves a staged file to its final destination atomically. Because empty folders in destination are being deleted,
+// we try to move from src to dest and handle the folder. it might fail for several reasons, and therefore we try 
+// multiple times until succeeded
 export async function atomicMoveWithHandles(srcPath: string, destPath: string): Promise<void> {
   const destDir = path.dirname(destPath)
 
   try {
     // 1. Create all missing destination directory segments.
     await fs.promises.mkdir(destDir, { recursive: true }).catch((err: unknown) => {
-      if (fs.existsSync(destDir)) return // Ignore error if directory already exists
-      logger.error('fsUtils', `Failed to make directory in destination directory: ${destDir}`, {
-        error: err instanceof Error ? err.message : String(err)
-      })
+      if (fs.existsSync(destDir)) return // Safe to ignore - directory already exists
+      throw err
     })
 
     // 2. Touch the destination file to act as an anchor

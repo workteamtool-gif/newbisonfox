@@ -26,6 +26,7 @@ export class UploadManager {
     }
 
     this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
+    this.notifier.notifyProgress(sessionId, { type: 'cancelled' })
   }
 
   public cancelAllUploads(): void {
@@ -107,10 +108,7 @@ export class UploadManager {
 
       await this.fileService.deleteDir(stagingDest).catch(() => {})
 
-      if (
-        (err instanceof Error ? err.message : String(err)) &&
-        (err instanceof Error ? err.message : String(err)).includes('Aborted')
-      ) {
+      if (err instanceof Error && err.name === 'AbortError') {
         logger.info('UploadManager', 'Upload aborted successfully. Staging folder cleaned up.')
       } else {
         logger.error('UploadManager', 'Upload failed', {

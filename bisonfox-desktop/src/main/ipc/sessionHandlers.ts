@@ -3,10 +3,11 @@ import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { sessionSingleton } from '@main/application/UploadSession'
 import { NameValidator } from '@main/domain/validators/NameValidator'
 import { SubfolderValidator } from '@main/domain/validators/SubfolderValidator'
-import { validateSpecialCode } from '@main/domain/interfaces/Validators/SpecialCodeValidator'
+import { SpecialCodeValidator } from '@main/domain/validators/SpecialCodeValidator'
 
 const nameValidator = new NameValidator()
 const subfolderValidator = new SubfolderValidator()
+const specialCodeValidator = new SpecialCodeValidator()
 const sessionSingletonInstance = sessionSingleton.getInstance()
 
 // SESSION handlers manage user identity, input validation, and session lifecycle.
@@ -23,7 +24,7 @@ export function registerSessionHandlers(): void {
 
   // Validates a special access code and marks the session as restricted if valid.
   ipcMain.handle(IPC_CHANNELS.SESSION.VALIDATE_SPECIAL_CODE, async (_, { sessionId, code }) => {
-    return validateSpecialCode(sessionId, code)
+    return specialCodeValidator.validate(code, sessionId)
   })
 
   // Creates a new upload session for the given username and returns its ID.

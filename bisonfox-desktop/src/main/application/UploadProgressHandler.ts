@@ -28,14 +28,7 @@ export class UploadProgressHandler {
     totalBytes: number
   ): void => {
     if (file === '__done__') {
-      this.handleCopyComplete(
-        completedFiles,
-        completedBytes,
-        failedCount,
-        failedFiles,
-        totalFilesAmount,
-        totalBytes
-      )
+      this.handleCopyComplete(completedFiles, failedCount, failedFiles, totalFilesAmount)
       return
     }
 
@@ -55,17 +48,17 @@ export class UploadProgressHandler {
           failedFiles: failedFiles,
           totalCount: totalFilesAmount
         })
+        this.notifier.notifyProgress(this.sessionId, {
+          type: 'progress',
+          file,
+          percent,
+          completed: completedFiles,
+          completedBytes: completedBytes,
+          failed: failedCount,
+          total: totalFilesAmount,
+          totalBytes: totalBytes
+        })
       }
-      this.notifier.notifyProgress(this.sessionId, {
-        type: 'progress',
-        file,
-        percent,
-        completed: completedFiles,
-        completedBytes: completedBytes,
-        failed: failedCount,
-        total: totalFilesAmount,
-        totalBytes: totalBytes
-      })
     }
   }
 
@@ -76,11 +69,9 @@ export class UploadProgressHandler {
    */
   private handleCopyComplete(
     completedFiles: number,
-    _completedBytes: number,
     failedCount: number,
     failedFiles: FailedFile[],
-    totalFilesAmount: number,
-    _totalBytes: number
+    totalFilesAmount: number
   ): void {
     this.sessionSingletonInstance.update(this.sessionId, {
       completedCount: completedFiles,
