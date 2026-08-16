@@ -3,7 +3,7 @@ import { DiskService } from './infrastructure/services/DiskService'
 import { HardwareService } from './infrastructure/services/HardwareService'
 import { ElectronEventNotifier } from './infrastructure/services/ElectronEventNotifier'
 import { UploadManager } from './application/UploadManager'
-import { registerIpcHandlers } from './ipcHandlers'
+import { registerIpcHandlers } from './ipc/ipcHandlers'
 
 export function setupApplication(): { uploadManager: UploadManager } {
   const fileService = new FileService()

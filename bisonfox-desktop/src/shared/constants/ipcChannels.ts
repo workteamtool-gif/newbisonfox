@@ -3,7 +3,9 @@ export const IPC_CHANNELS = {
     LOG: 'log-from-client',
     DETECT_KEYBOARD: 'detect-keyboard',
     SEND_MAIL_LOG: 'send-mail-log',
-    GET_CONFIG: 'get-config'
+    GET_CONFIG: 'get-config',
+    CLOSE: 'system:close',
+    OPEN_CMD: 'open-cmd'
   },
   SESSION: {
     VALIDATE_NAME: 'validate-name',
@@ -15,6 +17,7 @@ export const IPC_CHANNELS = {
     LIST: 'list-drives',
     GET_TREE: 'get-drive-tree',
     GET_DIR: 'get-dir',
+    GET_DIR_COUNT: 'get-dir-count',
     FIND_PAGE: 'find-item-page',
     DEEP_FIND: 'deep-find-item'
   },
@@ -26,6 +29,7 @@ export const IPC_CHANNELS = {
     REMOVE_FILE: 'remove-file',
     START: 'start-upload',
     CANCEL: 'cancel-upload',
-    PROGRESS_PREFIX: 'upload-progress-'
+    PROGRESS_PREFIX: 'upload-progress-',
+    LOG_MAIL: 'log-mail'
   }
 } as const
