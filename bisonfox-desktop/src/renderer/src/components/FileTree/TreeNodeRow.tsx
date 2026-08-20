@@ -1,6 +1,6 @@
 import React from 'react'
 import { ItemNode } from '@shared/entities/ItemNode'
-import { formatSize } from './utils'
+import { formatSize } from '@renderer/utils/formatSize'
 
 interface TreeNodeRowProps {
   node: ItemNode

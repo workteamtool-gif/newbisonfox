@@ -83,8 +83,8 @@ export function registerUploadHandlers(fileService: FileService, uploadManager: 
   })
 
   // Writes the final upload summary (mail log)
-  ipcMain.handle(IPC_CHANNELS.UPLOAD.LOG_MAIL, (_, { username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount }) => {
-    logMail(username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount)
+  ipcMain.handle(IPC_CHANNELS.UPLOAD.LOG_MAIL, (_, { username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount, userEndpointBaseFolder }) => {
+    logMail(username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount, userEndpointBaseFolder)
     return { success: true }
   })
 }

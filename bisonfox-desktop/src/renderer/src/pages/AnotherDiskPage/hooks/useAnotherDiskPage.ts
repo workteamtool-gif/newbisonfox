@@ -3,6 +3,7 @@ import { useWizardStore } from '@renderer/store/useWizardStore'
 import { SetupPage, FinalPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
+import { getConfig } from '@renderer/services/configService'
 
 export function useAnotherDiskPage() {
   const {
@@ -18,22 +19,27 @@ export function useAnotherDiskPage() {
   const mailLogged = useRef(false)
 
   useEffect(() => {
+    const logMail = async () => {
     if (!mailLogged.current) {
       mailLogged.current = true
       const lastSession = diskSessions[diskSessions.length - 1]
       const succeededFilesAmount = lastSession?.copiedCount ?? 0
       const failedFilesAmount = lastSession?.failedCount ?? 0
       const totalFilesAmount = succeededFilesAmount + failedFilesAmount
+      const config = await getConfig()
 
       window.api.invoke(IPC_CHANNELS.UPLOAD.LOG_MAIL, {
         username,
         subfolder: currentSubfolder,
         succeededFilesAmount,
         totalFilesAmount,
-        failedFilesAmount
+        failedFilesAmount,
+        userEndpointBaseFolder: config.endpointDestinationFolder
       })
     }
+  }
 
+  logMail()
     const interval = setInterval(() => {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {
