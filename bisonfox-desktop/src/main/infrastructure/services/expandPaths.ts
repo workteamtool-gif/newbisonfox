@@ -2,8 +2,8 @@ import * as fs from 'original-fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { PathResult } from '@main/domain/entities/PathResult'
-import { BackpressureGate } from './BackpressureGate'
-import { normalizeDriveCase } from './pathUtils'
+import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
+import { normalizeDriveCase } from '@main/infrastructure/services/pathUtils'
 
 /**
  * Converts a list of folders into a flat list of every nested file.
@@ -65,7 +65,7 @@ export async function expandPaths(
           if (resolveAllIdle) resolveAllIdle()
           break
         }
-        await new Promise((r) => setTimeout(r, 10))
+        await new Promise((resolve) => setTimeout(resolve, 10))
         continue
       }
 

@@ -1,5 +1,5 @@
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import './WelcomePage.css'
+import '@renderer/pages/WelcomePage/WelcomePage.css'
 import { JSX } from 'react'
 import { SetupPage } from '@renderer/entites/Wizard'
 import iconImg from '@renderer/images/appLogo.png'

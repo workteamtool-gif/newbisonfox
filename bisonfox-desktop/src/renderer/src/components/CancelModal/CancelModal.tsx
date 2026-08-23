@@ -1,4 +1,4 @@
-import './CancelModal.css'
+import '@renderer/components/CancelModal/CancelModal.css'
 
 interface CancelModalProps {
   isOpen: boolean

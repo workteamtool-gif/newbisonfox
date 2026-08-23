@@ -1,5 +1,5 @@
 import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
-import { SessionSingleton } from './UploadSession'
+import { SessionSingleton } from '@main/application/UploadSession'
 import { CopySummary } from '@main/domain/interfaces/FileService'
 import { FailedFile } from '@shared/entities/FailedFile'
 

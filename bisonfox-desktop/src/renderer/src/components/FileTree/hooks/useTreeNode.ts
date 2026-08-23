@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { useTreePagination } from './useTreePagination'
-import { useTreePageCount } from './useTreePageCount'
-import { useTreeSearch } from './useTreeSearch'
-import { useTreeScroll } from './useTreeScroll'
+import { useTreePagination } from '@renderer/components/FileTree/hooks/useTreePagination'
+import { useTreePageCount } from '@renderer/components/FileTree/hooks/useTreePageCount'
+import { useTreeSearch } from '@renderer/components/FileTree/hooks/useTreeSearch'
+import { useTreeScroll } from '@renderer/components/FileTree/hooks/useTreeScroll'
 
 export interface UseTreeNodeOptions {
   node: ItemNode

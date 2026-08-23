@@ -1,4 +1,4 @@
-import './ConfirmModal.css'
+import '@renderer/components/ConfirmModal/ConfirmModal.css'
 
 interface ConfirmModalProps {
   isOpen: boolean

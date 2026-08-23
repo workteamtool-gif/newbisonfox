@@ -4,9 +4,9 @@ import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import loadingVideo from '@renderer/videos/uploadingvideo.mp4'
 import { JSX } from 'react'
 import { SetupPage, ReviewSelectedItemsPage } from '@renderer/entites/Wizard'
-import { ErrorUpload } from './components/ErrorUpload'
-import { CountingUpload } from './components/CountingUpload'
-import { UploadComponent } from './components/UploadComponent'
+import { ErrorUpload } from '@renderer/pages/UploadPage/components/ErrorUpload'
+import { CountingUpload } from '@renderer/pages/UploadPage/components/CountingUpload'
+import { UploadComponent } from '@renderer/pages/UploadPage/components/UploadComponent'
 
 export function UploadPage(): JSX.Element | null {
   const {

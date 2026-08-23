@@ -1,10 +1,10 @@
 import React from 'react'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import './FileTree.css'
-import { useTreeNode } from './hooks/useTreeNode'
-import { TreeNodeRow } from './TreeNodeRow'
-import { TreeNodeChildren } from './TreeNodeChildren'
+import '@renderer/components/FileTree/FileTree.css'
+import { useTreeNode } from '@renderer/components/FileTree/hooks/useTreeNode'
+import { TreeNodeRow } from '@renderer/components/FileTree/TreeNodeRow'
+import { TreeNodeChildren } from '@renderer/components/FileTree/TreeNodeChildren'
 
 export interface TreeNodeProps {
   node: ItemNode

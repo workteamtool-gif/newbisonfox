@@ -1,4 +1,4 @@
-import { FailedFile } from './FailedFile'
+import { FailedFile } from '@shared/entities/FailedFile'
 
 export interface DiskSession {
   driveLetter: string

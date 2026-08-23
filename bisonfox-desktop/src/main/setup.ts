@@ -1,11 +1,11 @@
-import { FileService } from './infrastructure/services/FileService'
-import { DiskService } from './infrastructure/services/DiskService'
-import { HardwareService } from './infrastructure/services/HardwareService'
-import { SystemService } from './infrastructure/services/SystemService'
-import { ElectronEventNotifier } from './infrastructure/services/ElectronEventNotifier'
-import { UploadManager } from './application/UploadManager'
-import { UploadValidator } from './domain/validators/UploadValidator'
-import { registerIpcHandlers } from './ipc/ipcHandlers'
+import { FileService } from '@main/infrastructure/services/FileService'
+import { DiskService } from '@main/infrastructure/services/DiskService'
+import { HardwareService } from '@main/infrastructure/services/HardwareService'
+import { SystemService } from '@main/infrastructure/services/SystemService'
+import { ElectronEventNotifier } from '@main/infrastructure/services/ElectronEventNotifier'
+import { UploadManager } from '@main/application/UploadManager'
+import { UploadValidator } from '@main/domain/validators/UploadValidator'
+import { registerIpcHandlers } from '@main/ipc/ipcHandlers'
 
 export function setupApplication(): { uploadManager: UploadManager } {
   const fileService = new FileService()

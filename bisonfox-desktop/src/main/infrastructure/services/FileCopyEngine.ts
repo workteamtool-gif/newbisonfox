@@ -1,6 +1,6 @@
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/FileService'
 import { FileScanner } from '@main/domain/interfaces/FileScanner'
-import { CopyEngineCore } from './copyEngine/CopyEngineCore'
+import { CopyEngineCore } from '@main/infrastructure/services/copyEngine/CopyEngineCore'
 
 /**
  * Executes a concurrent, throttled copy sequence that migrates selected paths to a target directory.

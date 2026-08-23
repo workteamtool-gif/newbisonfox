@@ -59,9 +59,9 @@ export function useSelectItemsPage() {
           if (updatedSet.has(path)) updatedSet.delete(path)
           else updatedSet.add(path)
 
-          for (const sel of updatedSet) {
-            if (sel !== path && isSubPath(path, sel)) {
-              updatedSet.delete(sel)
+          for (const selectedPath of updatedSet) {
+            if (selectedPath !== path && isSubPath(path, selectedPath)) {
+              updatedSet.delete(selectedPath)
             }
           }
           return updatedSet
@@ -70,9 +70,9 @@ export function useSelectItemsPage() {
         setExcluded((prev) => {
           const updatedSet = new Set(prev)
           let changed = false
-          for (const ex of updatedSet) {
-            if (ex === path || isSubPath(path, ex)) {
-              updatedSet.delete(ex)
+          for (const excludedPath of updatedSet) {
+            if (excludedPath === path || isSubPath(path, excludedPath)) {
+              updatedSet.delete(excludedPath)
               changed = true
             }
           }
@@ -92,13 +92,13 @@ export function useSelectItemsPage() {
   const handleSearchRootSubmit = async (query: string): Promise<boolean> => {
     if (!currentDisk || !query || searching) return false
 
-    const gen = ++searchGenRef.current
+    const searchGeneration = ++searchGenRef.current
     setSearching(true)
     useWizardStore.getState().setToast(`מחפש בכונן עבור "${query}"...`, 'info')
 
     try {
       const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
-      if (gen !== searchGenRef.current) return false
+      if (searchGeneration !== searchGenRef.current) return false
 
       if (deepMatch) {
         useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
@@ -111,10 +111,10 @@ export function useSelectItemsPage() {
           .setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
       }
     } catch {
-      if (gen !== searchGenRef.current) return false
+      if (searchGeneration !== searchGenRef.current) return false
       useWizardStore.getState().setToast('אופס, אירעה שגיאה במהלך החיפוש.', 'error')
     } finally {
-      if (gen === searchGenRef.current) {
+      if (searchGeneration === searchGenRef.current) {
         setSearching(false)
       }
     }

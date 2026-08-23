@@ -1,12 +1,12 @@
-import './env'
+import '@main/env'
 
 import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { setupApplication } from './setup'
+import { setupApplication } from '@main/setup'
 import { startKeepAliveLogger } from '@main/infrastructure/loggers/keepAliveLogger'
-import { UploadManager } from './application/UploadManager'
+import { UploadManager } from '@main/application/UploadManager'
 
 let appServices: { uploadManager: UploadManager } | null = null
 let isShuttingDown = false

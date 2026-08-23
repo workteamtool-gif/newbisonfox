@@ -1,11 +1,11 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { config } from '../appConfig'
-import { logger } from '../infrastructure/loggers/Logger'
-import { registerSystemHandlers } from './systemHandlers'
-import { registerSessionHandlers } from './sessionHandlers'
-import { registerDriveHandlers } from './driveHandlers'
-import { registerUploadHandlers } from './uploadHandlers'
+import { config } from '@main/appConfig'
+import { logger } from '@main/infrastructure/loggers/Logger'
+import { registerSystemHandlers } from '@main/ipc/systemHandlers'
+import { registerSessionHandlers } from '@main/ipc/sessionHandlers'
+import { registerDriveHandlers } from '@main/ipc/driveHandlers'
+import { registerUploadHandlers } from '@main/ipc/uploadHandlers'
 import { AppDependencies } from '@main/domain/entities/AppDependencies'
 
 

@@ -1,7 +1,7 @@
 import React, { JSX } from 'react'
-import { FailedItemsUpload } from './FailedItemsUpload'
-import { StatsUpload } from './StatsUpload'
-import { VideoUpload } from './VideoUpload'
+import { FailedItemsUpload } from '@renderer/pages/UploadPage/components/FailedItemsUpload'
+import { StatsUpload } from '@renderer/pages/UploadPage/components/StatsUpload'
+import { VideoUpload } from '@renderer/pages/UploadPage/components/VideoUpload'
 import { FailedFile } from '@shared/entities/FailedFile'
 export interface UploadComponentProps {
   showFailedReview: boolean

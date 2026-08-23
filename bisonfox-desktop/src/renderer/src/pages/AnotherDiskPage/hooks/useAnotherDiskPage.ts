@@ -69,11 +69,15 @@ export function useAnotherDiskPage() {
   }
 
   const totalFilesAmount = diskSessions.reduce(
-    (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
+    (accumulator, diskSession) =>
+      accumulator + (diskSession.copiedCount ?? diskSession.selectedItemPaths.length),
     0
   )
-  const failedCountTotal = diskSessions.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
-  const failedFiles = diskSessions.flatMap((d) => d.failedItems || [])
+  const failedCountTotal = diskSessions.reduce(
+    (accumulator, diskSession) => accumulator + (diskSession.failedCount ?? 0),
+    0
+  )
+  const failedFiles = diskSessions.flatMap((diskSession) => diskSession.failedItems || [])
 
   return {
     countdown,

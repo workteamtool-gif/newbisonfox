@@ -1,8 +1,8 @@
 import { JSX } from 'react'
 import { FileTree } from '@renderer/components/FileTree/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
-import { useReviewSelectedItemsPage } from './hooks/useReviewSelectedItemsPage'
-import './ReviewSelectedItemsPage.css'
+import { useReviewSelectedItemsPage } from '@renderer/pages/ReviewSelectedItemsPage/hooks/useReviewSelectedItemsPage'
+import '@renderer/pages/ReviewSelectedItemsPage/ReviewSelectedItemsPage.css'
 
 export function ReviewSelectedItemsPage(): JSX.Element | null {
   const {

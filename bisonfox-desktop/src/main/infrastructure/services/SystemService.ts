@@ -1,6 +1,6 @@
 import { app } from 'electron'
 import { spawn } from 'child_process'
-import { HardwareService } from './HardwareService'
+import { HardwareService } from '@main/infrastructure/services/HardwareService'
 
 export class SystemService {
   constructor(private hardwareService: HardwareService) {}

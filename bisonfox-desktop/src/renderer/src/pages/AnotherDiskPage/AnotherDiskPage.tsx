@@ -1,9 +1,9 @@
 import React from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
-import { useAnotherDiskPage } from './hooks/useAnotherDiskPage'
-import { AnotherDiskStats } from './components/AnotherDiskStats'
-import { AnotherDiskChoices } from './components/AnotherDiskChoices'
-import './AnotherDiskPage.css'
+import { useAnotherDiskPage } from '@renderer/pages/AnotherDiskPage/hooks/useAnotherDiskPage'
+import { AnotherDiskStats } from '@renderer/pages/AnotherDiskPage/components/AnotherDiskStats'
+import { AnotherDiskChoices } from '@renderer/pages/AnotherDiskPage/components/AnotherDiskChoices'
+import '@renderer/pages/AnotherDiskPage/AnotherDiskPage.css'
 
 const MAX_FAILED_FILES_TO_SHOW = 5
 

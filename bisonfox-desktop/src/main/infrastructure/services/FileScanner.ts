@@ -1,8 +1,8 @@
 import type { FileScanner as IFileScanner } from '@main/domain/interfaces/FileScanner'
 import { PathResult } from '@main/domain/entities/PathResult'
-import { BackpressureGate } from './BackpressureGate'
-import { expandPaths } from './expandPaths'
-import { countFiles } from './countFiles'
+import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
+import { expandPaths } from '@main/infrastructure/services/expandPaths'
+import { countFiles } from '@main/infrastructure/services/countFiles'
 
 /**
  * Service class that acts as the entry point and delegator for file discovery,
@@ -71,7 +71,7 @@ export class FileScanner implements IFileScanner {
     excludedDirectories: Set<string>,
     parallelWorkers = 1,
     excludedFiles: string[] = [],
-    onCount: (c: number, s: number) => void,
+    onCount: (fileCount: number, totalBytes: number) => void,
     signal: AbortSignal
   ): Promise<{ count: number; size: number }> {
     return countFiles(

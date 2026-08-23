@@ -1,7 +1,7 @@
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { TreeNode } from './TreeNode'
-import './FileTree.css'
+import { TreeNode } from '@renderer/components/FileTree/TreeNode'
+import '@renderer/components/FileTree/FileTree.css'
 import { JSX } from 'react'
 
 export interface FileTreeProps {

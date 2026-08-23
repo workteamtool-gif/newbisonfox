@@ -1,4 +1,4 @@
-import { config } from './appConfig'
+import { config } from '@main/appConfig'
 
 // Node.js uses a C library called libuv for file system operations, and by default set to 4 threads, so even if we
 // set copyConcurrency to higher than 4, Node.js will use only 4 threads. changing UV_THREADPOOL_SIZE to higher

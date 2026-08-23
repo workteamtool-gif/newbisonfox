@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { UploadManager } from '../application/UploadManager'
+import { UploadManager } from '@main/application/UploadManager'
 
 // UPLOAD handlers manage the full lifecycle of an upload: scanning, selection, execution, and logging.
 export function registerUploadHandlers(uploadManager: UploadManager): void {

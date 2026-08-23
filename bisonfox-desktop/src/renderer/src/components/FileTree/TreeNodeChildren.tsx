@@ -1,8 +1,8 @@
 import React from 'react'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { PaginatedResult } from '@shared/entities/PaginatedResult'
-import { PaginationBar } from './PaginationBar'
-import { TreeNode } from './TreeNode'
+import { PaginationBar } from '@renderer/components/FileTree/PaginationBar'
+import { TreeNode } from '@renderer/components/FileTree/TreeNode'
 
 interface TreeNodeChildrenProps {
   children: ItemNode[]

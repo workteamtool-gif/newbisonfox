@@ -1,6 +1,6 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import './WizardHeader.css'
+import '@renderer/components/WizardHeader/WizardHeader.css'
 import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
 import iconImg from '@renderer/images/appLogo.png'
 import teamLogoImg from '@renderer/images/teamLogo.png'

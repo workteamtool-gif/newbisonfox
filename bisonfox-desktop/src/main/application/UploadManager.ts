@@ -1,11 +1,11 @@
-import { SessionSingleton } from './UploadSession'
+import { SessionSingleton } from '@main/application/UploadSession'
 import { FileService } from '@main/domain/interfaces/FileService'
 import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { UploadValidator } from '@main/domain/interfaces/Validators/UploadValidator'
-import { UploadProgressHandler } from './UploadProgressHandler'
+import { UploadProgressHandler } from '@main/application/UploadProgressHandler'
 import type { UploadPayload } from '@shared/entities/UploadPayload'
-import { logMail } from '../infrastructure/loggers/MailLogger'
+import { logMail } from '@main/infrastructure/loggers/MailLogger'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()

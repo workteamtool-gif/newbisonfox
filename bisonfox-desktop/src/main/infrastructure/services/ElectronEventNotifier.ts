@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron'
-import { EventNotifier } from '../../domain/interfaces/EventNotifier'
+import { EventNotifier } from '@main/domain/interfaces/EventNotifier'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 
 export class ElectronEventNotifier implements EventNotifier {

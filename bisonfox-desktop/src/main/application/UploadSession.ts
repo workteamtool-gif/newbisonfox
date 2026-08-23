@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import type { UploadSession } from '../domain/entities/UploadSession'
+import type { UploadSession } from '@main/domain/entities/UploadSession'
 
 export class SessionSingleton {
   private static instance: SessionSingleton

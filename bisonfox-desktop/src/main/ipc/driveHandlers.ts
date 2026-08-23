@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { DiskService } from '../domain/interfaces/DiskService'
-import { FileService } from '../domain/interfaces/FileService'
+import { DiskService } from '@main/domain/interfaces/DiskService'
+import { FileService } from '@main/domain/interfaces/FileService'
 
 // DRIVE handlers expose the file system for browsing and searching drives.
 export function registerDriveHandlers(diskService: DiskService, fileService: FileService): void {

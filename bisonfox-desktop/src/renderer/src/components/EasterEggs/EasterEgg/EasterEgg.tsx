@@ -1,5 +1,5 @@
 import { JSX } from 'react'
-import './EasterEgg.css'
+import '@renderer/components/EasterEggs/EasterEgg/EasterEgg.css'
 import easterEggImage from '@renderer/images/EasterEgg.png'
 
 interface EasterEggProps {

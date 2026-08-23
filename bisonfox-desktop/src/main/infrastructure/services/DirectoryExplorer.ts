@@ -48,8 +48,8 @@ export async function listDir(
           node.hasChildren = true
         } else {
           try {
-            const st = await fs.promises.stat(absolutePath)
-            node.sizeInBytes = st.size
+            const fileStat = await fs.promises.stat(absolutePath)
+            node.sizeInBytes = fileStat.size
           } catch {
             node.sizeInBytes = 0
           }

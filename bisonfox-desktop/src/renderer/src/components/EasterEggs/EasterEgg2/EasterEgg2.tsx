@@ -1,6 +1,6 @@
 import { JSX } from 'react'
-import '../EasterEgg/EasterEgg.css'
-import './EasterEgg2.css'
+import '@renderer/components/EasterEggs/EasterEgg/EasterEgg.css'
+import '@renderer/components/EasterEggs/EasterEgg2/EasterEgg2.css'
 import easterEggImage from '@renderer/images/EasterEgg2.png'
 
 interface EasterEgg2Props {

@@ -6,7 +6,7 @@ export async function countFiles(
   excludedDirectories: Set<string>,
   parallelWorkers = 1,
   excludedFiles: string[] = [],
-  onCount: (c: number, s: number) => void,
+  onCount: (fileCount: number, totalBytes: number) => void,
   signal: AbortSignal
 ): Promise<{ count: number; size: number }> {
   if (!initialPaths || initialPaths.length === 0) return { count: 0, size: 0 }

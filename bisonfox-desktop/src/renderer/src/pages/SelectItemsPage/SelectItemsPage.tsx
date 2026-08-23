@@ -1,9 +1,9 @@
 import { JSX } from 'react'
 import { FileTree } from '@renderer/components/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
-import { useSelectItemsPage } from './hooks/useSelectItemsPage'
-import { TreePaginationBar } from './components/TreePaginationBar'
-import './SelectItemsPage.css'
+import { useSelectItemsPage } from '@renderer/pages/SelectItemsPage/hooks/useSelectItemsPage'
+import { TreePaginationBar } from '@renderer/pages/SelectItemsPage/components/TreePaginationBar'
+import '@renderer/pages/SelectItemsPage/SelectItemsPage.css'
 
 export function SelectItemsPage(): JSX.Element {
   const {

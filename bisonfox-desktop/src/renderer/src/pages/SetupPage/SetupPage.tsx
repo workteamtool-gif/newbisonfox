@@ -7,17 +7,17 @@ import { NavigationOptions } from '@renderer/components/NavigationOptions/Naviga
 import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 
-import { useDrives } from './hooks/useDrives'
-import { useSetupForm } from './hooks/useSetupForm'
-import { DriveList } from './components/DriveList'
-import { UserNameInput, SubfolderInput, SpecialCodeInput } from './components/SetupInputs'
+import { useDrives } from '@renderer/pages/SetupPage/hooks/useDrives'
+import { useSetupForm } from '@renderer/pages/SetupPage/hooks/useSetupForm'
+import { DriveList } from '@renderer/pages/SetupPage/components/DriveList'
+import { UserNameInput, SubfolderInput, SpecialCodeInput } from '@renderer/pages/SetupPage/components/SetupInputs'
 
 import { EasterEgg } from '@renderer/components/EasterEggs/EasterEgg/EasterEgg'
 import { useEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg/useEasterEggTrigger'
 import { EasterEgg2 } from '@renderer/components/EasterEggs/EasterEgg2/EasterEgg2'
 import { useUsernameEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg2/useEasterEgg2Trigger'
 
-import './SetupPage.css'
+import '@renderer/pages/SetupPage/SetupPage.css'
 
 export function SetupPage(): JSX.Element {
   const { isCancelModalOpen, setKeyboardVisible } = useWizardStore()

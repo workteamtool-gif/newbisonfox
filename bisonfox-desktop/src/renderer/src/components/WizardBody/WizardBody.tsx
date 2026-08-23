@@ -1,6 +1,6 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import './WizardBody.css'
+import '@renderer/components/WizardBody/WizardBody.css'
 import { PHASE_GROUPS } from '@renderer/Constants/phases'
 
 interface WizardBodyProps {

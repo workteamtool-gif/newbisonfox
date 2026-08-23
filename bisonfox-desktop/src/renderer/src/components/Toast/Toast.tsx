@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import './Toast.css'
+import '@renderer/components/Toast/Toast.css'
 import { TOAST_ICONS } from '@renderer/Constants/toast'
 
 export function Toast(): React.JSX.Element | null {

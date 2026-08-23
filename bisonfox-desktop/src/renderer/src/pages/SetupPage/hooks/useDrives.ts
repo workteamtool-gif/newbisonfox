@@ -20,7 +20,7 @@ export function useDrives() {
 
         setDrives(drivesList)
         setSelectedLetter((currentSelection) => {
-          if (currentSelection && !drivesList.some((d) => d.letter === currentSelection)) {
+          if (currentSelection && !drivesList.some((drive) => drive.letter === currentSelection)) {
             return ''
           }
           return currentSelection

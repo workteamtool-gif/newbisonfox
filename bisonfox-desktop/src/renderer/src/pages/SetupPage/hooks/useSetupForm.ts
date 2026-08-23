@@ -58,8 +58,8 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
   const validSubfolderPattern = /^[a-zA-Z0-9 _-]+$/
   const reserved = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
 
-  function validateName(val: string): boolean {
-    const trimmed = val.trim()
+  function validateName(value: string): boolean {
+    const trimmed = value.trim()
     if (trimmed && reserved.test(trimmed)) {
       setNameError('שם המשתמש שבחרת הינו אסור לשימוש במערכת')
       return false
@@ -74,8 +74,8 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     return true
   }
 
-  function validateSubfolder(val: string): boolean {
-    const trimmed = val.trim()
+  function validateSubfolder(value: string): boolean {
+    const trimmed = value.trim()
     if (trimmed && reserved.test(trimmed)) {
       setSubfolderError('שם התיקייה שבחרת הינו אסור לשימוש במערכת')
       return false
@@ -88,8 +88,8 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     return true
   }
 
-  async function handleSubmit(e?: React.FormEvent): Promise<void> {
-    if (e) e.preventDefault()
+  async function handleSubmit(formEvent?: React.FormEvent): Promise<void> {
+    if (formEvent) formEvent.preventDefault()
 
     const trimmedName = name.trim()
     const trimmedSubfolder = subfolder.trim()
@@ -103,8 +103,8 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
     setSpecialCodeError('')
 
     try {
-      const nameResult = await sessionApi.validateName(trimmedName)
-      if (!nameResult.valid) {
+      const nameValidation = await sessionApi.validateName(trimmedName)
+      if (!nameValidation.valid) {
         setNameError(
           'שם המשתמש אינו תקין. עליו להכיל רק אותיות באנגלית, מספרים, נקודה, קו תחתון ומקף.'
         )
@@ -113,9 +113,9 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
       }
 
       if (trimmedSubfolder) {
-        const subResult = await sessionApi.validateSubfolder(trimmedSubfolder)
-        if (!subResult.valid) {
-          setSubfolderError(subResult.message || 'שם התיקייה אינו תקין.')
+        const subfolderValidation = await sessionApi.validateSubfolder(trimmedSubfolder)
+        if (!subfolderValidation.valid) {
+          setSubfolderError(subfolderValidation.message || 'שם התיקייה אינו תקין.')
           setLoading(false)
           return
         }
@@ -134,7 +134,7 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
 
     const trimmedName = name.trim()
     const trimmedSubfolder = subfolder.trim()
-    const drive = drives.find((d) => d.letter === selectedLetter)
+    const drive = drives.find((targetDrive) => targetDrive.letter === selectedLetter)
 
     try {
       setUserName(trimmedName)
@@ -143,9 +143,9 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
       setSessionId(newSessionId)
 
       if (specialCode.trim()) {
-        const specialResult = await sessionApi.validateSpecialCode(newSessionId, specialCode.trim())
-        if (!specialResult.valid) {
-          setSpecialCodeError(specialResult.message || 'קוד משתמש לא חוקי')
+        const specialCodeValidation = await sessionApi.validateSpecialCode(newSessionId, specialCode.trim())
+        if (!specialCodeValidation.valid) {
+          setSpecialCodeError(specialCodeValidation.message || 'קוד משתמש לא חוקי')
           setLoading(false)
           return
         }

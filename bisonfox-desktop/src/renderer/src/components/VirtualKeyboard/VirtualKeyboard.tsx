@@ -1,5 +1,5 @@
 import { useState, JSX } from 'react'
-import './VirtualKeyboard.css'
+import '@renderer/components/VirtualKeyboard/VirtualKeyboard.css'
 
 interface VirtualKeyboardProps {
   currentValue: string

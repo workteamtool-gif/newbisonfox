@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App'
+import App from '@renderer/App'
 import '@fontsource/rubik'
 import '@renderer/styles/reset.css'
 import '@renderer/styles/global.css'

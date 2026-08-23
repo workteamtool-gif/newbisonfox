@@ -1,3 +1,3 @@
-export * from './FileTree'
-export * from './TreeNode'
-export * from './PaginationBar'
+export * from '@renderer/components/FileTree/FileTree'
+export * from '@renderer/components/FileTree/TreeNode'
+export * from '@renderer/components/FileTree/PaginationBar'

@@ -10,11 +10,15 @@ export function useFinalPage() {
   const [countdown, setCountdown] = useState(150)
 
   const totalFilesAmount = snapshot.reduce(
-    (acc, d) => acc + (d.copiedCount ?? d.selectedItemPaths.length),
+    (accumulator, diskSession) =>
+      accumulator + (diskSession.copiedCount ?? diskSession.selectedItemPaths.length),
     0
   )
-  const failedCountTotal = snapshot.reduce((acc, d) => acc + (d.failedCount ?? 0), 0)
-  const failedFiles = snapshot.flatMap((d) => d.failedItems || [])
+  const failedCountTotal = snapshot.reduce(
+    (accumulator, diskSession) => accumulator + (diskSession.failedCount ?? 0),
+    0
+  )
+  const failedFiles = snapshot.flatMap((diskSession) => diskSession.failedItems || [])
   const [destinationUserEndpoint, setDestinationUserEndpoint] = useState('')
 
   useEffect(() => {

@@ -8,7 +8,7 @@ export const uploadApi = {
     selectedPaths: string[],
     excludedPaths: string[],
     signal?: AbortSignal,
-    onCount?: (c: number, s: number) => void
+    onCount?: (fileCount: number, totalBytes: number) => void
   ): Promise<{ count: number; size: number }> => {
     clientLogger.info('API', `Starting background file count session`)
     const scanId = Math.random().toString(36).substring(2, 10)

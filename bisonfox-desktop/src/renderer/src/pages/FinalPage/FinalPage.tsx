@@ -1,9 +1,9 @@
 import { JSX } from 'react'
 import { FailedFilesList } from '@renderer/components/FailedFilesList/FailedFilesList'
-import { useFinalPage } from './hooks/useFinalPage'
-import { SuccessStats } from './components/SuccessStats'
-import { SuccessFooter } from './components/SuccessFooter'
-import './FinalPage.css'
+import { useFinalPage } from '@renderer/pages/FinalPage/hooks/useFinalPage'
+import { SuccessStats } from '@renderer/pages/FinalPage/components/SuccessStats'
+import { SuccessFooter } from '@renderer/pages/FinalPage/components/SuccessFooter'
+import '@renderer/pages/FinalPage/FinalPage.css'
 
 const MAX_FAILED_FILES_TO_SHOW = 10
 

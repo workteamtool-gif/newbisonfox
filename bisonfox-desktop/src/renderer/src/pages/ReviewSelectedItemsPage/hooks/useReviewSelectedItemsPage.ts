@@ -6,6 +6,7 @@ import { uploadApi } from '@renderer/services/uploadApi'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { UploadPage, SetupPage, SelectItemsPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
+import { isSubPath } from '@renderer/utils/paths'
 
 export function useReviewSelectedItemsPage() {
   const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username } =
@@ -27,12 +28,12 @@ export function useReviewSelectedItemsPage() {
     setSelected(new Set(currentDisk.selectedItemPaths))
     setExcluded(new Set(currentDisk.excludedItemPaths ?? []))
 
-    const initialNodes = currentDisk.selectedItemPaths.map((aboslutePath) => {
-      const name = aboslutePath.split(/[/\\]/).pop() ?? aboslutePath
+    const initialNodes = currentDisk.selectedItemPaths.map((absolutePath) => {
+      const name = absolutePath.split(/[/\\]/).pop() ?? absolutePath
       const isFileLike = name.includes('.')
       return {
-        name: `${name}   (${aboslutePath})`,
-        absolutePath: aboslutePath,
+        name: `${name}   (${absolutePath})`,
+        absolutePath: absolutePath,
         isDirectory: !isFileLike,
         hasChildren: !isFileLike
       }
@@ -60,11 +61,9 @@ export function useReviewSelectedItemsPage() {
           if (updatedSet.has(path)) updatedSet.delete(path)
           else updatedSet.add(path)
 
-          const prefixWindows = path + '\\'
-          const prefixPosix = path + '/'
-          for (const sel of updatedSet) {
-            if (sel !== path && (sel.startsWith(prefixWindows) || sel.startsWith(prefixPosix))) {
-              updatedSet.delete(sel)
+          for (const selectedPath of updatedSet) {
+            if (selectedPath !== path && isSubPath(path, selectedPath)) {
+              updatedSet.delete(selectedPath)
             }
           }
           return updatedSet
@@ -73,11 +72,9 @@ export function useReviewSelectedItemsPage() {
         setExcluded((prev) => {
           const updatedSet = new Set(prev)
           let changed = false
-          const prefixWindows = path + '\\'
-          const prefixPosix = path + '/'
-          for (const ex of updatedSet) {
-            if (ex === path || ex.startsWith(prefixWindows) || ex.startsWith(prefixPosix)) {
-              updatedSet.delete(ex)
+          for (const excludedPath of updatedSet) {
+            if (excludedPath === path || isSubPath(path, excludedPath)) {
+              updatedSet.delete(excludedPath)
               changed = true
             }
           }

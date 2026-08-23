@@ -1,5 +1,5 @@
-import type { SubfolderValidator as ISubfolderValidator } from '../interfaces/Validators/SubfolderValidator'
-import { ValidationResult } from '../entities/ValidationInfo'
+import type { SubfolderValidator as ISubfolderValidator } from '@main/domain/interfaces/Validators/SubfolderValidator'
+import { ValidationResult } from '@main/domain/entities/ValidationInfo'
 import { config } from '@main/appConfig'
 
 export class SubfolderValidator implements ISubfolderValidator {

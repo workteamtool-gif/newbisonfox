@@ -1,13 +1,13 @@
 import React from 'react'
-import { useWizardStore } from '../../store/useWizardStore'
-import { uploadApi } from '../../services/uploadApi'
-import { CancelModal } from '../CancelModal/CancelModal'
-import { WizardHeader } from '../WizardHeader/WizardHeader'
-import { clientLogger } from '../../utils/logger'
+import { useWizardStore } from '@renderer/store/useWizardStore'
+import { uploadApi } from '@renderer/services/uploadApi'
+import { CancelModal } from '@renderer/components/CancelModal/CancelModal'
+import { WizardHeader } from '@renderer/components/WizardHeader/WizardHeader'
+import { clientLogger } from '@renderer/utils/logger'
 import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import './WizardLayout.css'
-import { WizardBody } from '../WizardBody/WizardBody'
+import '@renderer/components/WizardLayout/WizardLayout.css'
+import { WizardBody } from '@renderer/components/WizardBody/WizardBody'
 interface Props {
   children: React.ReactNode
 }

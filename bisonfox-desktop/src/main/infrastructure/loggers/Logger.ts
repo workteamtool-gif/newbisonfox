@@ -62,7 +62,7 @@ async function safeMoveFile(src: string, dest: string): Promise<void> {
 
   while (moveAttempt < retries) {
     try {
-      if (moveAttempt > 0) await new Promise<void>((res) => setTimeout(res, delayMs))
+      if (moveAttempt > 0) await new Promise<void>((resolve) => setTimeout(resolve, delayMs))
 
       try {
         await fs.promises.rename(src, dest)

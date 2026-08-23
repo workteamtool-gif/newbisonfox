@@ -7,8 +7,8 @@ import type {
   CopySummary
 } from '@main/domain/interfaces/FileService'
 import { FileScanner } from '@main/infrastructure/services/FileScanner'
-import { listDir, getDirCount, findItemPage as findPageOfItem, deepFindItem } from './DirectoryExplorer'
-import { copyFiles } from './FileCopyEngine'
+import { listDir, getDirCount, findItemPage as findPageOfItem, deepFindItem } from '@main/infrastructure/services/DirectoryExplorer'
+import { copyFiles } from '@main/infrastructure/services/FileCopyEngine'
 
 const EXCLUDED = new Set<string>([])
 

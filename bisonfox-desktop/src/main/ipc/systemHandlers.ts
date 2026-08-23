@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { SystemService } from '../infrastructure/services/SystemService'
+import { SystemService } from '@main/infrastructure/services/SystemService'
 
 // SYSTEM handlers deal with OS-level operations: app lifecycle, hardware detection, and CLI access.
 export function registerSystemHandlers(systemService: SystemService): void {

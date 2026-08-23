@@ -3,11 +3,11 @@ import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
 import { FileScanner } from '@main/domain/interfaces/FileScanner'
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/FileService'
-import { BackpressureGate } from '../BackpressureGate'
 import { config } from '@main/appConfig'
-import { atomicMoveWithHandles } from '../../utils/fsUtils'
-import { copyOneFast } from './copyOneFast'
-import { CopyProgressReporter } from './CopyProgressReporter'
+import { atomicMoveWithHandles } from '@main/infrastructure/utils/fsUtils'
+import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
+import { copyOneFast } from '@main/infrastructure/services/copyEngine/copyOneFast'
+import { CopyProgressReporter } from '@main/infrastructure/services/copyEngine/CopyProgressReporter'
 
 interface CopyQueueItem {
   src: string
@@ -62,7 +62,7 @@ export class CopyEngineCore {
     const inferredBase = this.getInferredBase()
     const excludedSet = new Set<string>(this.options.excludedFiles ?? [])
 
-    await fs.promises.mkdir(this.destination, { recursive: true }).catch(() => {})
+    await fs.promises.mkdir(this.destination, { recursive: true }).catch(() => { })
 
     const scanPromise = this.scanner
       .expandPaths(
@@ -81,7 +81,7 @@ export class CopyEngineCore {
           const trueFinalPath = this.options.finalDest ? path.join(this.options.finalDest, rel) : stagingPath
           this.queue.push({ src, destPath: stagingPath, finalPath: trueFinalPath })
         },
-        () => {},
+        () => { },
         (failedPath, errorMsg) => {
           this.reporter.failedCount++
           if (this.reporter.failedFiles.length < MAX_REPORTED_FAILURES) {
@@ -113,7 +113,7 @@ export class CopyEngineCore {
       const item = this.queue.shift()
       if (!item) {
         if (this.isScanningDone) break
-        await new Promise((r) => setTimeout(r, 50))
+        await new Promise((resolve) => setTimeout(resolve, 50))
         continue
       }
 
@@ -144,24 +144,24 @@ export class CopyEngineCore {
         partialBytes = 0
         try {
           if (copyAttempt > 0)
-            await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS * copyAttempt))
+            await new Promise((resolve) => setTimeout(resolve, FAIL_INTERVAL_MS * copyAttempt))
 
           const expectedFileSize = fileSize > 0 ? fileSize : 1
           const stagingDir = path.dirname(destPath)
-          
+
           if (stagingDir !== this.destination && !this.mkdirCache.has(stagingDir)) {
-            await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => {})
+            await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => { })
             this.mkdirCache.add(stagingDir)
           }
 
           // Touch the staging file to anchor the directory
-          await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => {})
+          await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => { })
 
           await copyOneFast(src, destPath, workerBuffer, activeSignal, (chunkSize) => {
             partialBytes += chunkSize
             this.reporter.completedBytes += chunkSize
-            const pct = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
-            this.reporter.reportProgress(src, pct)
+            const progressPercent = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
+            this.reporter.reportProgress(src, progressPercent)
           })
 
           copiedToStaging = true
@@ -181,7 +181,7 @@ export class CopyEngineCore {
         while (moveAttempt < MOVE_RETRIES) {
           if (activeSignal.aborted) break
           try {
-            if (moveAttempt > 0) await new Promise((r) => setTimeout(r, FAIL_INTERVAL_MS))
+            if (moveAttempt > 0) await new Promise((resolve) => setTimeout(resolve, FAIL_INTERVAL_MS))
             await atomicMoveWithHandles(destPath, finalPath)
             success = true
             if (moveAttempt > 0) {

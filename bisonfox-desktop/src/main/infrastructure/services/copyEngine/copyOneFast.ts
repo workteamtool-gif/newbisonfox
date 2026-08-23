@@ -1,5 +1,5 @@
 import * as fs from 'original-fs'
-import { AsyncSemaphore } from '../AsyncSemaphore'
+import { AsyncSemaphore } from '@main/infrastructure/services/AsyncSemaphore'
 import { config } from '@main/appConfig'
 
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
@@ -23,8 +23,8 @@ export async function copyOneFast(
   signal?: AbortSignal,
   onProgressBytes?: (chunkSize: number) => void
 ): Promise<number> {
-  const st = await fs.promises.stat(src).catch(() => null)
-  if (!st) throw new Error('File not accessible')
+  const fileStat = await fs.promises.stat(src).catch(() => null)
+  if (!fileStat) throw new Error('File not accessible')
 
   if (signal?.aborted) return 0
 
@@ -110,7 +110,7 @@ export async function copyOneFast(
     })
   }
 
-  if (st.size > HEAVY_FILE_THRESHOLD) {
+  if (fileStat.size > HEAVY_FILE_THRESHOLD) {
     await heavyLock.acquire()
     try {
       if (signal?.aborted) return 0
@@ -118,9 +118,9 @@ export async function copyOneFast(
     } finally {
       heavyLock.release()
     }
-    return st.size
+    return fileStat.size
   }
 
   await doCopy()
-  return st.size
+  return fileStat.size
 }
