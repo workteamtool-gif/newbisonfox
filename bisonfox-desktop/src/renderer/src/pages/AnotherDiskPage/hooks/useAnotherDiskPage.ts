@@ -34,7 +34,7 @@ export function useAnotherDiskPage() {
         succeededFilesAmount,
         totalFilesAmount,
         failedFilesAmount,
-        userEndpointBaseFolder: config.endpointDestinationFolder
+        interfaceName: config.endpointDestinationFolder.replace(/[/\\]+$/, '').split(/[/\\]/).pop()
       })
     }
   }

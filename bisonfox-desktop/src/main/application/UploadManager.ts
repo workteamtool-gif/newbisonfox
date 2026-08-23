@@ -5,9 +5,11 @@ import { logger } from '@main/infrastructure/loggers/Logger'
 import { UploadValidator } from '@main/domain/interfaces/Validators/UploadValidator'
 import { UploadProgressHandler } from './UploadProgressHandler'
 import type { UploadPayload } from '@shared/entities/UploadPayload'
+import { logMail } from '../infrastructure/loggers/MailLogger'
 
 export class UploadManager {
   private activeUploads: Map<string, AbortController> = new Map()
+  private countFileControllers: Map<string, AbortController> = new Map()
   private sessionSingletonInstance = SessionSingleton.getInstance()
 
   constructor(
@@ -27,6 +29,61 @@ export class UploadManager {
 
     this.sessionSingletonInstance.update(sessionId, { status: 'cancelled' })
     this.notifier.notifyProgress(sessionId, { type: 'cancelled' })
+  }
+
+  public async startCount(scanId: string, selectedPaths: string[], excludedPaths: string[]): Promise<void> {
+    const onCount = (count: number, size: number): void => {
+      this.notifier.notifyCount(scanId, { count, size })
+    }
+
+    const controller = new AbortController()
+    this.countFileControllers.set(scanId, controller)
+
+    try {
+      const { count, size } = await this.fileService.countFiles(selectedPaths, excludedPaths, onCount, controller.signal)
+      this.notifier.notifyCount(scanId, { done: true, count, size })
+    } catch (err: unknown) {
+      this.notifier.notifyCount(scanId, {
+        error: err instanceof Error ? err.message : String(err)
+      })
+    } finally {
+      this.countFileControllers.delete(scanId)
+    }
+  }
+
+  public cancelCount(scanId: string): void {
+    const controller = this.countFileControllers.get(scanId)
+    if (controller) {
+      controller.abort()
+      this.countFileControllers.delete(scanId)
+    }
+  }
+
+  public addDiskFiles(sessionId: string, driveLetter: string, selectedItemPaths: string[], excludedItemPaths: string[] = []): void {
+    const session = this.sessionSingletonInstance.get(sessionId)
+    if (!session) throw new Error('Session not found')
+
+    session.diskSessions.push({
+      driveLetter,
+      selectedItemPaths,
+      excludedItemPaths
+    })
+    this.sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
+  }
+
+  public removeFile(sessionId: string, filePath: string, diskIndex: number): void {
+    const session = this.sessionSingletonInstance.get(sessionId)
+    if (!session) throw new Error('Session not found')
+
+    const diskSession = session.diskSessions[diskIndex]
+    if (diskSession) {
+      diskSession.selectedItemPaths = diskSession.selectedItemPaths.filter((p) => p !== filePath)
+      this.sessionSingletonInstance.update(sessionId, { diskSessions: session.diskSessions })
+    }
+  }
+
+  public logMail(username: string, subfolder: string, succeededFilesAmount: number, totalFilesAmount: number, failedFilesAmount: number, interfaceName: string): void {
+    logMail(username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount, interfaceName)
   }
 
   public cancelAllUploads(): void {

@@ -10,7 +10,7 @@ import { AppDependencies } from '@main/domain/entities/AppDependencies'
 
 
 export function registerIpcHandlers(dependencies: AppDependencies): void {
-  const { diskService, fileService, hardwareService, uploadManager } = dependencies
+  const { diskService, fileService, systemService, uploadManager } = dependencies
 
   // Forwards client-side log events to the backend file logger
   ipcMain.handle(IPC_CHANNELS.SYSTEM.LOG, (_event, { level, context, message, data }) => {
@@ -26,8 +26,8 @@ export function registerIpcHandlers(dependencies: AppDependencies): void {
   })
 
   // ─── Domain Handlers ─────────────────────────────────────────────────────
-  registerSystemHandlers(hardwareService)
+  registerSystemHandlers(systemService)
   registerSessionHandlers()
   registerDriveHandlers(diskService, fileService)
-  registerUploadHandlers(fileService, uploadManager)
+  registerUploadHandlers(uploadManager)
 }

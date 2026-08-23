@@ -33,7 +33,7 @@ export function logMail(
   succeededFilesAmount: number,
   totalFilesAmount: number,
   failedFilesAmount: number,
-  userEndpointBaseFolder: string
+  interfaceName: string
 ): void {
   const dir = resolveMailDir()
   if (!dir) return
@@ -48,7 +48,7 @@ export function logMail(
     succeededFilesAmount,
     totalFilesAmount,
     failedFilesAmount,
-    userEndpointBaseFolder
+    interfaceName
   }
 
   const retries = config.failRetries
