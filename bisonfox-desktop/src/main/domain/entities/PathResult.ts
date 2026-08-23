@@ -1,1 +1,4 @@
-export type PathResult = { fullPath: string; relativePath: string }
+export interface PathResult {
+  fullPath: string
+  relativePath: string
+}

@@ -2,8 +2,8 @@ import { useState, useCallback, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
-import { isSubPath } from '@renderer/utils/paths'
 import { SetupPage, ReviewSelectedItemsPage } from '@renderer/entites/Wizard'
+import { useTreeSelection } from '@renderer/hooks/useTreeSelection'
 import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 
@@ -28,11 +28,9 @@ export function useSelectItemsPage() {
   const [scrollToPath, setScrollToPath] = useState<string | undefined>(undefined)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
 
-  const [selected, setSelected] = useState<Set<string>>(
-    new Set(currentDisk?.selectedItemPaths || [])
-  )
-  const [excluded, setExcluded] = useState<Set<string>>(
-    new Set(currentDisk?.excludedItemPaths || [])
+  const { selected, excluded, handleToggleSelect } = useTreeSelection(
+    currentDisk?.selectedItemPaths || [],
+    currentDisk?.excludedItemPaths || []
   )
 
   const [searching, setSearching] = useState(false)
@@ -42,46 +40,6 @@ export function useSelectItemsPage() {
   const handleLoadChildren = useCallback(async (dirPath: string, page: number) => {
     return driveApi.getDir(dirPath, page)
   }, [])
-
-  const handleToggleSelect = useCallback(
-    (path: string, _isDir: boolean, isExcluded: boolean, isInherited: boolean) => {
-      if (isExcluded) {
-        setExcluded((prev) => {
-          const updatedSet = new Set(prev)
-          updatedSet.delete(path)
-          return updatedSet
-        })
-      } else if (isInherited) {
-        setExcluded((prev) => new Set([...prev, path]))
-      } else {
-        setSelected((prev) => {
-          const updatedSet = new Set(prev)
-          if (updatedSet.has(path)) updatedSet.delete(path)
-          else updatedSet.add(path)
-
-          for (const selectedPath of updatedSet) {
-            if (selectedPath !== path && isSubPath(path, selectedPath)) {
-              updatedSet.delete(selectedPath)
-            }
-          }
-          return updatedSet
-        })
-
-        setExcluded((prev) => {
-          const updatedSet = new Set(prev)
-          let changed = false
-          for (const excludedPath of updatedSet) {
-            if (excludedPath === path || isSubPath(path, excludedPath)) {
-              updatedSet.delete(excludedPath)
-              changed = true
-            }
-          }
-          return changed ? updatedSet : prev
-        })
-      }
-    },
-    []
-  )
 
   const handleCancelSearch = useCallback(() => {
     searchGenRef.current++

@@ -1,14 +1,14 @@
 import { useState, JSX } from 'react'
 
-interface TreePaginationBarProps {
+interface DriveSearchBarProps {
   searching: boolean
   onSearch: (query: string) => Promise<boolean>
 }
 
-export function TreePaginationBar({
+export function DriveSearchBar({
   searching,
   onSearch
-}: TreePaginationBarProps): JSX.Element {
+}: DriveSearchBarProps): JSX.Element {
   const [rootSearchQuery, setRootSearchQuery] = useState('')
 
   const handleSearchSubmit = async (e: React.FormEvent) => {

@@ -1,9 +1,5 @@
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-
-interface ValidationResult {
-  valid: boolean
-  message?: string
-}
+import { ValidationResult } from '@shared/entities/ValidationResult'
 
 interface CreateSessionResult {
   sessionId: string

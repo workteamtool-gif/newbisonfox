@@ -6,6 +6,8 @@ interface ConfirmModalProps {
   message: string
   confirmText?: string
   cancelText?: string
+  icon?: string
+  isRed?: boolean
   onClose: () => void
   onConfirm: () => void
 }
@@ -16,6 +18,8 @@ export function ConfirmModal({
   message,
   confirmText = 'כן, המשך',
   cancelText = 'לא, ביטול',
+  icon = '❓',
+  isRed = false,
   onClose,
   onConfirm
 }: ConfirmModalProps): React.JSX.Element | false {
@@ -23,7 +27,7 @@ export function ConfirmModal({
     isOpen && (
       <div className="confirm-modal">
         <div className="glass-card" style={{ direction: 'rtl' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>❓</div>
+          <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{icon}</div>
           <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
             {title}
           </h2>
@@ -35,7 +39,14 @@ export function ConfirmModal({
             <button className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
               {cancelText}
             </button>
-            <button className="btn btn-primary" onClick={onConfirm} style={{ flex: 1 }}>
+            <button 
+              className="btn btn-primary" 
+              onClick={onConfirm} 
+              style={{ 
+                flex: 1, 
+                ...(isRed ? { background: '#ff4d4d', borderColor: '#ff4d4d', color: '#fff' } : {}) 
+              }}
+            >
               {confirmText}
             </button>
           </div>

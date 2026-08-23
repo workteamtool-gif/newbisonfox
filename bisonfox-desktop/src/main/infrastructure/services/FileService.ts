@@ -6,7 +6,7 @@ import type {
   CopyOptions,
   CopySummary
 } from '@main/domain/interfaces/FileService'
-import { FileScanner } from '@main/infrastructure/services/FileScanner'
+import { countFiles } from '@main/infrastructure/services/countFiles'
 import { listDir, getDirCount, findItemPage as findPageOfItem, deepFindItem } from '@main/infrastructure/services/DirectoryExplorer'
 import { copyFiles } from '@main/infrastructure/services/FileCopyEngine'
 
@@ -17,8 +17,6 @@ const EXCLUDED = new Set<string>([])
  * Implements FileService to interface tree browsing, size counting, and copying modules.
  */
 export class FileService implements IFileService {
-  private readonly scanner = new FileScanner()
-
   // ────────────────────────────────── TREE BROWSING ──────────────────────────
 
   /**
@@ -84,7 +82,7 @@ export class FileService implements IFileService {
     onCount: (count: number, size: number) => void,
     signal: AbortSignal
   ): Promise<{ count: number; size: number }> {
-    return this.scanner.countFiles(files, EXCLUDED, 1, excludedFiles, onCount, signal)
+    return countFiles(files, EXCLUDED, 1, excludedFiles, onCount, signal)
   }
 
   // ────────────────────────────────── COPY ENGINE ────────────────────────────
@@ -94,7 +92,7 @@ export class FileService implements IFileService {
     destination: string,
     options: CopyOptions
   ): Promise<CopySummary> {
-    return copyFiles(this.scanner, initialPaths, destination, options)
+    return copyFiles(initialPaths, destination, options)
   }
 
   /**

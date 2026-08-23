@@ -1,7 +1,7 @@
 import fs from 'original-fs'
 import path from 'path'
 import type { SpecialCodeValidator as ISpecialCodeValidator } from '@main/domain/interfaces/Validators/SpecialCodeValidator'
-import { ValidationResult } from '@main/domain/entities/ValidationInfo'
+import { ValidationResult } from '@shared/entities/ValidationResult'
 import { SessionSingleton } from '@main/application/UploadSession'
 import { config } from '@main/appConfig'
 

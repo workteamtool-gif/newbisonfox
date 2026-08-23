@@ -6,7 +6,7 @@ import { uploadApi } from '@renderer/services/uploadApi'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
 import { UploadPage, SetupPage, SelectItemsPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
-import { isSubPath } from '@renderer/utils/paths'
+import { useTreeSelection } from '@renderer/hooks/useTreeSelection'
 
 export function useReviewSelectedItemsPage() {
   const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username } =
@@ -15,8 +15,8 @@ export function useReviewSelectedItemsPage() {
   useDriveMonitor()
 
   const [nodes, setNodes] = useState<ItemNode[]>([])
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [excluded, setExcluded] = useState<Set<string>>(new Set())
+  const { selected, setSelected, excluded, setExcluded, handleToggleSelect } = useTreeSelection()
+
   const [saving, setSaving] = useState(false)
   const [syncError, setSyncError] = useState<string | null>(null)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
@@ -44,46 +44,6 @@ export function useReviewSelectedItemsPage() {
   const handleLoadChildren = useCallback(async (dirPath: string, page: number) => {
     return driveApi.getDir(dirPath, page)
   }, [])
-
-  const handleToggleSelect = useCallback(
-    (path: string, _isDir: boolean, isExcluded: boolean, isInherited: boolean) => {
-      if (isExcluded) {
-        setExcluded((prev) => {
-          const updatedSet = new Set(prev)
-          updatedSet.delete(path)
-          return updatedSet
-        })
-      } else if (isInherited) {
-        setExcluded((prev) => new Set([...prev, path]))
-      } else {
-        setSelected((prev) => {
-          const updatedSet = new Set(prev)
-          if (updatedSet.has(path)) updatedSet.delete(path)
-          else updatedSet.add(path)
-
-          for (const selectedPath of updatedSet) {
-            if (selectedPath !== path && isSubPath(path, selectedPath)) {
-              updatedSet.delete(selectedPath)
-            }
-          }
-          return updatedSet
-        })
-
-        setExcluded((prev) => {
-          const updatedSet = new Set(prev)
-          let changed = false
-          for (const excludedPath of updatedSet) {
-            if (excludedPath === path || isSubPath(path, excludedPath)) {
-              updatedSet.delete(excludedPath)
-              changed = true
-            }
-          }
-          return changed ? updatedSet : prev
-        })
-      }
-    },
-    []
-  )
 
   async function handleStartUpload(): Promise<void | null> {
     if (!currentDisk) return

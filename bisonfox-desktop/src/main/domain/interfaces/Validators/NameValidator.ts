@@ -1,4 +1,4 @@
-import { ValidationResult } from '@main/domain/entities/ValidationInfo'
+import { ValidationResult } from '@shared/entities/ValidationResult'
 
 export interface NameValidator {
   validate(name: string): ValidationResult

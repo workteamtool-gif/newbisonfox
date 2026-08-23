@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { uploadApi } from '@renderer/services/uploadApi'
-import { CancelModal } from '@renderer/components/CancelModal/CancelModal'
+import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 import { WizardHeader } from '@renderer/components/WizardHeader/WizardHeader'
 import { clientLogger } from '@renderer/utils/logger'
 import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
@@ -51,10 +51,16 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
 
   return (
     <div className={layoutClass}>
-      <CancelModal
+      <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setCancelModalOpen(false)}
         onConfirm={handleConfirmCancel}
+        title="האם אתה רוצה לצאת?"
+        message=""
+        confirmText="כן, לצאת"
+        cancelText="לא, להמשיך"
+        icon="⚠️"
+        isRed={true}
       />
       {showSteppersAndHeader && <WizardHeader onCancelClick={() => setCancelModalOpen(true)} />}
 

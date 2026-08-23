@@ -2,7 +2,7 @@ import { JSX } from 'react'
 import { FileTree } from '@renderer/components/FileTree'
 import { NavigationOptions } from '@renderer/components/NavigationOptions/NavigationOptions'
 import { useSelectItemsPage } from '@renderer/pages/SelectItemsPage/hooks/useSelectItemsPage'
-import { TreePaginationBar } from '@renderer/pages/SelectItemsPage/components/TreePaginationBar'
+import { DriveSearchBar } from '@renderer/pages/SelectItemsPage/components/DriveSearchBar'
 import '@renderer/pages/SelectItemsPage/SelectItemsPage.css'
 
 export function SelectItemsPage(): JSX.Element {
@@ -38,7 +38,7 @@ export function SelectItemsPage(): JSX.Element {
         <span>נבחרו {selectedCount} פריטים</span>
       </div>
 
-      <TreePaginationBar searching={searching} onSearch={handleSearchRootSubmit} />
+      <DriveSearchBar searching={searching} onSearch={handleSearchRootSubmit} />
 
       {searching && (
         <div className="loading-container">

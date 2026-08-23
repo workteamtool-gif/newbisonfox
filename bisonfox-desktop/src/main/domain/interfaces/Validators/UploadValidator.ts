@@ -1,4 +1,4 @@
-import { ValidationResult } from '@main/domain/entities/ValidationInfo'
+import { ValidationResult } from '@shared/entities/ValidationResult'
 import { UploadValidationData } from '@main/domain/entities/UploadValidationData'
 import { UploadSession } from '@main/domain/entities/UploadSession'
 import { UploadPayload } from '@shared/entities/UploadPayload'

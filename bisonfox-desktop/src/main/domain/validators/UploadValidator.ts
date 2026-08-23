@@ -1,7 +1,7 @@
 import path from 'path'
 import { logger, getFirstMacAddress } from '@main/infrastructure/loggers/Logger'
 import type { UploadSession } from '@main/domain/entities/UploadSession'
-import { ValidationResult } from '@main/domain/entities/ValidationInfo'
+import { ValidationResult } from '@shared/entities/ValidationResult'
 import type { UploadValidationData } from '@main/domain/entities/UploadValidationData'
 import type { UploadPayload } from '@shared/entities/UploadPayload'
 import { config } from '@main/appConfig'

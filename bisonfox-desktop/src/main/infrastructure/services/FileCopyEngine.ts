@@ -1,5 +1,4 @@
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/FileService'
-import { FileScanner } from '@main/domain/interfaces/FileScanner'
 import { CopyEngineCore } from '@main/infrastructure/services/copyEngine/CopyEngineCore'
 
 /**
@@ -13,11 +12,10 @@ import { CopyEngineCore } from '@main/infrastructure/services/copyEngine/CopyEng
  * @param options Copy options and progress/scanning callback configuration.
  */
 export async function copyFiles(
-  scanner: FileScanner,
   initialPaths: string[],
   destination: string,
   options: CopyOptions
 ): Promise<CopySummary> {
-  const engine = new CopyEngineCore(scanner, initialPaths, destination, options)
+  const engine = new CopyEngineCore(initialPaths, destination, options)
   return engine.start()
 }

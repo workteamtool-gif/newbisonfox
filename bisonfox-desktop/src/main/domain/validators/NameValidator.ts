@@ -1,5 +1,5 @@
 import type { NameValidator as INameValidator } from '@main/domain/interfaces/Validators/NameValidator'
-import { ValidationResult } from '@main/domain/entities/ValidationInfo'
+import { ValidationResult } from '@shared/entities/ValidationResult'
 import { config } from '@main/appConfig'
 
 export class NameValidator implements INameValidator {

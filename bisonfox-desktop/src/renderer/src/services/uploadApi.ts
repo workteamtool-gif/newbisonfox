@@ -1,6 +1,6 @@
 import { clientLogger } from '@renderer/utils/logger'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
-import { ProgressMessage } from '@renderer/entites/ProgressMessage'
+import { ProgressMessage } from '@shared/entities/ProgressMessage'
 
 export const uploadApi = {
   countFiles: async (

@@ -1,13 +1,13 @@
 import * as fs from 'original-fs'
 import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
-import { FileScanner } from '@main/domain/interfaces/FileScanner'
 import { CopyOptions, CopySummary } from '@main/domain/interfaces/FileService'
 import { config } from '@main/appConfig'
 import { atomicMoveWithHandles } from '@main/infrastructure/utils/fsUtils'
 import { BackpressureGate } from '@main/infrastructure/services/BackpressureGate'
 import { copyOneFast } from '@main/infrastructure/services/copyEngine/copyOneFast'
 import { CopyProgressReporter } from '@main/infrastructure/services/copyEngine/CopyProgressReporter'
+import { expandPaths } from '@main/infrastructure/services/expandPaths'
 
 interface CopyQueueItem {
   src: string
@@ -36,7 +36,6 @@ export class CopyEngineCore {
   private readonly reporter: CopyProgressReporter
 
   constructor(
-    private readonly scanner: FileScanner,
     private readonly initialPaths: string[],
     private readonly destination: string,
     private readonly options: CopyOptions
@@ -64,8 +63,7 @@ export class CopyEngineCore {
 
     await fs.promises.mkdir(this.destination, { recursive: true }).catch(() => { })
 
-    const scanPromise = this.scanner
-      .expandPaths(
+    const scanPromise = expandPaths(
         this.initialPaths,
         inferredBase,
         EXCLUDED,
