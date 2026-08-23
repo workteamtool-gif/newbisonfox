@@ -114,9 +114,9 @@ class Logger {
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
     } else {
-      const macFolder = getFirstMacAddress()
-      this.finalLogDir = path.resolve(envLogDir, macFolder)
-      this.stagingLogDir = path.resolve(uploadingStagingDir, 'app_logs_staging', macFolder)
+      const macAddress = getFirstMacAddress()
+      this.finalLogDir = path.resolve(envLogDir)
+      this.stagingLogDir = path.resolve(uploadingStagingDir, 'app_logs_staging')
 
       if (!fs.existsSync(this.finalLogDir)) fs.mkdirSync(this.finalLogDir, { recursive: true })
       if (!fs.existsSync(this.stagingLogDir)) fs.mkdirSync(this.stagingLogDir, { recursive: true })
@@ -124,7 +124,7 @@ class Logger {
       try {
         const files = fs.readdirSync(this.stagingLogDir)
         for (const file of files) {
-          if (file.endsWith('.json')) {
+          if (file.endsWith('.json') && file.includes(macAddress)) {
             const src = path.join(this.stagingLogDir, file)
             const dest = path.join(this.finalLogDir, file)
             safeMoveFileSync(src, dest)
@@ -150,7 +150,8 @@ class Logger {
 
     if (this.stagingLogDir) {
       const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\./g, '-')
-      const fileName = `${timestamp}.json`
+      const macAddress = getFirstMacAddress()
+      const fileName = `${timestamp}-${macAddress}.json`
 
       transports.push(
         new winston.transports.File({
@@ -250,9 +251,10 @@ class Logger {
     if (!this.stagingLogDir || !this.finalLogDir) return
 
     try {
+      const macAddress = getFirstMacAddress()
       const files = await fs.promises.readdir(this.stagingLogDir)
       for (const file of files) {
-        if (file.endsWith('.json')) {
+        if (file.endsWith('.json') && file.includes(macAddress)) {
           const src = path.join(this.stagingLogDir, file)
           const dest = path.join(this.finalLogDir, file)
           await safeMoveFile(src, dest)

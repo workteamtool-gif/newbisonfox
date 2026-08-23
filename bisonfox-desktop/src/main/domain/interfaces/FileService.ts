@@ -51,7 +51,5 @@ export interface FileService {
     signal?: AbortSignal
   ): Promise<{ count: number; size: number }>
 
-  moveDir(src: string, dest: string): Promise<void>
-
   deleteDir(dirPath: string): Promise<void>
 }
