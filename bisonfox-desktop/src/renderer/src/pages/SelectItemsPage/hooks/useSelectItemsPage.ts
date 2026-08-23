@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
 import { ItemNode } from '@shared/entities/ItemNode'
 import { driveApi } from '@renderer/services/driveApi'
@@ -6,17 +6,24 @@ import { isSubPath } from '@renderer/utils/paths'
 import { SetupPage, ReviewSelectedItemsPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { useDriveMonitor } from '@renderer/hooks/useDriveMonitor'
-import { getConfig } from '@renderer/services/configService'
 
 export function useSelectItemsPage() {
   const { setStep, currentDisk, setCurrentDisk, currentSubfolder } = useWizardStore()
 
   useDriveMonitor()
 
-  const [tree, setTree] = useState<ItemNode[]>([])
-  const [rootPage, setRootPage] = useState(1)
-  const [rootTotalPages, setRootTotalPages] = useState(1)
-  const [rootHasMore, setRootHasMore] = useState(false)
+  // Synthesize a single root node for the drive — no upfront fetch needed.
+  // The TreeNode component handles lazy loading of children on expand.
+  const driveNode: ItemNode | null = currentDisk?.driveLetter
+    ? {
+        name: currentDisk.driveLetter,
+        absolutePath: currentDisk.driveLetter,
+        isDirectory: true,
+        hasChildren: true
+      }
+    : null
+
+  const tree: ItemNode[] = driveNode ? [driveNode] : []
 
   const [scrollToPath, setScrollToPath] = useState<string | undefined>(undefined)
   const [autoExpandMap, setAutoExpandMap] = useState<Record<string, number>>({})
@@ -28,127 +35,9 @@ export function useSelectItemsPage() {
     new Set(currentDisk?.excludedItemPaths || [])
   )
 
-  const [loading, setLoading] = useState(true)
-  const [pageLoading, setPageLoading] = useState(false)
   const [searching, setSearching] = useState(false)
   const searchGenRef = useRef(0)
   const [saving, setSaving] = useState(false)
-
-  const [rootCountLoading, setRootCountLoading] = useState(false)
-
-  useEffect(() => {
-    if (!currentDisk) return
-
-    let isMounted = true
-    setLoading(true)
-
-    const timeoutId = setTimeout(() => {
-      driveApi
-        .getDir(currentDisk.driveLetter!, 1)
-        .then((treeResponse) => {
-          if (!isMounted) return
-          setTree(treeResponse.nodes)
-          setRootPage(1)
-          setRootHasMore(treeResponse.hasMore)
-          setRootTotalPages(treeResponse.totalPages ?? 1)
-          setLoading(false)
-
-          if (treeResponse.totalPages === -1) {
-            setRootCountLoading(true)
-            driveApi
-              .getDirCount(currentDisk.driveLetter!)
-              .then((count) => {
-                if (!isMounted) return
-                getConfig()
-                  .then((config) => {
-                    if (!isMounted) return
-                    const limit = config.itemsInOnePage || 48
-                    setRootTotalPages(Math.max(1, Math.ceil(count / limit)))
-                    setRootCountLoading(false)
-                  })
-                  .catch((err) => {
-                    if (!isMounted) return
-                    console.error('Failed to load config for tree pages', err)
-                    setRootCountLoading(false)
-                  })
-              })
-              .catch(() => {
-                if (!isMounted) return
-                setRootTotalPages(1)
-                setRootCountLoading(false)
-              })
-          }
-        })
-        .catch(() => {
-          if (isMounted) setLoading(false)
-        })
-    }, 50)
-
-    return () => {
-      isMounted = false
-      clearTimeout(timeoutId)
-    }
-  }, [currentDisk])
-
-  const handleLoadNextRoot = useCallback(async () => {
-    if (!currentDisk || !rootHasMore) return
-    const nextPage = rootPage + 1
-    setPageLoading(true)
-    try {
-      const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, nextPage)
-      setTree(treeResponse.nodes)
-      setRootPage(nextPage)
-      setRootHasMore(treeResponse.hasMore)
-      setRootTotalPages((prev) =>
-        treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
-          ? treeResponse.totalPages
-          : prev
-      )
-    } finally {
-      setPageLoading(false)
-    }
-  }, [currentDisk, rootPage, rootHasMore])
-
-  const handleLoadPrevRoot = useCallback(async () => {
-    if (!currentDisk || rootPage <= 1) return
-    const prevPage = rootPage - 1
-    setPageLoading(true)
-    try {
-      const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, prevPage)
-      setTree(treeResponse.nodes)
-      setRootPage(prevPage)
-      setRootHasMore(true)
-      setRootTotalPages((prev) =>
-        treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
-          ? treeResponse.totalPages
-          : prev
-      )
-    } finally {
-      setPageLoading(false)
-    }
-  }, [currentDisk, rootPage])
-
-  const handleJumpToPage = useCallback(
-    async (targetPage: number) => {
-      if (!currentDisk || targetPage < 1 || targetPage > rootTotalPages || targetPage === rootPage)
-        return
-      setPageLoading(true)
-      try {
-        const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, targetPage)
-        setTree(treeResponse.nodes)
-        setRootPage(targetPage)
-        setRootHasMore(treeResponse.hasMore)
-        setRootTotalPages((prev) =>
-          treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
-            ? treeResponse.totalPages
-            : prev
-        )
-      } finally {
-        setPageLoading(false)
-      }
-    },
-    [currentDisk, rootPage, rootTotalPages]
-  )
 
   const handleLoadChildren = useCallback(async (dirPath: string, page: number) => {
     return driveApi.getDir(dirPath, page)
@@ -197,7 +86,6 @@ export function useSelectItemsPage() {
   const handleCancelSearch = useCallback(() => {
     searchGenRef.current++
     setSearching(false)
-    setLoading(false)
     useWizardStore.getState().setToast('החיפוש בוטל.', 'info')
   }, [])
 
@@ -206,69 +94,21 @@ export function useSelectItemsPage() {
 
     const gen = ++searchGenRef.current
     setSearching(true)
-    setLoading(true)
     useWizardStore.getState().setToast(`מחפש בכונן עבור "${query}"...`, 'info')
 
     try {
-      const targetPage = await driveApi.findItemPage(currentDisk.driveLetter!, query)
+      const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
       if (gen !== searchGenRef.current) return false
 
-      if (targetPage !== null) {
-        const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, targetPage)
-        if (gen !== searchGenRef.current) return false
-
-        setTree(treeResponse.nodes)
-        setRootPage(targetPage)
-        setRootHasMore(treeResponse.hasMore)
-        setRootTotalPages((prev) =>
-          treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
-            ? treeResponse.totalPages
-            : prev !== -1
-              ? prev
-              : Math.max(1, targetPage)
-        )
-
-        const match = treeResponse.nodes.find((node) =>
-          node.name.toLowerCase().includes(query.toLowerCase())
-        )
-        if (match) {
-          setScrollToPath(match.absolutePath)
-          useWizardStore.getState().setToast(`נמצא "${match.name}"`, 'success')
-        } else {
-          useWizardStore.getState().setToast(`נמצאה התאמה! מציג עמוד ${targetPage}.`, 'info')
-        }
-        return false
+      if (deepMatch) {
+        useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
+        setAutoExpandMap(deepMatch.pages)
+        setScrollToPath(deepMatch.path)
+        return true
       } else {
-        const deepMatch = await driveApi.deepFindItem(currentDisk.driveLetter!, query)
-        if (gen !== searchGenRef.current) return false
-
-        if (deepMatch) {
-          useWizardStore.getState().setToast(`נמצא! פותח את נתיב התיקייה כעת.`, 'success')
-          const expandedPages = deepMatch.pages
-          const rootTargetPage = expandedPages[currentDisk.driveLetter!] || 1
-
-          const treeResponse = await driveApi.getDir(currentDisk.driveLetter!, rootTargetPage)
-          if (gen !== searchGenRef.current) return false
-
-          setTree(treeResponse.nodes)
-          setRootPage(rootTargetPage)
-          setRootHasMore(treeResponse.hasMore)
-          setRootTotalPages((prev) =>
-            treeResponse.totalPages !== undefined && treeResponse.totalPages !== -1
-              ? treeResponse.totalPages
-              : prev !== -1
-                ? prev
-                : Math.max(1, rootTargetPage)
-          )
-
-          setAutoExpandMap(expandedPages)
-          setScrollToPath(deepMatch.path)
-          return true
-        } else {
-          useWizardStore
-            .getState()
-            .setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
-        }
+        useWizardStore
+          .getState()
+          .setToast(`לא הצלחנו למצוא קובץ או תיקייה בשם זה בכונן.`, 'warning')
       }
     } catch {
       if (gen !== searchGenRef.current) return false
@@ -276,7 +116,6 @@ export function useSelectItemsPage() {
     } finally {
       if (gen === searchGenRef.current) {
         setSearching(false)
-        setLoading(false)
       }
     }
     return false
@@ -309,24 +148,15 @@ export function useSelectItemsPage() {
 
   return {
     tree,
-    rootPage,
-    rootTotalPages,
-    rootCountLoading,
-    rootHasMore,
     scrollToPath,
     setScrollToPath,
     autoExpandMap,
     setAutoExpandMap,
     selected,
     excluded,
-    loading,
-    pageLoading,
     searching,
     saving,
     currentDisk,
-    handleLoadNextRoot,
-    handleLoadPrevRoot,
-    handleJumpToPage,
     handleLoadChildren,
     handleToggleSelect,
     handleCancelSearch,

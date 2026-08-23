@@ -8,24 +8,15 @@ import './SelectItemsPage.css'
 export function SelectItemsPage(): JSX.Element {
   const {
     tree,
-    rootPage,
-    rootTotalPages,
-    rootCountLoading,
-    rootHasMore,
     scrollToPath,
     setScrollToPath,
     autoExpandMap,
     setAutoExpandMap,
     selected,
     excluded,
-    loading,
-    pageLoading,
     searching,
     saving,
     currentDisk,
-    handleLoadNextRoot,
-    handleLoadPrevRoot,
-    handleJumpToPage,
     handleLoadChildren,
     handleToggleSelect,
     handleCancelSearch,
@@ -46,55 +37,34 @@ export function SelectItemsPage(): JSX.Element {
         </span>
         <span>נבחרו {selectedCount} פריטים</span>
       </div>
-      {loading ? (
+
+      <TreePaginationBar searching={searching} onSearch={handleSearchRootSubmit} />
+
+      {searching && (
         <div className="loading-container">
           <p>
-            <span className="spin">⟳</span> {searching ? 'מחפש...' : 'קורא כונן...'}
+            <span className="spin">⟳</span> מחפש...
           </p>
-          {searching && (
-            <button className="btn btn-secondary cancel-search-btn" onClick={handleCancelSearch}>
-              ✕ ביטול חיפוש
-            </button>
-          )}
+          <button className="btn btn-secondary cancel-search-btn" onClick={handleCancelSearch}>
+            ✕ ביטול חיפוש
+          </button>
         </div>
-      ) : (
-        <>
-          <TreePaginationBar
-            rootPage={rootPage}
-            rootTotalPages={rootTotalPages}
-            rootCountLoading={rootCountLoading}
-            rootHasMore={rootHasMore}
-            loading={pageLoading}
-            searching={searching}
-            onLoadPrevRoot={handleLoadPrevRoot}
-            onLoadNextRoot={handleLoadNextRoot}
-            onJumpToPage={handleJumpToPage}
-            onSearch={handleSearchRootSubmit}
-          />
-          {pageLoading ? (
-            <div className="loading-container">
-              <p>
-                <span className="spin">⟳</span> קורא כונן...
-              </p>
-            </div>
-          ) : (
-            <FileTree
-              nodes={tree}
-              selected={selected}
-              excluded={excluded}
-              onToggleSelect={handleToggleSelect}
-              onLoadChildren={handleLoadChildren}
-              autoExpandMap={autoExpandMap}
-              onAutoExpand={(map, targetPath) => {
-                setAutoExpandMap(map)
-                if (targetPath) setScrollToPath(targetPath)
-              }}
-              scrollToPath={scrollToPath}
-              onScrolled={() => setScrollToPath(undefined)}
-            />
-          )}
-        </>
       )}
+
+      <FileTree
+        nodes={tree}
+        selected={selected}
+        excluded={excluded}
+        onToggleSelect={handleToggleSelect}
+        onLoadChildren={handleLoadChildren}
+        autoExpandMap={autoExpandMap}
+        onAutoExpand={(map, targetPath) => {
+          setAutoExpandMap(map)
+          if (targetPath) setScrollToPath(targetPath)
+        }}
+        scrollToPath={scrollToPath}
+        onScrolled={() => setScrollToPath(undefined)}
+      />
 
       <NavigationOptions
         onBack={handleBack}
