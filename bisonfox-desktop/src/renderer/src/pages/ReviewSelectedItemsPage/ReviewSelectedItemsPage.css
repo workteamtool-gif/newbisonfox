@@ -12,8 +12,8 @@
 
 .review-disk-info {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.6rem;
     margin-bottom: 1rem;
-    direction: ltr;
-    font-size: 1rem;
+    font-size: 1.8rem;
 }

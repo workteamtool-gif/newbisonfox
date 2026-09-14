@@ -19,7 +19,9 @@ export function ReviewSelectedItemsPage(): JSX.Element | null {
     handleLoadChildren,
     handleToggleSelect,
     handleStartUpload,
-    handleBack
+    handleBack,
+    username,
+    currentSubfolder
   } = useReviewSelectedItemsPage()
 
   if (!currentDisk) {
@@ -30,13 +32,18 @@ export function ReviewSelectedItemsPage(): JSX.Element | null {
 
   return (
     <div className="glass-card">
-      <p className="page-title">אישור הקבצים להעלאה</p>
+      <p className="page-title">אישור המידע להעלאה</p>
 
       <div className="info-box review-disk-info">
-        <span>
-          💿 <strong>{currentDisk.driveLetter}</strong>
-        </span>
-        <span>נבחרו {fileCount} פריטים</span>
+        <div className="review-disk-info-row ltr-row">
+          <span className="rtl-row">נבחרו {fileCount} פריטים</span>
+        </div>
+        <div className="review-disk-info-row rtl-row review-meta">
+          <span>👤 משתמש: <strong>{username}</strong></span>
+        </div>        
+        <div className="review-disk-info-row rtl-row review-meta">
+          <span>📁 תיקייה: <strong>{currentSubfolder || '(ללא)'}</strong></span>
+        </div>
       </div>
 
       {nodes.length === 0 ? (

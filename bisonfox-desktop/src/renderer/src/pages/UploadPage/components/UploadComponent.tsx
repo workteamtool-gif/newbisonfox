@@ -7,8 +7,6 @@ export interface UploadComponentProps {
   showFailedReview: boolean
   uploadDone: boolean
   phaseLabel: JSX.Element
-  totalDiscovered: number
-  shown: number
   completedCount: number
   failedCount: number
   overallPercentage: number
@@ -26,8 +24,6 @@ export function UploadComponent({
   showFailedReview,
   uploadDone,
   phaseLabel,
-  totalDiscovered,
-  shown,
   completedCount,
   failedCount,
   overallPercentage,
@@ -57,8 +53,6 @@ export function UploadComponent({
 
       {/* Stats row */}
       <StatsUpload
-        totalDiscovered={totalDiscovered}
-        shown={shown}
         completedCount={completedCount}
         failedCount={failedCount}
         overallPercentage={overallPercentage}

@@ -1,8 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react'
 
 export interface StatsUploadProps {
-  totalDiscovered: number
-  shown: number
   completedCount: number
   failedCount: number
   overallPercentage: number
@@ -23,8 +21,6 @@ function formatEta(seconds: number): string {
 }
 
 export function StatsUpload({
-  totalDiscovered,
-  shown,
   completedCount,
   failedCount,
   overallPercentage,
@@ -136,16 +132,6 @@ export function StatsUpload({
   return (
     <>
       <div className={`upload-stats ${!showTotalReview ? 'upload-stats--4cols' : ''}`}>
-        <div className="stat-card">
-          <div className="stat-val">
-            {totalDiscovered > 0 ? totalDiscovered.toLocaleString() : shown}
-          </div>
-          <div className="stat-lbl">סה"כ קבצים</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-val">{completedCount.toLocaleString()}</div>
-          <div className="stat-lbl">הועתקו</div>
-        </div>
         <div className="stat-card">
           <div
             className="stat-val"

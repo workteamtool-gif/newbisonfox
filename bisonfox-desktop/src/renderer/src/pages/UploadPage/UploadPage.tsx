@@ -38,7 +38,6 @@ export function UploadPage(): JSX.Element | null {
 
   if (!currentDisk) return null
 
-  const shown = totalDiscovered || preCalcTotal || currentDisk.selectedItemPaths.length
   const doneTotal = completedCount + failedCount
 
   const phaseLabel =
@@ -78,8 +77,6 @@ export function UploadPage(): JSX.Element | null {
           showFailedReview={showFailedReview}
           uploadDone={uploadDone}
           phaseLabel={phaseLabel}
-          totalDiscovered={totalDiscovered}
-          shown={shown}
           completedCount={completedCount}
           failedCount={failedCount}
           overallPercentage={overallPercentage}

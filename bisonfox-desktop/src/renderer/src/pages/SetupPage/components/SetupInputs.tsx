@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useState } from 'react'
 
 interface UserNameInputProps {
   name: string
@@ -120,36 +120,49 @@ export function SpecialCodeInput({
   maxSpecialCodeLength,
   setActiveInput
 }: SpecialCodeInputProps): JSX.Element {
+  const [expanded, setExpanded] = useState(false)
+
   return (
-    <div className="form-group">
-      <label className="form-label" htmlFor="specialCode-input">
-        רשום את הקוד אם אתה משתמש מיוחד  (אם אתה לא יודע מה זה - כנראה זה לא רלוונטי עבורך):
-      </label>
-      <input
-        id="specialCode-input"
-        className={`form-input setup-input-ltr ${specialCodeError ? 'error' : ''}`}
-        type="text"
-        maxLength={maxSpecialCodeLength}
-        value={specialCode}
-        onFocus={() => setActiveInput('specialCode')}
-        onChange={(e) => {
-          setSpecialCode(e.target.value)
-        }}
-      />
-      <span
-        className="form-msg setup-form-msg"
-        style={{
-          visibility:
-            specialCodeError || specialCode.length >= maxSpecialCodeLength ? 'visible' : 'hidden',
-          color: specialCodeError ? 'var(--accent-red)' : 'var(--accent-orange)'
-        }}
+    <div className="form-group special-code-wrapper">
+      <button
+        type="button"
+        className={`special-code-toggle-btn ${expanded ? 'expanded' : ''}`}
+        onClick={() => setExpanded((prev) => !prev)}
       >
-        ⚠{' '}
-        {specialCodeError ||
-          (specialCode.length >= maxSpecialCodeLength
-            ? `הגעת למגבלת התווים המקסימלית (${maxSpecialCodeLength} תווים).`
-            : '')}
-      </span>
+        <span>{expanded ? 'סגור' : 'לחץ אם יש לך קוד מיוחד'}</span>
+        <span className="special-code-chevron">{expanded ? '▲' : '▼'}</span>
+      </button>
+
+      {expanded && (
+        <div className="special-code-content">
+          <input
+            id="specialCode-input"
+            className={`form-input setup-input-ltr ${specialCodeError ? 'error' : ''}`}
+            type="text"
+            maxLength={maxSpecialCodeLength}
+            value={specialCode}
+            autoFocus
+            onFocus={() => setActiveInput('specialCode')}
+            onChange={(e) => {
+              setSpecialCode(e.target.value)
+            }}
+          />
+          <span
+            className="form-msg setup-form-msg"
+            style={{
+              visibility:
+                specialCodeError || specialCode.length >= maxSpecialCodeLength ? 'visible' : 'hidden',
+              color: specialCodeError ? 'var(--accent-red)' : 'var(--accent-orange)'
+            }}
+          >
+            ⚠{' '}
+            {specialCodeError ||
+              (specialCode.length >= maxSpecialCodeLength
+                ? `הגעת למגבלת התווים המקסימלית (${maxSpecialCodeLength} תווים).`
+                : '')}
+          </span>
+        </div>
+      )}
     </div>
   )
 }

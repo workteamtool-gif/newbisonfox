@@ -9,7 +9,7 @@ import { clientLogger } from '@renderer/utils/logger'
 import { useTreeSelection } from '@renderer/hooks/useTreeSelection'
 
 export function useReviewSelectedItemsPage() {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username } =
+  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username, currentSubfolder } =
     useWizardStore()
 
   useDriveMonitor()
@@ -109,6 +109,8 @@ export function useReviewSelectedItemsPage() {
     handleLoadChildren,
     handleToggleSelect,
     handleStartUpload,
-    handleBack
+    handleBack,
+    username,
+    currentSubfolder
   }
 }
