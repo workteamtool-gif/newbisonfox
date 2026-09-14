@@ -18,7 +18,6 @@ export function AnotherDiskChoices({ onYes, onNo }: AnotherDiskChoicesProps): JS
       >
         <span className="choice-emoji">💿</span>
         <span className="choice-label">כן, הוסף עוד כונן</span>
-        <span className="choice-sub">חבר כונן נוסף כדי להמשיך</span>
       </div>
 
       <div
@@ -31,7 +30,6 @@ export function AnotherDiskChoices({ onYes, onNo }: AnotherDiskChoicesProps): JS
       >
         <span className="choice-emoji">✅</span>
         <span className="choice-label">לא, סיימתי</span>
-        <span className="choice-sub">עבור לעמוד הסיום</span>
       </div>
     </div>
   )
