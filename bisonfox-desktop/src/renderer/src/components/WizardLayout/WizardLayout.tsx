@@ -4,7 +4,7 @@ import { uploadApi } from '@renderer/services/uploadApi'
 import { ConfirmModal } from '@renderer/components/ConfirmModal/ConfirmModal'
 import { WizardHeader } from '@renderer/components/WizardHeader/WizardHeader'
 import { clientLogger } from '@renderer/utils/logger'
-import { WelcomePage, FinalPage } from '@renderer/entites/Wizard'
+import { WelcomePage } from '@renderer/entites/Wizard'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import '@renderer/components/WizardLayout/WizardLayout.css'
 import { WizardBody } from '@renderer/components/WizardBody/WizardBody'
@@ -45,7 +45,7 @@ export function WizardLayout({ children }: Props): React.JSX.Element {
     window.api.invoke(IPC_CHANNELS.SYSTEM.CLOSE)
   }
 
-  const showSteppersAndHeader = step !== WelcomePage && step !== FinalPage
+  const showSteppersAndHeader = step !== WelcomePage
 
   const layoutClass = `wizard-layout${isKeyboardVisible ? ' wizard-layout--with-keyboard' : ''}${!showSteppersAndHeader ? ' wizard-layout--no-header' : ''}`
 

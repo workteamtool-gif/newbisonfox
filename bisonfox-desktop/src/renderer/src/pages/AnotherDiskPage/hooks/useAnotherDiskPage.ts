@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { useWizardStore } from '@renderer/store/useWizardStore'
-import { SetupPage, FinalPage } from '@renderer/entites/Wizard'
+import { SetupPage } from '@renderer/entites/Wizard'
 import { clientLogger } from '@renderer/utils/logger'
 import { IPC_CHANNELS } from '@shared/constants/ipcChannels'
 import { getConfig } from '@renderer/services/configService'
@@ -16,7 +16,19 @@ export function useAnotherDiskPage() {
     currentSubfolder
   } = useWizardStore()
   const [countdown, setCountdown] = useState(150)
+  const [destinationUserEndpoint, setDestinationUserEndpoint] = useState('')
   const mailLogged = useRef(false)
+
+  useEffect(() => {
+    let mounted = true
+    getConfig()
+      .then((config) => {
+        if (mounted) setDestinationUserEndpoint(config.endpointDestinationFolder)
+      })
+      .catch((err) => clientLogger.error(
+        'AnotherDiskPage', 'Failed to load config for another disk page', err))
+    return () => { mounted = false }
+  }, [])
 
   useEffect(() => {
     const logMail = async () => {
@@ -64,8 +76,8 @@ export function useAnotherDiskPage() {
   }
 
   function handleNo(): void {
-    clientLogger.info('AnotherDiskPage', `Finishing session and moving to FinalPage`)
-    setStep(FinalPage)
+    clientLogger.info('AnotherDiskPage', `Finishing session, closing app`)
+    window.api.invoke(IPC_CHANNELS.SYSTEM.CLOSE)
   }
 
   const totalFilesAmount = diskSessions.reduce(
@@ -86,6 +98,8 @@ export function useAnotherDiskPage() {
     failedCountTotal,
     failedFiles,
     handleYes,
-    handleNo
+    handleNo,
+    destinationUserEndpoint,
+    username
   }
 }

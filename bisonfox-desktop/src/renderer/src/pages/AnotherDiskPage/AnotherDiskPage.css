@@ -145,3 +145,12 @@
     flex-direction: column;
     align-items: center;
 }
+
+.destination-path {
+    font-size: 1.4rem;
+    color: var(--accent);
+    direction: ltr;
+    font-family: monospace;
+    word-break: break-all;
+    margin-top: 0.3rem;
+}

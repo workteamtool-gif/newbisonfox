@@ -25,9 +25,6 @@ export const AnotherDiskPage = React.lazy(() =>
     default: m.AnotherDiskPage
   }))
 )
-export const FinalPage = React.lazy(() =>
-  import('@renderer/pages/FinalPage/FinalPage').then((m) => ({ default: m.FinalPage }))
-)
 
 export type WizardStep =
   | typeof WelcomePage
@@ -36,7 +33,6 @@ export type WizardStep =
   | typeof ReviewSelectedItemsPage
   | typeof UploadPage
   | typeof AnotherDiskPage
-  | typeof FinalPage
 
 export interface WizardData {
   step: React.LazyExoticComponent<() => React.JSX.Element | null>

@@ -15,7 +15,9 @@ export function AnotherDiskPage(): React.JSX.Element {
     failedCountTotal,
     failedFiles,
     handleYes,
-    handleNo
+    handleNo,
+    destinationUserEndpoint,
+    username
   } = useAnotherDiskPage()
 
   return (
@@ -23,6 +25,15 @@ export function AnotherDiskPage(): React.JSX.Element {
       <p className="page-title">כונן נוסף?</p>
 
       <p className="page-subtitle">לא לשכוח לנתק את הכונן החיצוני!</p>
+
+      {destinationUserEndpoint && (
+        <p className="page-subtitle">
+          ניתן לראות את הקבצים ברשת היחידה בעזרת הנתיב: <br />
+          <div className="destination-path">
+            {destinationUserEndpoint}\{username}
+          </div>
+        </p>
+      )}
 
       <div className="another-disk-content">
         <AnotherDiskStats
