@@ -131,7 +131,7 @@ export function StatsUpload({
 
   return (
     <>
-      <div className={`upload-stats ${!showTotalReview ? 'upload-stats--4cols' : ''}`}>
+      <div className={`upload-stats ${!showTotalReview ? 'upload-stats--2cols' : ''}`}>
         <div className="stat-card">
           <div
             className="stat-val"
@@ -145,7 +145,7 @@ export function StatsUpload({
           <div className="stat-val upload-stat-val-ltr">
             {formatSize(completedBytes)} / {formatSize(totalBytes)}
           </div>
-          <div className="stat-lbl">גודל הועתק</div>
+          <div className="stat-lbl">גודל הועבר</div>
         </div>
         {showTotalReview && (
           <>

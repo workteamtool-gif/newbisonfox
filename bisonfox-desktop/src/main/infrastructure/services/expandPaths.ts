@@ -29,6 +29,11 @@ export async function expandPaths(
   let foundCount = 0
   const normalizedBase = normalizeDriveCase(basePath)
 
+  const normalizeForSet = (p: string) => path.normalize(p).toLowerCase()
+  const normalizedExcludedPaths = new Set<string>(
+    [...excludedPaths].map(normalizeForSet)
+  )
+
   const queue: { path: string; isDir?: boolean }[] = inputs.map((p) => ({ path: p }))
 
   // Track how many workers are actively processing a directory.
@@ -72,7 +77,7 @@ export async function expandPaths(
       activeWorkers++
       const currentPath = item.path
 
-      if (excludedPaths.has(currentPath)) {
+      if (normalizedExcludedPaths.has(normalizeForSet(currentPath))) {
         activeWorkers--
         continue
       }
@@ -100,7 +105,11 @@ export async function expandPaths(
             if (excludedDirectories.has(entry.name)) continue
 
             const fullChildPath = path.join(currentPath, entry.name)
-            if (excludedPaths.has(fullChildPath)) continue
+            const normalizedChild = normalizeForSet(fullChildPath)
+            if (normalizedExcludedPaths.has(normalizedChild)) {
+              logger.info('expandPaths', `Skipping excluded path: ${fullChildPath} (normalized: ${normalizedChild})`)
+              continue
+            }
 
             if (entry.isDirectory()) {
               queue.push({ path: fullChildPath, isDir: true })

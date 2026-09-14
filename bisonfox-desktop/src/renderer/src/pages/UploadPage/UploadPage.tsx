@@ -47,7 +47,7 @@ export function UploadPage(): JSX.Element | null {
       <>סורק... נמצאו {totalDiscovered.toLocaleString()} קבצים</>
     ) : (
       <>
-        מעתיק {totalDiscovered.toLocaleString()} / {doneTotal.toLocaleString()} קבצים
+        מעביר {totalDiscovered.toLocaleString()} / {doneTotal.toLocaleString()} קבצים
       </>
     )
 

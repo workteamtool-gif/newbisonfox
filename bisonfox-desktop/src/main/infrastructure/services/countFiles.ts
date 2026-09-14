@@ -11,7 +11,8 @@ export async function countFiles(
 ): Promise<{ count: number; size: number }> {
   if (!initialPaths || initialPaths.length === 0) return { count: 0, size: 0 }
 
-  const excludedFilesSet = new Set<string>(excludedFiles)
+  const normalizeForSet = (p: string) => path.normalize(p).toLowerCase()
+  const excludedFilesSet = new Set<string>(excludedFiles.map(normalizeForSet))
   let count = 0
   let size = 0
   let lastReport = Date.now()
@@ -23,7 +24,7 @@ export async function countFiles(
 
   await Promise.all(
     initialPaths.map(async (currentPath) => {
-      if (!excludedFilesSet.has(currentPath) && !excludedFilesSet.has(path.basename(currentPath))) {
+      if (!excludedFilesSet.has(normalizeForSet(currentPath)) && !excludedFilesSet.has(normalizeForSet(path.basename(currentPath)))) {
         try {
           const stat = await fs.promises.stat(currentPath)
           if (stat.isDirectory()) {
@@ -104,6 +105,12 @@ export async function countFiles(
 
       while (queue.length > 0 && activeReads < parallelWorkers) {
         const currentDir = queue.shift()!
+
+        if (excludedFilesSet.has(normalizeForSet(currentDir))) {
+          checkDone()
+          continue
+        }
+
         activeReads++
 
         fs.readdir(currentDir, { withFileTypes: true }, (err, entries) => {
@@ -119,7 +126,7 @@ export async function countFiles(
               if (excludedDirectories.has(entry.name)) continue
 
               const fullPath = path.join(currentDir, entry.name)
-              if (excludedFilesSet.has(fullPath)) continue
+              if (excludedFilesSet.has(normalizeForSet(fullPath))) continue
 
               if (entry.isDirectory()) {
                 queue.push(fullPath)
