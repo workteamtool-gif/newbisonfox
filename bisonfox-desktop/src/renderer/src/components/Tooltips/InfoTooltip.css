@@ -1,0 +1,74 @@
+/* --- Info Tooltip Styles --- */
+
+.label-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.3rem;
+}
+
+.label-with-icon .form-label {
+    margin-bottom: 0; /* ביטול שוליים תחתונים במידה ומוגדרים, כי ה-flex מנהל את זה */
+}
+
+.info-tooltip-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary, #aaa);
+    transition: color 0.2s ease, transform 0.2s ease;
+    margin: 1rem;
+}
+
+.info-tooltip-wrapper:hover {
+    color: var(--accent, #14b8a6);
+    transform: scale(1.05);
+}
+
+.info-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.info-tooltip-text {
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    opacity: 0;
+    visibility: hidden;
+    background: #1f2937;
+    color: #f3f4f6;
+    text-align: center;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--r-md, 8px);
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    width: max-content;
+    max-width: 220px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    pointer-events: none;
+    white-space: normal;
+}
+
+.info-tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #1f2937 transparent transparent transparent;
+}
+
+.info-tooltip-wrapper:hover .info-tooltip-text {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}

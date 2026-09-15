@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
-import { clientLogger } from '@renderer/utils/logger'
 import { WizardData, WizardActions, WelcomePage } from '@renderer/entites/Wizard'
 import { sessionApi } from '@renderer/services/sessionApi'
 
@@ -53,7 +52,6 @@ export const useWizardStore = create<WizardData & WizardActions>()(
     setToast: (message, type = 'info') => set({ toast: { message, type } }),
 
     reset: () => {
-      clientLogger.info('WizardStore', 'Wizard reset triggered.')
       const currentSessionId = get().sessionId
       if (currentSessionId) {
         sessionApi.deleteSession(currentSessionId).catch(() => {})

@@ -35,7 +35,7 @@
   text-align: center;
   margin: 0;
   text-shadow: 0 0 10px rgba(255, 51, 51, 0.6), 0 4px 12px rgba(0, 0, 0, 0.9);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 @keyframes fadeIn {

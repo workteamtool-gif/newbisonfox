@@ -86,11 +86,6 @@
     font-size: 1.5rem;
 }
 
-.drive-list-header {
-    display: flex;
-    justify-content: space-between;
-}
-
 .drive-list-container {
     max-height: 180px;
     overflow-y: auto;
@@ -124,6 +119,7 @@
     transition: border-color 0.2s, color 0.2s, background 0.2s;
     text-align: center;
     direction: rtl;
+    font-family: var(--font-display);
 }
 
 .special-code-toggle-btn:hover {
@@ -135,12 +131,6 @@
     background: rgba(20, 184, 166, 0.06);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-}
-
-.special-code-chevron {
-    font-size: 1.8rem;
-    opacity: 0.7;
-    flex-shrink: 0;
 }
 
 .special-code-content {

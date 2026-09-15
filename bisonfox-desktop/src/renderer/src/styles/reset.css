@@ -12,7 +12,7 @@ html {
 }
 
 body {
-    font-family: var(--font);
+    font-family: var(--font-display);
     background: url('../images/backgroundImage.png') center / cover no-repeat fixed;
     color: var(--text-primary);
     position: relative;

@@ -20,7 +20,8 @@ export function DriveList({
         <div className="info-box drive-list-waiting">ממתין לחיבור כונן...</div>
       ) : (
         <>
-          <label className="form-label drive-list-header">
+          <label className="form-label">
+            {!selectedLetter && <span style={{ color: 'var(--accent-red)', marginLeft: '4px' }}>*</span>}
             <span>בחר כונן:</span>
             {loadingDrives && <span className="badge pulse">סורק...</span>}
           </label>

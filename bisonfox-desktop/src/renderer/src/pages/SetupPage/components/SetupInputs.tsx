@@ -1,3 +1,4 @@
+import { InfoTooltip } from '@renderer/components/Tooltips/InfoTooltip'
 import { JSX, useState } from 'react'
 
 interface UserNameInputProps {
@@ -20,6 +21,7 @@ export function UserNameInput({
   return (
     <div className="form-group">
       <label className="form-label" htmlFor="name-input">
+        {!name && <span style={{ color: 'var(--accent-red)', marginLeft: '4px' }}>*</span>}
         שם המשתמש:
       </label>
       <input
@@ -72,9 +74,10 @@ export function SubfolderInput({
 }: SubfolderInputProps): JSX.Element {
   return (
     <div className="form-group">
+      <span><InfoTooltip text="אנא בחרו שם לתיקייה ברשת היחידה שבה תראו את הקבצים. אם לא תבחרו שם להעברה, שם התיקייה יהיה הזמן הנוכחי" />
       <label className="form-label" htmlFor="subfolder-input">
-        בחר שם להעברה שלך (אופציונלי):
-      </label>
+        בחר שם לתיקיית היעד שלך (אופציונלי):
+      </label></span>
       <input
         id="subfolder-input"
         className={`form-input setup-input-ltr ${subfolderError ? 'error' : ''}`}
@@ -129,8 +132,12 @@ export function SpecialCodeInput({
         className={`special-code-toggle-btn ${expanded ? 'expanded' : ''}`}
         onClick={() => setExpanded((prev) => !prev)}
       >
-        <span>{expanded ? 'סגור' : 'לחץ אם יש לך קוד מיוחד'}</span>
-        <span className="special-code-chevron">{expanded ? '▲' : '▼'}</span>
+        <span>
+          {expanded ? 'סגור' : 'יש לי שועל ברק מהיר'}
+          {!expanded && (
+            <InfoTooltip text="אנא הזינו את הקוד המיוחד שקיבלתם ממדור מיתר. משתמשים רגילים לא צריכים לשים קוד." />
+          )}
+        </span>
       </button>
 
       {expanded && (
