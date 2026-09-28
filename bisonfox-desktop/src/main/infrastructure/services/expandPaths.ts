@@ -20,7 +20,7 @@ export async function expandPaths(
   onScan: (count: number) => void,
   excludedPaths: Set<string>,
   onFile: (fullPath: string, relativePath: string) => void,
-  onDir: (relDir: string) => void,
+  onDirectoryFound: (relativeDirectoryPath: string) => void,
   onScanError: (filePath: string, errorMessage: string) => void,
   signal: AbortSignal,
   backpressureGate?: BackpressureGate
@@ -29,12 +29,12 @@ export async function expandPaths(
   let foundCount = 0
   const normalizedBase = normalizeDriveCase(basePath)
 
-  const normalizeForSet = (p: string) => path.normalize(p).toLowerCase()
+  const normalizeForSet = (filePath: string) => path.normalize(filePath).toLowerCase()
   const normalizedExcludedPaths = new Set<string>(
     [...excludedPaths].map(normalizeForSet)
   )
 
-  const queue: { path: string; isDir?: boolean }[] = inputs.map((p) => ({ path: p }))
+  const queue: { path: string; isDir?: boolean }[] = inputs.map((filePath) => ({ path: filePath }))
 
   // Track how many workers are actively processing a directory.
   // A worker increments this BEFORE pulling from the queue and decrements
@@ -44,8 +44,8 @@ export async function expandPaths(
   let resolveAllIdle: (() => void) | null = null
 
   const processFile = (fullPath: string): void => {
-    const normalizedPath = normalizeDriveCase(fullPath)
-    let relativePath = path.relative(normalizedBase, normalizedPath)
+    const normalizedFilePath = normalizeDriveCase(fullPath)
+    let relativePath = path.relative(normalizedBase, normalizedFilePath)
 
     if (path.isAbsolute(relativePath) || relativePath.startsWith('..')) {
       relativePath = path.basename(fullPath)
@@ -63,7 +63,7 @@ export async function expandPaths(
 
   const worker = async (): Promise<void> => {
     while (!signal.aborted) {
-      const item = queue.shift()
+      const item = queue.pop()
 
       if (!item) {
         if (activeWorkers === 0 && queue.length === 0) {
@@ -85,22 +85,22 @@ export async function expandPaths(
       try {
         let isDirectory = item.isDir
         if (isDirectory === undefined) {
-          const stat = await fs.promises.stat(currentPath)
-          isDirectory = stat.isDirectory()
+          const pathStat = await fs.promises.stat(currentPath)
+          isDirectory = pathStat.isDirectory()
         }
 
         if (isDirectory) {
-          const normalizedPath = normalizeDriveCase(currentPath)
-          let relativePath = path.relative(normalizedBase, normalizedPath)
+          const normalizedDirPath = normalizeDriveCase(currentPath)
+          let relativeDirectoryPath = path.relative(normalizedBase, normalizedDirPath)
 
-          if (path.isAbsolute(relativePath) || relativePath.startsWith('..')) {
-            relativePath = path.basename(currentPath)
+          if (path.isAbsolute(relativeDirectoryPath) || relativeDirectoryPath.startsWith('..')) {
+            relativeDirectoryPath = path.basename(currentPath)
           }
 
-          onDir(relativePath)
+          onDirectoryFound(relativeDirectoryPath)
 
-          const dir = await fs.promises.opendir(currentPath)
-          for await (const entry of dir) {
+          const openedDir = await fs.promises.opendir(currentPath)
+          for await (const entry of openedDir) {
             if (signal.aborted) break
             if (excludedDirectories.has(entry.name)) continue
 
@@ -115,14 +115,14 @@ export async function expandPaths(
               queue.push({ path: fullChildPath, isDir: true })
             } else {
               if (backpressureGate) {
-                await backpressureGate.waitIfNeeded(queue.length)
+                await backpressureGate.waitIfNeeded(signal)
               }
               processFile(fullChildPath)
             }
           }
         } else {
           if (backpressureGate) {
-            await backpressureGate.waitIfNeeded(queue.length)
+            await backpressureGate.waitIfNeeded(signal)
           }
           processFile(currentPath)
         }

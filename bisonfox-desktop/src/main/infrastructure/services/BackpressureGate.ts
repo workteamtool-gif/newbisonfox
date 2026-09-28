@@ -4,30 +4,39 @@
  */
 export class BackpressureGate {
   private blocked = false
-  private resolve: (() => void) | null = null
+  private waiters: Array<() => void> = []
 
   constructor(
     private highWaterMark: number,
     private lowWaterMark: number
   ) {}
   
-  async waitIfNeeded(queueLength: number): Promise<void> {
-    if (queueLength >= this.highWaterMark) {
-      if (!this.blocked) {
-        this.blocked = true
-      }
-      await new Promise<void>((resolveFn) => {
-        this.resolve = resolveFn
+  async waitIfNeeded(signal?: AbortSignal): Promise<void> {
+    if (this.blocked) {
+      await new Promise<void>((resolveWaiter) => {
+        if (signal?.aborted) return resolveWaiter()
+
+        const onAbort = () => resolveWaiter()
+        if (signal) signal.addEventListener('abort', onAbort)
+
+        this.waiters.push(() => {
+          if (signal) signal.removeEventListener('abort', onAbort)
+          resolveWaiter()
+        })
       })
     }
   }
 
-  notify(queueLength: number): void {
-    if (this.blocked && queueLength <= this.lowWaterMark && this.resolve) {
+  update(queueLength: number): void {
+    if (!this.blocked && queueLength >= this.highWaterMark) {
+      this.blocked = true
+    } else if (this.blocked && queueLength <= this.lowWaterMark) {
       this.blocked = false
-      const resolver = this.resolve
-      this.resolve = null
-      resolver()
+      if (this.waiters.length > 0) {
+        const currentWaiters = this.waiters
+        this.waiters = []
+        currentWaiters.forEach(resolveWaiter => resolveWaiter())
+      }
     }
   }
 }

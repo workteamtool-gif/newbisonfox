@@ -10,9 +10,9 @@ import { CopyProgressReporter } from '@main/infrastructure/services/copyEngine/C
 import { expandPaths } from '@main/infrastructure/services/expandPaths'
 
 interface CopyQueueItem {
-  src: string
-  destPath: string
-  finalPath: string
+  sourcePath: string
+  stagingPath: string
+  finalDestinationPath: string
 }
 
 const EXCLUDED = new Set<string>([])
@@ -26,9 +26,9 @@ const MAX_REPORTED_FAILURES = config.maxReportedFailures
 export class CopyEngineCore {
   private readonly queue: CopyQueueItem[] = []
   private readonly mkdirCache = new Set<string>()
-  private readonly gate = new BackpressureGate(10_000, 5_000)
+  private readonly backpressureGate = new BackpressureGate(10_000, 5_000)
 
-  private isScanningDone = false
+  private isScanComplete = false
   private totalDiscovered = 0
   private activeCopies = 0
 
@@ -57,44 +57,45 @@ export class CopyEngineCore {
       this.options.signal.addEventListener('abort', triggerExternalAbort)
     }
 
-    const activeSignal = this.internalController.signal
-    const inferredBase = this.getInferredBase()
-    const excludedSet = new Set<string>(this.options.excludedFiles ?? [])
+    const abortSignal = this.internalController.signal
+    const inferredBasePath = this.getInferredBasePath()
+    const excludedPathsSet = new Set<string>(this.options.excludedFiles ?? [])
 
     await fs.promises.mkdir(this.destination, { recursive: true }).catch(() => { })
 
     const scanPromise = expandPaths(
-        this.initialPaths,
-        inferredBase,
-        EXCLUDED,
-        COPY_CONCURRENCY,
-        (count: number) => {
-          this.totalDiscovered = count
-          if (this.options.onScan) this.options.onScan(count)
-        },
-        excludedSet,
-        (src, rel) => {
-          this.totalDiscovered++
-          const stagingPath = path.join(this.destination, rel)
-          const trueFinalPath = this.options.finalDest ? path.join(this.options.finalDest, rel) : stagingPath
-          this.queue.push({ src, destPath: stagingPath, finalPath: trueFinalPath })
-        },
-        () => { },
-        (failedPath, errorMsg) => {
-          this.reporter.failedCount++
-          if (this.reporter.failedFiles.length < MAX_REPORTED_FAILURES) {
-            this.reporter.failedFiles.push({ path: failedPath, reason: errorMsg })
-          }
-          logger.error('FileService', `Scan failure: ${failedPath}`, { error: errorMsg })
-        },
-        activeSignal,
-        this.gate
-      )
+      this.initialPaths,
+      inferredBasePath,
+      EXCLUDED,
+      COPY_CONCURRENCY,
+      (count: number) => {
+        this.totalDiscovered = count
+        if (this.options.onScan) this.options.onScan(count)
+      },
+      excludedPathsSet,
+      (sourcePath, relativePath) => {
+        this.totalDiscovered++
+        const stagingPath = path.join(this.destination, relativePath)
+        const finalDestinationPath = this.options.finalDest ? path.join(this.options.finalDest, relativePath) : stagingPath
+        this.queue.push({ sourcePath, stagingPath, finalDestinationPath })
+        this.backpressureGate.update(this.queue.length)
+      },
+      () => { },
+      (failedPath, errorMessage) => {
+        this.reporter.failedCount++
+        if (this.reporter.failedFiles.length < MAX_REPORTED_FAILURES) {
+          this.reporter.failedFiles.push({ path: failedPath, reason: errorMessage })
+        }
+        logger.error('FileService', `Scan failure: ${failedPath}`, { error: errorMessage })
+      },
+      abortSignal,
+      this.backpressureGate
+    )
       .then(() => {
-        this.isScanningDone = true
+        this.isScanComplete = true
       })
 
-    const workers = Array.from({ length: COPY_CONCURRENCY }, () => this.runWorker(activeSignal))
+    const workers = Array.from({ length: COPY_CONCURRENCY }, () => this.runWorker(abortSignal))
     await Promise.all([scanPromise, ...workers])
 
     if (this.options.signal) {
@@ -104,30 +105,30 @@ export class CopyEngineCore {
     return this.reporter.reportDone()
   }
 
-  private async runWorker(activeSignal: AbortSignal): Promise<void> {
+  private async runWorker(abortSignal: AbortSignal): Promise<void> {
     while (true) {
-      if (activeSignal.aborted) break
+      if (abortSignal.aborted) break
 
-      const item = this.queue.shift()
+      const item = this.queue.pop()
       if (!item) {
-        if (this.isScanningDone) break
+        if (this.isScanComplete) break
         await new Promise((resolve) => setTimeout(resolve, 50))
         continue
       }
 
-      this.gate.notify(this.queue.length)
+      this.backpressureGate.update(this.queue.length)
 
-      const { src, destPath, finalPath } = item
+      const { sourcePath, stagingPath, finalDestinationPath } = item
       let success = false
       let fileSize = 0
 
-      const statForSize = await fs.promises.stat(src).catch(() => null)
-      if (statForSize?.isFile()) fileSize = statForSize.size
+      const fileStat = await fs.promises.stat(sourcePath).catch(() => null)
+      if (fileStat?.isFile()) fileSize = fileStat.size
 
       let lastError: string | undefined
 
       this.activeCopies++
-      const workerBuffer = Math.max(
+      const streamBufferSize = Math.max(
         64 * 1024,
         Math.floor(TOTAL_BUFFER_BUDGET / this.activeCopies)
       )
@@ -137,7 +138,7 @@ export class CopyEngineCore {
       let partialBytes = 0
 
       while (copyAttempt < FAIL_RETRIES && !copiedToStaging) {
-        if (activeSignal.aborted) break
+        if (abortSignal.aborted) break
 
         partialBytes = 0
         try {
@@ -145,7 +146,7 @@ export class CopyEngineCore {
             await new Promise((resolve) => setTimeout(resolve, FAIL_INTERVAL_MS * copyAttempt))
 
           const expectedFileSize = fileSize > 0 ? fileSize : 1
-          const stagingDir = path.dirname(destPath)
+          const stagingDir = path.dirname(stagingPath)
 
           if (stagingDir !== this.destination && !this.mkdirCache.has(stagingDir)) {
             await fs.promises.mkdir(stagingDir, { recursive: true }).catch(() => { })
@@ -153,13 +154,13 @@ export class CopyEngineCore {
           }
 
           // Touch the staging file to anchor the directory
-          await fs.promises.writeFile(destPath, '', { flag: 'a' }).catch(() => { })
+          await fs.promises.writeFile(stagingPath, '', { flag: 'a' }).catch(() => { })
 
-          await copyOneFast(src, destPath, workerBuffer, activeSignal, (chunkSize) => {
+          await copyOneFast(sourcePath, stagingPath, streamBufferSize, abortSignal, (chunkSize) => {
             partialBytes += chunkSize
             this.reporter.completedBytes += chunkSize
             const progressPercent = Math.min(100, Math.floor((partialBytes / expectedFileSize) * 100))
-            this.reporter.reportProgress(src, progressPercent)
+            this.reporter.reportProgress(sourcePath, progressPercent)
           })
 
           copiedToStaging = true
@@ -177,15 +178,15 @@ export class CopyEngineCore {
       if (copiedToStaging && this.options.finalDest) {
         let moveAttempt = 0
         while (moveAttempt < MOVE_RETRIES) {
-          if (activeSignal.aborted) break
+          if (abortSignal.aborted) break
           try {
             if (moveAttempt > 0) await new Promise((resolve) => setTimeout(resolve, FAIL_INTERVAL_MS))
-            await atomicMoveWithHandles(destPath, finalPath)
+            await atomicMoveWithHandles(stagingPath, finalDestinationPath)
             success = true
             if (moveAttempt > 0) {
               logger.warn('FileCopyEngine', `Move succeeded after ${moveAttempt + 1} attempts`, {
-                src,
-                dest: finalPath
+                sourcePath,
+                destinationPath: finalDestinationPath
               })
             }
             break
@@ -194,10 +195,10 @@ export class CopyEngineCore {
             moveAttempt++
           }
         }
-        if (!success && !activeSignal.aborted) {
+        if (!success && !abortSignal.aborted) {
           logger.error('FileCopyEngine', `Move gave up after ${MOVE_RETRIES} retries`, {
-            src,
-            dest: finalPath,
+            sourcePath,
+            destinationPath: finalDestinationPath,
             lastError
           })
         }
@@ -205,32 +206,32 @@ export class CopyEngineCore {
         success = true
       }
 
-      if (activeSignal.aborted) break
+      if (abortSignal.aborted) break
 
       if (success) {
         this.reporter.completedFiles++
-        this.reporter.reportProgress(src, 100)
+        this.reporter.reportProgress(sourcePath, 100)
       } else {
         this.reporter.failedCount++
         if (this.reporter.failedCount <= MAX_REPORTED_FAILURES) {
           this.reporter.failedFiles.push({
-            path: src,
+            path: sourcePath,
             reason: lastError || 'Copy failed after 5 retries',
             sizeInBytes: fileSize
           })
         }
-        this.reporter.reportProgress(src, -1)
+        this.reporter.reportProgress(sourcePath, -1)
       }
     }
   }
 
-  private getInferredBase(): string {
+  private getInferredBasePath(): string {
     if (this.options.basePath) return this.options.basePath
 
-    const first = this.initialPaths[0]
-    if (first) {
-      const parsedRoot = path.parse(first).root
-      if (parsedRoot) return parsedRoot
+    const firstPath = this.initialPaths[0]
+    if (firstPath) {
+      const driveRoot = path.parse(firstPath).root
+      if (driveRoot) return driveRoot
     }
     return path.dirname(this.initialPaths[0] ?? this.destination)
   }

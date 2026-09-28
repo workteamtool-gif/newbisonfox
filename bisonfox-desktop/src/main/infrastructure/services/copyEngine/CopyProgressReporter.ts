@@ -5,8 +5,8 @@ import { CopySummary } from '@main/domain/interfaces/FileService'
 export class CopyProgressReporter {
   private lastBroadcastTime = Date.now()
   private reportTimer: NodeJS.Timeout | null = null
-  private lastReportFile = ''
-  private lastReportPct = 0
+  private lastReportFilePath = ''
+  private lastReportProgressPercent = 0
 
   public completedFiles = 0
   public completedBytes = 0
@@ -17,8 +17,8 @@ export class CopyProgressReporter {
 
   constructor(
     private readonly onProgress: (
-      file: string,
-      pct: number,
+      currentFilePath: string,
+      progressPercent: number,
       completedFiles: number,
       completedBytes: number,
       failedCount: number,
@@ -30,21 +30,21 @@ export class CopyProgressReporter {
     private readonly getTotalBytes: () => number
   ) {}
 
-  public reportProgress(file: string, pct: number): void {
-    this.lastReportFile = file
-    this.lastReportPct = pct
+  public reportProgress(currentFilePath: string, progressPercent: number): void {
+    this.lastReportFilePath = currentFilePath
+    this.lastReportProgressPercent = progressPercent
 
     const now = Date.now()
     if (now - this.lastBroadcastTime >= this.REPORT_COPIED_FILES_INTERVAL_MS) {
       this.clearTimer()
       this.lastBroadcastTime = now
-      this.broadcast(file, pct)
+      this.broadcast(currentFilePath, progressPercent)
     } else if (!this.reportTimer) {
       this.reportTimer = setTimeout(
         () => {
           this.reportTimer = null
           this.lastBroadcastTime = Date.now()
-          this.broadcast(this.lastReportFile, this.lastReportPct)
+          this.broadcast(this.lastReportFilePath, this.lastReportProgressPercent)
         },
         this.REPORT_COPIED_FILES_INTERVAL_MS - (now - this.lastBroadcastTime)
       )
@@ -78,10 +78,10 @@ export class CopyProgressReporter {
     }
   }
 
-  private broadcast(file: string, pct: number): void {
+  private broadcast(currentFilePath: string, progressPercent: number): void {
     this.onProgress(
-      file,
-      pct,
+      currentFilePath,
+      progressPercent,
       this.completedFiles,
       this.completedBytes,
       this.failedCount,

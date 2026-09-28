@@ -3,32 +3,32 @@ import { AsyncSemaphore } from '@main/infrastructure/services/AsyncSemaphore'
 import { config } from '@main/appConfig'
 
 const HEAVY_FILE_THRESHOLD = config.heavyFileThresholdMb * 1024 * 1024
-const heavyLock = new AsyncSemaphore(4)
+const heavyFileSemaphore = new AsyncSemaphore(4)
 
 /**
  * Checks file size first, and if it exceeds the heavy threshold, acquires a permit
- * from `heavyLock` to limit simultaneous large-file network and disk I/O.
+ * from `heavyFileSemaphore` to limit simultaneous large-file network and disk I/O.
  *
- * @param src The source file path.
- * @param dest The destination file path.
+ * @param sourcePath The source file path.
+ * @param destinationPath The destination file path.
  * @param bufferSize The highWaterMark size for the streams.
  * @param signal Optional AbortSignal to cancel the copy.
  * @param onProgressBytes Callback to report bytes transferred.
  * @returns A promise resolving to the file size in bytes upon success.
  */
 export async function copyOneFast(
-  src: string,
-  dest: string,
+  sourcePath: string,
+  destinationPath: string,
   bufferSize: number,
   signal?: AbortSignal,
   onProgressBytes?: (chunkSize: number) => void
 ): Promise<number> {
-  const fileStat = await fs.promises.stat(src).catch(() => null)
+  const fileStat = await fs.promises.stat(sourcePath).catch(() => null)
   if (!fileStat) throw new Error('File not accessible')
 
   if (signal?.aborted) return 0
 
-  const doCopy = (): Promise<void> => {
+  const executeCopy = (): Promise<void> => {
     return new Promise((resolve, reject) => {
       let aborted = false
       let stallTimer: NodeJS.Timeout | null = null
@@ -54,11 +54,11 @@ export async function copyOneFast(
       }
 
       const FILE_FLAG_SEQUENTIAL_SCAN = 0x08000000
-      const readStream = fs.createReadStream(src, {
+      const readStream = fs.createReadStream(sourcePath, {
         flags: (fs.constants.O_RDONLY | FILE_FLAG_SEQUENTIAL_SCAN) as unknown as string,
         highWaterMark: bufferSize
       })
-      const writeStream = fs.createWriteStream(dest, {
+      const writeStream = fs.createWriteStream(destinationPath, {
         flags: (fs.constants.O_WRONLY |
           fs.constants.O_CREAT |
           fs.constants.O_TRUNC |
@@ -111,16 +111,16 @@ export async function copyOneFast(
   }
 
   if (fileStat.size > HEAVY_FILE_THRESHOLD) {
-    await heavyLock.acquire()
+    await heavyFileSemaphore.acquire()
     try {
       if (signal?.aborted) return 0
-      await doCopy()
+      await executeCopy()
     } finally {
-      heavyLock.release()
+      heavyFileSemaphore.release()
     }
     return fileStat.size
   }
 
-  await doCopy()
+  await executeCopy()
   return fileStat.size
 }
