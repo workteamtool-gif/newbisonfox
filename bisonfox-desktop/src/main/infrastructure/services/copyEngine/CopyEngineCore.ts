@@ -111,9 +111,29 @@ export class CopyEngineCore {
     if (!abortSignal.aborted && this.emptyDirs.length > 0) {
       await Promise.all(
         this.emptyDirs.map(async ({ stagingPath, finalDestPath }) => {
-          await fs.promises.mkdir(stagingPath, { recursive: true }).catch(() => {})
-          if (finalDestPath) {
-            await fs.promises.mkdir(finalDestPath, { recursive: true }).catch(() => {})
+          const targets = [stagingPath, ...(finalDestPath ? [finalDestPath] : [])]
+          for (const dirPath of targets) {
+            let attempt = 0
+            let created = false
+            while (attempt < MOVE_RETRIES && !created && !abortSignal.aborted) {
+              try {
+                if (attempt > 0)
+                  await new Promise((resolve) => setTimeout(resolve, FAIL_INTERVAL_MS))
+                await fs.promises.mkdir(dirPath, { recursive: true })
+                created = true
+              } catch {
+                attempt++
+              }
+            }
+            if (!created && !abortSignal.aborted) {
+              logger.error('FileCopyEngine', `Failed to create empty directory after ${MOVE_RETRIES} retries`, {
+                dirPath
+              })
+              this.reporter.failedCount++
+              if (this.reporter.failedFiles.length < MAX_REPORTED_FAILURES) {
+                this.reporter.failedFiles.push({ path: dirPath, reason: 'Failed to create empty directory' })
+              }
+            }
           }
         })
       )
