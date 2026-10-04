@@ -36,7 +36,9 @@ export const driveApi = {
 
   findItemPage: async (dirPath: string, query: string): Promise<number | null> => {
     try {
-      return (await window.api.invoke(IPC_CHANNELS.DRIVE.FIND_PAGE, { dirPath, query })) as number | null
+      return (await window.api.invoke(IPC_CHANNELS.DRIVE.FIND_PAGE, { dirPath, query })) as
+        | number
+        | null
     } catch {
       return null
     }

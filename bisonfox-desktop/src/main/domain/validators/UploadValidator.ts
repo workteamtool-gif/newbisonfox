@@ -30,7 +30,12 @@ export class UploadValidator implements IUploadValidator {
     }
 
     const macFolder = getFirstMacAddress()
-    const stagingDest = path.resolve(rawUploadingStagingDir, macFolder, session.username, subfolder || '')
+    const stagingDest = path.resolve(
+      rawUploadingStagingDir,
+      macFolder,
+      session.username,
+      subfolder || ''
+    )
 
     const filesToUpload = files ?? session.diskSessions.flatMap((d) => d.selectedItemPaths)
     const allExcluded = session.diskSessions.flatMap((d) => d.excludedItemPaths ?? [])
@@ -61,8 +66,12 @@ export class UploadValidator implements IUploadValidator {
     }
   }
 
-  private validateSystemConfig(session: UploadSession): ValidationResult<{ rawUploadFinalDir: string; rawUploadingStagingDir: string }> {
-    const rawUploadFinalDir = session.isRestricted ? config.uploadFinalRestrictedDir : config.uploadFinalDir
+  private validateSystemConfig(
+    session: UploadSession
+  ): ValidationResult<{ rawUploadFinalDir: string; rawUploadingStagingDir: string }> {
+    const rawUploadFinalDir = session.isRestricted
+      ? config.uploadFinalRestrictedDir
+      : config.uploadFinalDir
     if (!rawUploadFinalDir || rawUploadFinalDir.trim() === '') {
       logger.error(
         'UploadValidator',
@@ -94,7 +103,11 @@ export class UploadValidator implements IUploadValidator {
     }
   }
 
-  private validateSecurity(session: UploadSession, finalDest: string, baseDir: string): ValidationResult {
+  private validateSecurity(
+    session: UploadSession,
+    finalDest: string,
+    baseDir: string
+  ): ValidationResult {
     // SECURITY: Case-insensitive Path Traversal Check for Network Drives
     if (!finalDest.toLowerCase().startsWith(baseDir.toLowerCase())) {
       logger.error('UploadValidator', 'SECURITY: Path traversal attempt blocked!', {

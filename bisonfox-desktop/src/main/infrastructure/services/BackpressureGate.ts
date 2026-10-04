@@ -10,7 +10,7 @@ export class BackpressureGate {
     private highWaterMark: number,
     private lowWaterMark: number
   ) {}
-  
+
   async waitIfNeeded(signal?: AbortSignal): Promise<void> {
     if (this.blocked) {
       await new Promise<void>((resolveWaiter) => {
@@ -35,7 +35,7 @@ export class BackpressureGate {
       if (this.waiters.length > 0) {
         const currentWaiters = this.waiters
         this.waiters = []
-        currentWaiters.forEach(resolveWaiter => resolveWaiter())
+        currentWaiters.forEach((resolveWaiter) => resolveWaiter())
       }
     }
   }

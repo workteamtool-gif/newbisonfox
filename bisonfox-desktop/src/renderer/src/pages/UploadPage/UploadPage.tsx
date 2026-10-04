@@ -59,7 +59,11 @@ export function UploadPage(): JSX.Element | null {
     <div className="glass-card">
       {/* === SCENARIO 1: ERROR === */}
       {uploadError && (
-        <ErrorUpload uploadError={uploadError} setStep={setStep} ReviewSelectedItemsPage={ReviewSelectedItemsPage} />
+        <ErrorUpload
+          uploadError={uploadError}
+          setStep={setStep}
+          ReviewSelectedItemsPage={ReviewSelectedItemsPage}
+        />
       )}
 
       {/* === SCENARIO 2: COUNTING === */}

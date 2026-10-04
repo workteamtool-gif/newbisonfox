@@ -31,7 +31,11 @@ export interface CopySummary {
 }
 
 export interface FileService {
-  paginatedListDir(dirPath: string, page?: number, limit?: number): Promise<PaginatedResult<ItemNode[]>>
+  paginatedListDir(
+    dirPath: string,
+    page?: number,
+    limit?: number
+  ): Promise<PaginatedResult<ItemNode[]>>
 
   getDirCount(dirPath: string): Promise<number>
 

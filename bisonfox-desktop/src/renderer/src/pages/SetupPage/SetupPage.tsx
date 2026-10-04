@@ -10,7 +10,11 @@ import { useKeyboardDetection } from '@renderer/hooks/useKeyboardDetection'
 import { useDrives } from '@renderer/pages/SetupPage/hooks/useDrives'
 import { useSetupForm } from '@renderer/pages/SetupPage/hooks/useSetupForm'
 import { DriveList } from '@renderer/pages/SetupPage/components/DriveList'
-import { UserNameInput, SubfolderInput, SpecialCodeInput } from '@renderer/pages/SetupPage/components/SetupInputs'
+import {
+  UserNameInput,
+  SubfolderInput,
+  SpecialCodeInput
+} from '@renderer/pages/SetupPage/components/SetupInputs'
 
 import { EasterEgg } from '@renderer/components/EasterEggs/EasterEgg/EasterEgg'
 import { useEasterEggTrigger } from '@renderer/components/EasterEggs/EasterEgg/useEasterEggTrigger'

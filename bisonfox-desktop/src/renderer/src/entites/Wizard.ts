@@ -15,7 +15,9 @@ export const SelectItemsPage = React.lazy(() =>
   }))
 )
 export const ReviewSelectedItemsPage = React.lazy(() =>
-  import('@renderer/pages/ReviewSelectedItemsPage/ReviewSelectedItemsPage').then((m) => ({ default: m.ReviewSelectedItemsPage }))
+  import('@renderer/pages/ReviewSelectedItemsPage/ReviewSelectedItemsPage').then((m) => ({
+    default: m.ReviewSelectedItemsPage
+  }))
 )
 export const UploadPage = React.lazy(() =>
   import('@renderer/pages/UploadPage/UploadPage').then((m) => ({ default: m.UploadPage }))

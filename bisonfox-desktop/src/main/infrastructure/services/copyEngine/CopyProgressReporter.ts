@@ -12,7 +12,7 @@ export class CopyProgressReporter {
   public completedBytes = 0
   public failedCount = 0
   public failedFiles: FailedFile[] = []
-  
+
   private readonly REPORT_COPIED_FILES_INTERVAL_MS = config.reportCopiedFilesIntervalMs
 
   constructor(
@@ -53,7 +53,7 @@ export class CopyProgressReporter {
 
   public reportDone(): CopySummary {
     this.clearTimer()
-    
+
     const finalTotalFiles = this.getTotalFiles()
     const finalTotalBytes = this.getTotalBytes() || this.completedBytes
 

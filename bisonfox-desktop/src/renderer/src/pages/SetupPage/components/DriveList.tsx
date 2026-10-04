@@ -21,7 +21,9 @@ export function DriveList({
       ) : (
         <>
           <label className="form-label">
-            {!selectedLetter && <span style={{ color: 'var(--accent-red)', marginLeft: '4px' }}>*</span>}
+            {!selectedLetter && (
+              <span style={{ color: 'var(--accent-red)', marginLeft: '4px' }}>*</span>
+            )}
             <span>בחר כונן:</span>
             {loadingDrives && <span className="badge pulse">סורק...</span>}
           </label>

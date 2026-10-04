@@ -3,7 +3,7 @@ import * as path from 'path'
 import { logger } from '@main/infrastructure/loggers/Logger'
 
 // Moves a staged file to its final destination atomically. Because empty folders in destination are being deleted,
-// we try to move from src to dest and handle the folder. it might fail for several reasons, and therefore we try 
+// we try to move from src to dest and handle the folder. it might fail for several reasons, and therefore we try
 // multiple times until succeeded
 export async function atomicMoveWithHandles(srcPath: string, destPath: string): Promise<void> {
   const destDir = path.dirname(destPath)

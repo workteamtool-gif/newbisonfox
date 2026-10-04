@@ -39,12 +39,12 @@ export function ConfirmModal({
             <button className="btn btn-secondary" onClick={onClose} style={{ flex: 1 }}>
               {cancelText}
             </button>
-            <button 
-              className="btn btn-primary" 
-              onClick={onConfirm} 
-              style={{ 
-                flex: 1, 
-                ...(isRed ? { background: '#ff4d4d', borderColor: '#ff4d4d', color: '#fff' } : {}) 
+            <button
+              className="btn btn-primary"
+              onClick={onConfirm}
+              style={{
+                flex: 1,
+                ...(isRed ? { background: '#ff4d4d', borderColor: '#ff4d4d', color: '#fff' } : {})
               }}
             >
               {confirmText}

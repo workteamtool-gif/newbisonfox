@@ -106,10 +106,17 @@ class Logger {
     try {
       envLogDir = config.logDir
       uploadingStagingDir = config.uploadingStagingDir
-    } catch { }
+    } catch {}
 
-    if (!envLogDir || envLogDir.trim() === '' || !uploadingStagingDir || uploadingStagingDir.trim() === '') {
-      process.stderr.write('\n[SYSTEM WARNING] logDir or uploadingStagingDir is missing or empty!\n')
+    if (
+      !envLogDir ||
+      envLogDir.trim() === '' ||
+      !uploadingStagingDir ||
+      uploadingStagingDir.trim() === ''
+    ) {
+      process.stderr.write(
+        '\n[SYSTEM WARNING] logDir or uploadingStagingDir is missing or empty!\n'
+      )
       process.stderr.write(
         '[SYSTEM WARNING] File logging is disabled. Logs will only appear in this console.\n\n'
       )
@@ -130,7 +137,7 @@ class Logger {
             safeMoveFileSync(src, dest)
           }
         }
-      } catch (err) { }
+      } catch (err) {}
     }
 
     const transports: winston.transport[] = []

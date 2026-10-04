@@ -143,7 +143,10 @@ export function useSetupForm(drives: DriveInfo[], selectedLetter: string) {
       setSessionId(newSessionId)
 
       if (specialCode.trim()) {
-        const specialCodeValidation = await sessionApi.validateSpecialCode(newSessionId, specialCode.trim())
+        const specialCodeValidation = await sessionApi.validateSpecialCode(
+          newSessionId,
+          specialCode.trim()
+        )
         if (!specialCodeValidation.valid) {
           setSpecialCodeError(specialCodeValidation.message || 'קוד משתמש לא חוקי')
           setLoading(false)

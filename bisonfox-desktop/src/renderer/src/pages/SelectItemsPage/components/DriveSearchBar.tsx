@@ -5,10 +5,7 @@ interface DriveSearchBarProps {
   onSearch: (query: string) => Promise<boolean>
 }
 
-export function DriveSearchBar({
-  searching,
-  onSearch
-}: DriveSearchBarProps): JSX.Element {
+export function DriveSearchBar({ searching, onSearch }: DriveSearchBarProps): JSX.Element {
   const [rootSearchQuery, setRootSearchQuery] = useState('')
 
   const handleSearchSubmit = async (e: React.FormEvent) => {

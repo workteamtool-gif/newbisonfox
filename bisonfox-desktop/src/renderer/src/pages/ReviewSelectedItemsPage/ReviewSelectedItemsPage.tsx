@@ -39,10 +39,14 @@ export function ReviewSelectedItemsPage(): JSX.Element | null {
           <span className="rtl-row">נבחרו {fileCount} פריטים</span>
         </div>
         <div className="review-disk-info-row rtl-row review-meta">
-          <span>👤 משתמש: <strong>{username}</strong></span>
-        </div>        
+          <span>
+            👤 משתמש: <strong>{username}</strong>
+          </span>
+        </div>
         <div className="review-disk-info-row rtl-row review-meta">
-          <span>📁 תיקייה: <strong>{currentSubfolder || '(ללא)'}</strong></span>
+          <span>
+            📁 תיקייה: <strong>{currentSubfolder || '(ללא)'}</strong>
+          </span>
         </div>
       </div>
 

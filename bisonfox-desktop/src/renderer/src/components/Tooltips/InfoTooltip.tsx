@@ -1,8 +1,8 @@
-import { JSX } from "react";
-import './InfoTooltip.css';
+import { JSX } from 'react'
+import './InfoTooltip.css'
 
 interface InfoTooltipProps {
-  text: string;
+  text: string
 }
 
 export function InfoTooltip({ text }: InfoTooltipProps): JSX.Element {
@@ -23,5 +23,5 @@ export function InfoTooltip({ text }: InfoTooltipProps): JSX.Element {
       </svg>
       <span className="info-tooltip-text">{text}</span>
     </span>
-  );
+  )
 }

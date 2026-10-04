@@ -7,7 +7,8 @@ export class HardwareService {
    */
   async detectKeyboard(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
-      const cmd = 'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
+      const cmd =
+        'powershell -NoProfile -Command "(Get-WmiObject Win32_Keyboard | Measure-Object).Count"'
       exec(cmd, { timeout: 5000 }, (err, stdout) => {
         if (err) {
           // Fallback to assuming keyboard exists if query fails

@@ -25,33 +25,39 @@ export function useAnotherDiskPage() {
       .then((config) => {
         if (mounted) setDestinationUserEndpoint(config.endpointDestinationFolder)
       })
-      .catch((err) => clientLogger.error(
-        'AnotherDiskPage', 'Failed to load config for another disk page', err))
-    return () => { mounted = false }
+      .catch((err) =>
+        clientLogger.error('AnotherDiskPage', 'Failed to load config for another disk page', err)
+      )
+    return () => {
+      mounted = false
+    }
   }, [])
 
   useEffect(() => {
     const logMail = async () => {
-    if (!mailLogged.current) {
-      mailLogged.current = true
-      const lastSession = diskSessions[diskSessions.length - 1]
-      const succeededFilesAmount = lastSession?.copiedCount ?? 0
-      const failedFilesAmount = lastSession?.failedCount ?? 0
-      const totalFilesAmount = succeededFilesAmount + failedFilesAmount
-      const config = await getConfig()
+      if (!mailLogged.current) {
+        mailLogged.current = true
+        const lastSession = diskSessions[diskSessions.length - 1]
+        const succeededFilesAmount = lastSession?.copiedCount ?? 0
+        const failedFilesAmount = lastSession?.failedCount ?? 0
+        const totalFilesAmount = succeededFilesAmount + failedFilesAmount
+        const config = await getConfig()
 
-      window.api.invoke(IPC_CHANNELS.UPLOAD.LOG_MAIL, {
-        username,
-        subfolder: currentSubfolder,
-        succeededFilesAmount,
-        totalFilesAmount,
-        failedFilesAmount,
-        interfaceName: config.endpointDestinationFolder.replace(/[/\\]+$/, '').split(/[/\\]/).pop()
-      })
+        window.api.invoke(IPC_CHANNELS.UPLOAD.LOG_MAIL, {
+          username,
+          subfolder: currentSubfolder,
+          succeededFilesAmount,
+          totalFilesAmount,
+          failedFilesAmount,
+          interfaceName: config.endpointDestinationFolder
+            .replace(/[/\\]+$/, '')
+            .split(/[/\\]/)
+            .pop()
+        })
+      }
     }
-  }
 
-  logMail()
+    logMail()
     const interval = setInterval(() => {
       setCountdown((currentCountdown) => {
         if (currentCountdown <= 1) {

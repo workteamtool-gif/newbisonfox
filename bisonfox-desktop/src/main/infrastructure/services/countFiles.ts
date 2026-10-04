@@ -25,7 +25,10 @@ export async function countFiles(
 
   await Promise.all(
     initialPaths.map(async (currentPath) => {
-      if (!excludedFilesSet.has(normalizeForSet(currentPath)) && !excludedFilesSet.has(normalizeForSet(path.basename(currentPath)))) {
+      if (
+        !excludedFilesSet.has(normalizeForSet(currentPath)) &&
+        !excludedFilesSet.has(normalizeForSet(path.basename(currentPath)))
+      ) {
         try {
           const pathStat = await fs.promises.stat(currentPath)
           if (pathStat.isDirectory()) {
@@ -48,7 +51,12 @@ export async function countFiles(
 
   return new Promise((resolve) => {
     const checkIfComplete = (): void => {
-      if (queue.length === 0 && activeDirectoryReads === 0 && activeStatBatches === 0 && !isComplete) {
+      if (
+        queue.length === 0 &&
+        activeDirectoryReads === 0 &&
+        activeStatBatches === 0 &&
+        !isComplete
+      ) {
         isComplete = true
         if (!signal.aborted) {
           onCount(totalFileCount, totalBytes)

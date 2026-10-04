@@ -23,16 +23,15 @@ export async function expandPaths(
   onDirectoryFound: (relativeDirectoryPath: string) => void,
   onScanError: (filePath: string, errorMessage: string) => void,
   signal: AbortSignal,
-  backpressureGate?: BackpressureGate
+  backpressureGate?: BackpressureGate,
+  onEmptyDirectory?: (relativeDirectoryPath: string) => void
 ): Promise<PathResult[]> {
   const results: PathResult[] = []
   let foundCount = 0
   const normalizedBase = normalizeDriveCase(basePath)
 
   const normalizeForSet = (filePath: string) => path.normalize(filePath).toLowerCase()
-  const normalizedExcludedPaths = new Set<string>(
-    [...excludedPaths].map(normalizeForSet)
-  )
+  const normalizedExcludedPaths = new Set<string>([...excludedPaths].map(normalizeForSet))
 
   const queue: { path: string; isDir?: boolean }[] = inputs.map((filePath) => ({ path: filePath }))
 
@@ -100,6 +99,7 @@ export async function expandPaths(
           onDirectoryFound(relativeDirectoryPath)
 
           const openedDir = await fs.promises.opendir(currentPath)
+          let hasChildren = false
           for await (const entry of openedDir) {
             if (signal.aborted) break
             if (excludedDirectories.has(entry.name)) continue
@@ -107,10 +107,14 @@ export async function expandPaths(
             const fullChildPath = path.join(currentPath, entry.name)
             const normalizedChild = normalizeForSet(fullChildPath)
             if (normalizedExcludedPaths.has(normalizedChild)) {
-              logger.info('expandPaths', `Skipping excluded path: ${fullChildPath} (normalized: ${normalizedChild})`)
+              logger.info(
+                'expandPaths',
+                `Skipping excluded path: ${fullChildPath} (normalized: ${normalizedChild})`
+              )
               continue
             }
 
+            hasChildren = true
             if (entry.isDirectory()) {
               queue.push({ path: fullChildPath, isDir: true })
             } else {
@@ -119,6 +123,10 @@ export async function expandPaths(
               }
               processFile(fullChildPath)
             }
+          }
+
+          if (!hasChildren && onEmptyDirectory) {
+            onEmptyDirectory(relativeDirectoryPath)
           }
         } else {
           if (backpressureGate) {

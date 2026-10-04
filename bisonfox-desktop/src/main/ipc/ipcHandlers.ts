@@ -8,7 +8,6 @@ import { registerDriveHandlers } from '@main/ipc/driveHandlers'
 import { registerUploadHandlers } from '@main/ipc/uploadHandlers'
 import { AppDependencies } from '@main/domain/entities/AppDependencies'
 
-
 export function registerIpcHandlers(dependencies: AppDependencies): void {
   const { diskService, fileService, systemService, uploadManager } = dependencies
 

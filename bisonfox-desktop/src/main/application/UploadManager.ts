@@ -31,7 +31,11 @@ export class UploadManager {
     this.notifier.notifyProgress(sessionId, { type: 'cancelled' })
   }
 
-  public async startCount(scanId: string, selectedPaths: string[], excludedPaths: string[]): Promise<void> {
+  public async startCount(
+    scanId: string,
+    selectedPaths: string[],
+    excludedPaths: string[]
+  ): Promise<void> {
     const onCount = (count: number, size: number): void => {
       this.notifier.notifyCount(scanId, { count, size })
     }
@@ -40,7 +44,12 @@ export class UploadManager {
     this.countFileControllers.set(scanId, controller)
 
     try {
-      const { count, size } = await this.fileService.countFiles(selectedPaths, excludedPaths, onCount, controller.signal)
+      const { count, size } = await this.fileService.countFiles(
+        selectedPaths,
+        excludedPaths,
+        onCount,
+        controller.signal
+      )
       this.notifier.notifyCount(scanId, { done: true, count, size })
     } catch (err: unknown) {
       this.notifier.notifyCount(scanId, {
@@ -59,7 +68,12 @@ export class UploadManager {
     }
   }
 
-  public addDiskFiles(sessionId: string, driveLetter: string, selectedItemPaths: string[], excludedItemPaths: string[] = []): void {
+  public addDiskFiles(
+    sessionId: string,
+    driveLetter: string,
+    selectedItemPaths: string[],
+    excludedItemPaths: string[] = []
+  ): void {
     const session = this.sessionSingletonInstance.get(sessionId)
     if (!session) throw new Error('Session not found')
 
@@ -82,8 +96,22 @@ export class UploadManager {
     }
   }
 
-  public logMail(username: string, subfolder: string, succeededFilesAmount: number, totalFilesAmount: number, failedFilesAmount: number, interfaceName: string): void {
-    logMail(username, subfolder, succeededFilesAmount, totalFilesAmount, failedFilesAmount, interfaceName)
+  public logMail(
+    username: string,
+    subfolder: string,
+    succeededFilesAmount: number,
+    totalFilesAmount: number,
+    failedFilesAmount: number,
+    interfaceName: string
+  ): void {
+    logMail(
+      username,
+      subfolder,
+      succeededFilesAmount,
+      totalFilesAmount,
+      failedFilesAmount,
+      interfaceName
+    )
   }
 
   public cancelAllUploads(): void {

@@ -9,8 +9,15 @@ import { clientLogger } from '@renderer/utils/logger'
 import { useTreeSelection } from '@renderer/hooks/useTreeSelection'
 
 export function useReviewSelectedItemsPage() {
-  const { currentDisk, setCurrentDisk, sessionId, setStep, addDiskSession, username, currentSubfolder } =
-    useWizardStore()
+  const {
+    currentDisk,
+    setCurrentDisk,
+    sessionId,
+    setStep,
+    addDiskSession,
+    username,
+    currentSubfolder
+  } = useWizardStore()
 
   useDriveMonitor()
 
@@ -66,7 +73,10 @@ export function useReviewSelectedItemsPage() {
 
       setCurrentDisk(finalDisk)
       addDiskSession(finalDisk)
-      clientLogger.info('ReviewSelectedItemsPage', `Starting upload of ${finalDisk.selectedItemPaths} files`)
+      clientLogger.info(
+        'ReviewSelectedItemsPage',
+        `Starting upload of ${finalDisk.selectedItemPaths} files`
+      )
 
       setStep(UploadPage)
     } catch (err: unknown) {
@@ -90,7 +100,10 @@ export function useReviewSelectedItemsPage() {
 
   useEffect(() => {
     if (!currentDisk) {
-      clientLogger.warn('ReviewSelectedItemsPage', `No current disk found, navigating back to SetupPage`)
+      clientLogger.warn(
+        'ReviewSelectedItemsPage',
+        `No current disk found, navigating back to SetupPage`
+      )
       setStep(SetupPage)
     }
   }, [currentDisk, setStep, username, sessionId])
