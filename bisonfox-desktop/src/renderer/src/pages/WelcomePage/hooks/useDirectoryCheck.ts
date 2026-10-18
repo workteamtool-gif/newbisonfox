@@ -24,7 +24,7 @@ export function useDirectoryCheck(): DirectoryCheckResult {
     setStatus('checking')
     try {
       const failed = (await window.api.invoke(IPC_CHANNELS.SYSTEM.CHECK_DIRS)) as FailedDir[]
-      setFailedDirNames(failed?.map((d) => d.name) ?? [])
+      setFailedDirNames(failed?.map((directory) => directory.name) ?? [])
       setStatus(failed?.length > 0 ? 'error' : 'ok')
     } catch {
       setFailedDirNames([])
