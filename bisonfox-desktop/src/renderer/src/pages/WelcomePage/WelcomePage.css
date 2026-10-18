@@ -53,3 +53,80 @@
     width: clamp(180px, 22vw, 30vw);
     height: auto;
 }
+
+/* ── Connection error banner ───────────────────────────────────────── */
+.welcome-connection-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    width: 100%;
+    margin-bottom: clamp(0.8rem, 1.5vh, 1.4rem);
+    padding: clamp(0.6rem, 1.2vh, 1rem) clamp(1rem, 2vw, 1.4rem);
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.45);
+    border-radius: 10px;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.15);
+    direction: rtl;
+    animation: fadeInDown 0.3s ease;
+}
+
+.welcome-error-icon {
+    font-size: clamp(1.1rem, 1.8vw, 1.4rem);
+    flex-shrink: 0;
+    line-height: 1;
+    padding-top: 0.15rem;
+}
+
+.welcome-error-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+}
+
+.welcome-error-text {
+    font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+    font-weight: 600;
+    color: #fca5a5;
+}
+
+.welcome-error-dirs {
+    margin: 0;
+    padding-right: 1.1rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.welcome-error-dirs li {
+    font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+    color: #fecaca;
+    font-family: monospace;
+}
+
+
+/* ── Actions row ───────────────────────────────────────────────────── */
+.welcome-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+}
+
+.welcome-retry-btn {
+    font-size: clamp(0.85rem, 1.3vw, 1rem);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.welcome-retry-btn:hover {
+    opacity: 1;
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+

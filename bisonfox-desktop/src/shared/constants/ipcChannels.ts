@@ -5,7 +5,8 @@ export const IPC_CHANNELS = {
     SEND_MAIL_LOG: 'send-mail-log',
     GET_CONFIG: 'get-config',
     CLOSE: 'system:close',
-    OPEN_CMD: 'open-cmd'
+    OPEN_CMD: 'open-cmd',
+    CHECK_DIRS: 'system:check-dirs'
   },
   SESSION: {
     VALIDATE_NAME: 'validate-name',
